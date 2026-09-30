@@ -20,6 +20,8 @@ on:
     paths:
       - 'docs/**'
       - 'fern/**'
+      - 'control-plane/infra/openapi/specs/runai-public.yaml'
+      - 'control-plane/infra/openapi/specs/runai-system-scoped.yaml'
       - 'tools/check-fern-nav.py'
       - 'local-dev.md'
       - 'CONTRIBUTING.md'
@@ -57,6 +59,8 @@ jobs:
           sparse-checkout: |
             /fern/
             /docs/
+            /control-plane/infra/openapi/specs/runai-public.yaml
+            /control-plane/infra/openapi/specs/runai-system-scoped.yaml
             /tools/
             /local-dev.md
             /CONTRIBUTING.md

@@ -23,6 +23,8 @@ on:
     paths:
       - 'docs/**'
       - 'fern/**'
+      - 'control-plane/infra/openapi/specs/runai-public.yaml'
+      - 'control-plane/infra/openapi/specs/runai-system-scoped.yaml'
       - '.github/workflows/fern-docs-preview.yaml'
 
 permissions:
