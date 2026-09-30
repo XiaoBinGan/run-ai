@@ -3346,7 +3346,7 @@ components:
       nullable: true
       type: object
     Image:
-      description: Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+      description: Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
       type: string
       minLength: 1
       maxLength: 253
@@ -3949,7 +3949,7 @@ components:
         size:
           $ref: '#/components/schemas/PvcClaimSize'
         storageClass:
-          description: Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
+          description: Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
           type: string
           minLength: 1
           maxLength: 63
@@ -4989,7 +4989,7 @@ components:
     Nfs:
       properties:
         path:
-          description: Path that is exported by the NFS server (mandatory). For more information, see NFS.
+          description: Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
           type: string
           minLength: 1
           maxLength: 4096
@@ -5073,14 +5073,14 @@ components:
           nullable: true
           pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
         secretKeyOfAccessKeyId:
-          description: The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
+          description: The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
           type: string
           minLength: 1
           example: AccessKeyId
           nullable: true
           pattern: .*
         secretKeyOfSecretKey:
-          description: The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
+          description: The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
           type: string
           minLength: 1
           example: SecretKey
@@ -8750,7 +8750,7 @@ components:
       maxLength: 1023
     FormatterSetExpression:
       type: string
-      description: The JQ expression used to write the field value into the workload spec. Consult the jq manual for further info.
+      description: The JQ expression used to write the field value into the workload spec. Consult https://jqlang.org/manual/ for further info.
       example: |
         {
           "env": [
@@ -8765,7 +8765,7 @@ components:
       pattern: .*
     FormatterGetExpression:
       type: string
-      description: The JQ expression used to read the field value from the workload spec. Consult the jq manual for further info.
+      description: The JQ expression used to read the field value from the workload spec. Consult https://jqlang.org/manual/ for further info.
       example: .securityContext | .privileged
       minLength: 1
       maxLength: 4095
@@ -9071,7 +9071,7 @@ components:
           - $ref: '#/components/schemas/MappingScopeOfElement'
     ItemSelectorQuery:
       type: string
-      description: The JQ query used to filter items of an itemized field. Consult the jq manual for further info.
+      description: The JQ query used to filter items of an itemized field. Consult https://jqlang.org/manual/ for further info.
       example: |
         (.ports // [])[]
         | select(.containerPort == $ARGS.named.containerPort)
@@ -9317,7 +9317,7 @@ components:
           example: Deployment
     SpecSelectorQuery:
       type: string
-      description: The JQ query used to select a subtree of the workload spec. Consult the jq manual for further info.
+      description: The JQ query used to select a subtree of the workload spec. Consult https://jqlang.org/manual/ for further info.
       example: |
         (
            .spec.template.spec.containers[]?,

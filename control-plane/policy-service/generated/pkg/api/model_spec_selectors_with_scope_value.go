@@ -28,7 +28,7 @@ type SpecSelectorsWithScopeValue struct {
 	Description *string `json:"description,omitempty" gorm:"" validate:"regexp=.*"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// The JQ query used to select a subtree of the workload spec. Consult the jq manual for further info.
+	// The JQ query used to select a subtree of the workload spec. Consult https://jqlang.org/manual/ for further info.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Query string `json:"query,omitempty" validate:"regexp=.*"`
 	Query string `json:"query,omitempty" gorm:"not null;" validate:"regexp=.*"`

@@ -26,7 +26,7 @@ var _ MappedNullable = &ModelInference{}
 type ModelInference struct {
 	Meta WorkloadMetaV1        `json:"meta"`
 	Spec SpecificRunInfoFields `json:"spec"`
-	// An inference workload ready for submission at the cluster.
+	// An inference workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"
 	Workload map[string]interface{} `json:"workload,omitempty"`
 	Job      *DisplayedJob          `json:"job,omitempty"`
 }

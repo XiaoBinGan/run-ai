@@ -22,7 +22,7 @@ var dummyNfsAssetSpec = runaihttp.AssertPattern
 
 type NfsAssetSpec struct {
 
-	// Path that is exported by the NFS server (mandatory). For more information, see NFS.
+	// Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Path *string `json:"path,omitempty" validate:"regexp=.*"`
 	Path *string `json:"path,omitempty" gorm:"" validate:"regexp=.*"`

@@ -215,7 +215,7 @@ export interface ClaimInfo {
      */
     'size'?: string | null;
     /**
-     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
+     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
      * @type {string}
      * @memberof ClaimInfo
      */
@@ -1041,7 +1041,7 @@ export interface NimServiceSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NimServiceSpec
      */
@@ -1168,7 +1168,7 @@ export interface NimServiceSpecAllOf {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NimServiceSpecAllOf
      */

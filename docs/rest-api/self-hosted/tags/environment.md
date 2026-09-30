@@ -7,5 +7,4 @@ For more information, see [Environments](/run-ai/self-hosted/documentation/workl
 
 ## Related documentation
 
-- [Images](https://kubernetes.io/docs/concepts/containers/images)
 - [User identity in containers](/run-ai/self-hosted/documentation/installation-and-configuration/configuration/security/user-identity-in-containers)

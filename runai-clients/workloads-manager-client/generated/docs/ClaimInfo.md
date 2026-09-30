@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Size** | Pointer to **NullableString** | Requested size for the PVC. Mandatory when existingPvc is false. Recommended sizes: TB/GB/MB/TIB/GIB/MIB | [optional] 
-**StorageClass** | Pointer to **NullableString** | Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class. | [optional] 
+**StorageClass** | Pointer to **NullableString** | Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes). | [optional] 
 **AccessModes** | Pointer to [**NullablePvcAccessModes**](PvcAccessModes.md) |  | [optional] 
 **VolumeMode** | Pointer to [**NullablePvcVolumeMode**](PvcVolumeMode.md) |  | [optional] 
 **AddedAttrValues** | Pointer to [**[]PvcAddedAttrValue**](PvcAddedAttrValue.md) | an optional array of key-values pairs that are written as annotations on the created PVC. the allowed attributes are determined according to the storage class configuration (see k8s-objects-tracker for further info). | [optional] 

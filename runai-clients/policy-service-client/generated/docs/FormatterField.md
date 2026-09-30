@@ -4,8 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**SetExpr** | Pointer to **NullableString** | The JQ expression used to write the field value into the workload spec. Consult the jq manual for further info. | [optional] 
-**GetExpr** | Pointer to **NullableString** | The JQ expression used to read the field value from the workload spec. Consult the jq manual for further info. | [optional] 
+**SetExpr** | Pointer to **NullableString** | The JQ expression used to write the field value into the workload spec. Consult https://jqlang.org/manual/ for further info. | [optional] 
+**GetExpr** | Pointer to **NullableString** | The JQ expression used to read the field value from the workload spec. Consult https://jqlang.org/manual/ for further info. | [optional] 
 **ArrayKey** | Pointer to [**NullableFormatterArrayKey**](FormatterArrayKey.md) |  | [optional] 
 **ArgsInfo** | Pointer to [**map[string]MappingFieldType**](MappingFieldType.md) | The data type of each argument referenced by the JQ expression as $ARGS.named.&lt;argName&gt;. | [optional] 
 **ArgsEnum** | Pointer to **map[string][]string** | The allowed values for each string-typed argument referenced by the JQ expression as $ARGS.named.&lt;argName&gt;. Up to 100 values per argument. | [optional] 

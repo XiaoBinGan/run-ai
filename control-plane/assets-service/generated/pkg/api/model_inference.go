@@ -32,7 +32,7 @@ type Inference struct {
 	Spec SpecificRunInfoFields `json:"spec" gorm:"serializer:json; type:jsonb;not null;"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// An inference workload ready for submission at the cluster.
+	// An inference workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Workload map[string]interface{} `json:"workload,omitempty"`
 	Workload map[string]interface{} `json:"workload,omitempty" gorm:"not null;"`

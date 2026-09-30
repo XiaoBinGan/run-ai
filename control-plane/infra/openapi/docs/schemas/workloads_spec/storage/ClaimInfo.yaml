@@ -3,7 +3,7 @@ properties:
   size:
     $ref: "./PvcClaimSize.yaml"
   storageClass:
-    description: Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
+    description: Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
     type: string
     minLength: 1
     maxLength: 63

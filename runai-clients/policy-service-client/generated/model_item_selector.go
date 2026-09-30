@@ -24,7 +24,7 @@ var _ MappedNullable = &ItemSelector{}
 type ItemSelector struct {
 	// A free-text description of the element.
 	Description NullableString `json:"description,omitempty" validate:"regexp=.*"`
-	// The JQ query used to filter items of an itemized field. Consult the jq manual for further info.
+	// The JQ query used to filter items of an itemized field. Consult https://jqlang.org/manual/ for further info.
 	Query *string `json:"query,omitempty" validate:"regexp=.*"`
 	// The data type of each argument referenced by the JQ expression as $ARGS.named.<argName>.
 	ArgsInfo *map[string]MappingFieldType `json:"argsInfo,omitempty"`

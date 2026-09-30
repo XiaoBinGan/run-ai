@@ -1,7 +1,7 @@
 properties:
   path:
     description: Path that is exported by the NFS server (mandatory). 
-      For more information, see NFS.
+      For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
     type: string
     minLength: 1
     maxLength: 4096

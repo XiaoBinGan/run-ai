@@ -38,7 +38,7 @@ type ReplicaDefaultsV2 struct {
 	CreateHomeDir        NullableBool                         `json:"createHomeDir,omitempty"`
 	EnvironmentVariables NullableEnvironmentVariablesDefaults `json:"environmentVariables,omitempty"`
 	ExposedUrls          NullableExposedUrlsDefaults          `json:"exposedUrls,omitempty"`
-	// Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+	// Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
 	Image                NullableString                   `json:"image,omitempty" validate:"regexp=.*"`
 	ImagePullPolicy      NullableImagePullPolicy          `json:"imagePullPolicy,omitempty"`
 	ImagePullSecrets     NullableImagePullSecretsDefaults `json:"imagePullSecrets,omitempty"`

@@ -765,7 +765,7 @@ export interface BreakdownFormatterArrayKey {
  */
 export interface BreakdownItemSelector {
     /**
-     * The JQ query used to filter items of an itemized field. Consult the jq manual for further info.
+     * The JQ query used to filter items of an itemized field. Consult https://jqlang.org/manual/ for further info.
      * @type {string}
      * @memberof BreakdownItemSelector
      */
@@ -796,7 +796,7 @@ export interface BreakdownSpecSelector {
      */
     'description'?: string | null;
     /**
-     * The JQ query used to select a subtree of the workload spec. Consult the jq manual for further info.
+     * The JQ query used to select a subtree of the workload spec. Consult https://jqlang.org/manual/ for further info.
      * @type {string}
      * @memberof BreakdownSpecSelector
      */
@@ -883,7 +883,7 @@ export interface ClaimInfo {
      */
     'size'?: string | null;
     /**
-     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
+     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
      * @type {string}
      * @memberof ClaimInfo
      */
@@ -1910,7 +1910,7 @@ export interface DistributedInferenceLeaderDefaultsFieldsLeader {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderDefaultsFieldsLeader
      */
@@ -2167,7 +2167,7 @@ export interface DistributedInferenceLeaderWorkerDefaultsV2 {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerDefaultsV2
      */
@@ -3488,7 +3488,7 @@ export interface DistributedInferenceWorkerDefaultsFieldsWorker {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceWorkerDefaultsFieldsWorker
      */
@@ -3876,7 +3876,7 @@ export interface DistributedPolicyDefaultsV2Worker {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedPolicyDefaultsV2Worker
      */
@@ -5295,7 +5295,7 @@ export interface FallbackPolicyDefaultsAndRulesDefaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof FallbackPolicyDefaultsAndRulesDefaults
      */
@@ -7311,7 +7311,7 @@ export interface InferencePolicyDefaultsAndRulesV2Defaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferencePolicyDefaultsAndRulesV2Defaults
      */
@@ -7662,7 +7662,7 @@ export interface InferencePolicyDefaultsV2 {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferencePolicyDefaultsV2
      */
@@ -7838,7 +7838,7 @@ export interface InferencePolicyDefaultsV2AllOf {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferencePolicyDefaultsV2AllOf
      */
@@ -8775,7 +8775,7 @@ export interface ItemSelector {
      */
     'description'?: string | null;
     /**
-     * The JQ query used to filter items of an itemized field. Consult the jq manual for further info.
+     * The JQ query used to filter items of an itemized field. Consult https://jqlang.org/manual/ for further info.
      * @type {string}
      * @memberof ItemSelector
      */
@@ -8806,7 +8806,7 @@ export interface ItemSelectorsWithScopeValue {
      */
     'description'?: string | null;
     /**
-     * The JQ query used to filter items of an itemized field. Consult the jq manual for further info.
+     * The JQ query used to filter items of an itemized field. Consult https://jqlang.org/manual/ for further info.
      * @type {string}
      * @memberof ItemSelectorsWithScopeValue
      */
@@ -9344,7 +9344,7 @@ export interface MpiLauncherCreationPolicyRules {
  */
 export interface Nfs {
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
+     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
      * @type {string}
      * @memberof Nfs
      */
@@ -9381,7 +9381,7 @@ export interface NfsInstance {
      */
     'name'?: string | null;
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
+     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
      * @type {string}
      * @memberof NfsInstance
      */
@@ -9555,7 +9555,7 @@ export interface NimServiceDefaults {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NimServiceDefaults
      */
@@ -9682,7 +9682,7 @@ export interface NimServiceDefaultsAllOf {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NimServiceDefaultsAllOf
      */
@@ -10064,7 +10064,7 @@ export interface NimServicePolicyDefaultsAndRulesDefaults {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NimServicePolicyDefaultsAndRulesDefaults
      */
@@ -13379,7 +13379,7 @@ export interface ReplicaDefaultsV2 {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof ReplicaDefaultsV2
      */
@@ -13808,13 +13808,13 @@ export interface S3AccessKey {
      */
     'accessKeySecret'?: string | null;
     /**
-     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
+     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3AccessKey
      */
     'secretKeyOfAccessKeyId'?: string | null;
     /**
-     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
+     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3AccessKey
      */
@@ -13888,13 +13888,13 @@ export interface S3Instance {
      */
     'accessKeySecret'?: string | null;
     /**
-     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
+     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3Instance
      */
     'secretKeyOfAccessKeyId'?: string | null;
     /**
-     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
+     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3Instance
      */
@@ -14833,7 +14833,7 @@ export interface SpecSelector {
      */
     'description'?: string | null;
     /**
-     * The JQ query used to select a subtree of the workload spec. Consult the jq manual for further info.
+     * The JQ query used to select a subtree of the workload spec. Consult https://jqlang.org/manual/ for further info.
      * @type {string}
      * @memberof SpecSelector
      */
@@ -14895,7 +14895,7 @@ export interface SpecSelectorsWithScopeValue {
      */
     'description'?: string | null;
     /**
-     * The JQ query used to select a subtree of the workload spec. Consult the jq manual for further info.
+     * The JQ query used to select a subtree of the workload spec. Consult https://jqlang.org/manual/ for further info.
      * @type {string}
      * @memberof SpecSelectorsWithScopeValue
      */
@@ -15201,7 +15201,7 @@ export interface SupersetDefaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetDefaults
      */
@@ -15437,7 +15437,7 @@ export interface SupersetDefaultsAllOf {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetDefaultsAllOf
      */
@@ -17272,7 +17272,7 @@ export interface TrainingPolicyDefaultsAndRulesV2Defaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingPolicyDefaultsAndRulesV2Defaults
      */
@@ -17695,7 +17695,7 @@ export interface TrainingPolicyDefaultsV2 {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingPolicyDefaultsV2
      */
@@ -17907,7 +17907,7 @@ export interface TrainingPolicyDefaultsV2AllOf {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingPolicyDefaultsV2AllOf
      */
@@ -18787,7 +18787,7 @@ export interface WorkspacePolicyDefaultsAndRulesV2Defaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspacePolicyDefaultsAndRulesV2Defaults
      */
@@ -19186,7 +19186,7 @@ export interface WorkspacePolicyDefaultsV2 {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspacePolicyDefaultsV2
      */
@@ -19386,7 +19386,7 @@ export interface WorkspacePolicyDefaultsV2AllOf {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspacePolicyDefaultsV2AllOf
      */

@@ -1932,7 +1932,7 @@ export interface ClaimInfo {
      */
     'size'?: string | null;
     /**
-     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
+     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
      * @type {string}
      * @memberof ClaimInfo
      */
@@ -3549,7 +3549,7 @@ export interface DatasourceListResponseAssetSpecHostPath {
  */
 export interface DatasourceListResponseAssetSpecNfs {
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
+     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
      * @type {string}
      * @memberof DatasourceListResponseAssetSpecNfs
      */
@@ -4444,7 +4444,7 @@ export interface DistributedInferenceLeaderSpecFieldsLeader {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderSpecFieldsLeader
      */
@@ -4560,7 +4560,7 @@ export interface DistributedInferenceLeaderWorkerSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerSpec
      */
@@ -5060,7 +5060,7 @@ export interface DistributedInferenceWorkerSpecFieldsWorker {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceWorkerSpecFieldsWorker
      */
@@ -5643,7 +5643,7 @@ export interface EnvironmentAssetSpec {
      */
     'hostNetwork'?: boolean | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof EnvironmentAssetSpec
      */
@@ -7342,7 +7342,7 @@ export interface Inference {
      */
     'spec': SpecificRunInfoFields;
     /**
-     * An inference workload ready for submission at the cluster.
+     * An inference workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"
      * @type {object}
      * @memberof Inference
      */
@@ -8094,7 +8094,7 @@ export interface MasterSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof MasterSpec
      */
@@ -8441,7 +8441,7 @@ export interface ModelInference {
      */
     'spec': SpecificRunInfoFields;
     /**
-     * An inference workload ready for submission at the cluster.
+     * An inference workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"
      * @type {object}
      * @memberof ModelInference
      */
@@ -8674,7 +8674,7 @@ export interface NFSAsset {
  */
 export interface NFSAssetSpec {
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
+     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
      * @type {string}
      * @memberof NFSAssetSpec
      */
@@ -8756,7 +8756,7 @@ export interface NFSUpdateRequest {
  */
 export interface Nfs {
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
+     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
      * @type {string}
      * @memberof Nfs
      */
@@ -8793,7 +8793,7 @@ export interface NfsInstance {
      */
     'name'?: string | null;
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
+     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
      * @type {string}
      * @memberof NfsInstance
      */
@@ -9082,7 +9082,7 @@ export interface NonOverridableSpecFields {
      */
     'hostNetwork'?: boolean | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NonOverridableSpecFields
      */
@@ -9197,7 +9197,7 @@ export interface NonOverridableSpecFieldsAllOf {
      */
     'hostNetwork'?: boolean | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NonOverridableSpecFieldsAllOf
      */
@@ -10803,13 +10803,13 @@ export interface S3AccessKey {
      */
     'accessKeySecret'?: string | null;
     /**
-     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
+     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3AccessKey
      */
     'secretKeyOfAccessKeyId'?: string | null;
     /**
-     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
+     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3AccessKey
      */
@@ -10989,13 +10989,13 @@ export interface S3Instance {
      */
     'accessKeySecret'?: string | null;
     /**
-     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
+     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3Instance
      */
     'secretKeyOfAccessKeyId'?: string | null;
     /**
-     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
+     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3Instance
      */
@@ -12866,7 +12866,7 @@ export interface SupersetSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetSpec
      */
@@ -13108,7 +13108,7 @@ export interface SupersetSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetSpecAllOf
      */
@@ -13769,7 +13769,7 @@ export interface Training {
      */
     'spec': SpecificRunInfoFields;
     /**
-     * A training workload ready for submission at the cluster.
+     * A training workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"
      * @type {object}
      * @memberof Training
      */
@@ -14540,7 +14540,7 @@ export interface Workspace {
      */
     'spec': SpecificRunInfoFields;
     /**
-     * An interactive workload ready for submission at the cluster.
+     * An interactive workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"
      * @type {object}
      * @memberof Workspace
      */

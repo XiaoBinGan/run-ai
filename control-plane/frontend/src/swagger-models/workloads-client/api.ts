@@ -1898,7 +1898,7 @@ export interface ClaimInfo {
      */
     'size'?: string | null;
     /**
-     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
+     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
      * @type {string}
      * @memberof ClaimInfo
      */
@@ -3391,7 +3391,7 @@ export interface DistributedInferenceLeaderDefaultsFieldsLeader {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderDefaultsFieldsLeader
      */
@@ -3648,7 +3648,7 @@ export interface DistributedInferenceLeaderSpecFieldsLeader {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderSpecFieldsLeader
      */
@@ -3777,7 +3777,7 @@ export interface DistributedInferenceLeaderTemplateSpecFieldsLeader {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderTemplateSpecFieldsLeader
      */
@@ -3887,7 +3887,7 @@ export interface DistributedInferenceLeaderWorkerDefaultsV2 {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerDefaultsV2
      */
@@ -4351,7 +4351,7 @@ export interface DistributedInferenceLeaderWorkerSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerSpec
      */
@@ -4571,7 +4571,7 @@ export interface DistributedInferenceLeaderWorkerTemplateSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerTemplateSpec
      */
@@ -5535,7 +5535,7 @@ export interface DistributedInferenceWorkerDefaultsFieldsWorker {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceWorkerDefaultsFieldsWorker
      */
@@ -5792,7 +5792,7 @@ export interface DistributedInferenceWorkerSpecFieldsWorker {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceWorkerSpecFieldsWorker
      */
@@ -5921,7 +5921,7 @@ export interface DistributedInferenceWorkerTemplateSpecFieldsWorker {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceWorkerTemplateSpecFieldsWorker
      */
@@ -6124,7 +6124,7 @@ export interface DistributedSpecSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedSpecSpec
      */
@@ -6378,7 +6378,7 @@ export interface DistributedSpecSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedSpecSpecAllOf
      */
@@ -6848,7 +6848,7 @@ export interface DistributedTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedTemplateSpec
      */
@@ -7096,7 +7096,7 @@ export interface DistributedTemplateSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedTemplateSpecAllOf
      */
@@ -9823,7 +9823,7 @@ export interface InferenceSpecSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceSpecSpec
      */
@@ -9999,7 +9999,7 @@ export interface InferenceSpecSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceSpecSpecAllOf
      */
@@ -10410,7 +10410,7 @@ export interface InferenceTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceTemplateSpec
      */
@@ -10580,7 +10580,7 @@ export interface InferenceTemplateSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceTemplateSpecAllOf
      */
@@ -10865,7 +10865,7 @@ export interface InferenceUpdateSpecSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceUpdateSpecSpec
      */
@@ -10987,7 +10987,7 @@ export interface InferenceUpdateSpecSpecAllOf {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceUpdateSpecSpecAllOf
      */
@@ -11581,7 +11581,7 @@ export interface MasterSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof MasterSpec
      */
@@ -11785,7 +11785,7 @@ export interface MasterTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof MasterTemplateSpec
      */
@@ -12174,7 +12174,7 @@ export interface MpiLauncherCreationPolicyRules {
  */
 export interface Nfs {
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
+     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
      * @type {string}
      * @memberof Nfs
      */
@@ -12211,7 +12211,7 @@ export interface NfsInstance {
      */
     'name'?: string | null;
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
+     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
      * @type {string}
      * @memberof NfsInstance
      */
@@ -15077,13 +15077,13 @@ export interface S3AccessKey {
      */
     'accessKeySecret'?: string | null;
     /**
-     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
+     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3AccessKey
      */
     'secretKeyOfAccessKeyId'?: string | null;
     /**
-     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
+     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3AccessKey
      */
@@ -15157,13 +15157,13 @@ export interface S3Instance {
      */
     'accessKeySecret'?: string | null;
     /**
-     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
+     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3Instance
      */
     'secretKeyOfAccessKeyId'?: string | null;
     /**
-     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
+     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
      * @type {string}
      * @memberof S3Instance
      */
@@ -16212,7 +16212,7 @@ export interface SupersetDefaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetDefaults
      */
@@ -16448,7 +16448,7 @@ export interface SupersetDefaultsAllOf {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetDefaultsAllOf
      */
@@ -17918,7 +17918,7 @@ export interface SupersetSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetSpec
      */
@@ -18160,7 +18160,7 @@ export interface SupersetSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetSpecAllOf
      */
@@ -19625,7 +19625,7 @@ export interface TrainingSpecSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingSpecSpec
      */
@@ -19837,7 +19837,7 @@ export interface TrainingSpecSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingSpecSpecAllOf
      */
@@ -20174,7 +20174,7 @@ export interface TrainingTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingTemplateSpec
      */
@@ -20380,7 +20380,7 @@ export interface TrainingTemplateSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingTemplateSpecAllOf
      */
@@ -20879,7 +20879,7 @@ export interface UnifiedPolicyInfoPerReplicaTypeDefaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof UnifiedPolicyInfoPerReplicaTypeDefaults
      */
@@ -21444,7 +21444,7 @@ export interface UnifiedSpecMaster {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof UnifiedSpecMaster
      */
@@ -21736,7 +21736,7 @@ export interface UnifiedSpecWorker {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof UnifiedSpecWorker
      */
@@ -25305,7 +25305,7 @@ export interface WorkspaceSpecSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspaceSpecSpec
      */
@@ -25505,7 +25505,7 @@ export interface WorkspaceSpecSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspaceSpecSpecAllOf
      */
@@ -26049,7 +26049,7 @@ export interface WorkspaceTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspaceTemplateSpec
      */
@@ -26243,7 +26243,7 @@ export interface WorkspaceTemplateSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspaceTemplateSpecAllOf
      */

@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Meta** | [**WorkloadMetaV1**](WorkloadMetaV1.md) |  | 
 **Spec** | [**SpecificRunInfoFields**](SpecificRunInfoFields.md) |  | 
-**Workload** | Pointer to **map[string]interface{}** | An interactive workload ready for submission at the cluster. | [optional] 
+**Workload** | Pointer to **map[string]interface{}** | An interactive workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\&quot; | [optional] 
 **Job** | Pointer to [**DisplayedJob**](DisplayedJob.md) |  | [optional] 
 
 ## Methods

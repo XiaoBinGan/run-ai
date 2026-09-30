@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Description** | Pointer to **NullableString** | A free-text description of the element. | [optional] 
-**Query** | Pointer to **string** | The JQ query used to select a subtree of the workload spec. Consult the jq manual for further info. | [optional] 
+**Query** | Pointer to **string** | The JQ query used to select a subtree of the workload spec. Consult https://jqlang.org/manual/ for further info. | [optional] 
 **ArgsInfo** | Pointer to [**map[string]MappingFieldType**](MappingFieldType.md) | The data type of each argument referenced by the JQ expression as $ARGS.named.&lt;argName&gt;. | [optional] 
 **ArgsEnum** | Pointer to **map[string][]string** | The allowed values for each string-typed argument referenced by the JQ expression as $ARGS.named.&lt;argName&gt;. Up to 100 values per argument. | [optional] 
 **FieldGroups** | Pointer to **[]string** | The field groups exposed by this spec selector. | [optional] 

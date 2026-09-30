@@ -52,7 +52,7 @@ type NonOverridableSpecFields struct {
 	HostNetwork *bool `json:"hostNetwork,omitempty" gorm:""`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+	// Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Image *string `json:"image,omitempty" validate:"regexp=.*"`
 	Image *string `json:"image,omitempty" gorm:"" validate:"regexp=.*"`

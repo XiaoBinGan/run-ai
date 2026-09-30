@@ -23,7 +23,7 @@ var dummyBreakdownItemSelector = runaihttp.AssertPattern
 // BreakdownItemSelector - The details of a single item selector in the breakdown: its JQ query, and the type and enum information for any arguments referenced by the query.
 type BreakdownItemSelector struct {
 
-	// The JQ query used to filter items of an itemized field. Consult the jq manual for further info.
+	// The JQ query used to filter items of an itemized field. Consult https://jqlang.org/manual/ for further info.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Query string `json:"query,omitempty" validate:"regexp=.*"`
 	Query string `json:"query,omitempty" gorm:"not null;" validate:"regexp=.*"`

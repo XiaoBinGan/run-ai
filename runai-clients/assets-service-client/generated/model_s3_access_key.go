@@ -24,9 +24,9 @@ var _ MappedNullable = &S3AccessKey{}
 type S3AccessKey struct {
 	// Name of the secret containing credentials of the S3 bucket. Used for private S3 buckets.
 	AccessKeySecret NullableString `json:"accessKeySecret,omitempty" validate:"regexp=^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"`
-	// The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
+	// The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
 	SecretKeyOfAccessKeyId NullableString `json:"secretKeyOfAccessKeyId,omitempty" validate:"regexp=.*"`
-	// The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
+	// The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
 	SecretKeyOfSecretKey NullableString `json:"secretKeyOfSecretKey,omitempty" validate:"regexp=.*"`
 	// An AWS session token. It should be provided (in addition to the access key ID and secret access key) to authenticate to a bucket that is configured to use AWS Security Token Service (STS).
 	AwsSessionToken NullableString `json:"awsSessionToken,omitempty" validate:"regexp=.*"`

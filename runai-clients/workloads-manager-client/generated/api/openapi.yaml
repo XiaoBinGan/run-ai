@@ -5535,8 +5535,8 @@ components:
       nullable: true
       type: array
     Image:
-      description: "Docker image name. For more information, see Images. The image\
-        \ name is mandatory for creating a workload."
+      description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
+        \ The image name is mandatory for creating a workload."
       example: python:3.8
       maxLength: 253
       minLength: 1
@@ -5748,8 +5748,8 @@ components:
         storageClass:
           description: "Storage class name to associate with the PVC. This parameter\
             \ may be omitted if there is a single storage class in the system, or\
-            \ you are using the default storage class. For more information, see Storage\
-            \ class."
+            \ you are using the default storage class. For more information, see [Storage\
+            \ class](https://kubernetes.io/docs/concepts/storage/storage-classes)."
           example: my-storage-class
           maxLength: 63
           minLength: 1

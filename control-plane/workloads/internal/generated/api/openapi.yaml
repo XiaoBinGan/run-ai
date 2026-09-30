@@ -24778,8 +24778,8 @@ components:
       nullable: true
       type: array
     Image:
-      description: "Docker image name. For more information, see Images. The image\
-        \ name is mandatory for creating a workload."
+      description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
+        \ The image name is mandatory for creating a workload."
       example: python:3.8
       maxLength: 253
       minLength: 1
@@ -25912,7 +25912,7 @@ components:
       properties:
         path:
           description: "Path that is exported by the NFS server (mandatory). For more\
-            \ information, see NFS."
+            \ information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs)."
           example: /container/nfs
           maxLength: 4096
           minLength: 1
@@ -26115,8 +26115,8 @@ components:
         storageClass:
           description: "Storage class name to associate with the PVC. This parameter\
             \ may be omitted if there is a single storage class in the system, or\
-            \ you are using the default storage class. For more information, see Storage\
-            \ class."
+            \ you are using the default storage class. For more information, see [Storage\
+            \ class](https://kubernetes.io/docs/concepts/storage/storage-classes)."
           example: my-storage-class
           maxLength: 63
           minLength: 1
@@ -26261,8 +26261,8 @@ components:
           type: string
         secretKeyOfAccessKeyId:
           description: "The key to use for loading the access key id from the secret.\
-            \ The default is `AccessKeyId`. For more information, see Credentials\
-            \ access keys."
+            \ The default is `AccessKeyId`. For more information, see [Credentials\
+            \ access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html)."
           example: AccessKeyId
           minLength: 1
           nullable: true
@@ -26270,8 +26270,8 @@ components:
           type: string
         secretKeyOfSecretKey:
           description: "The key to use for loading the secret key from the secret.\
-            \ The default is `SecretKey`. For more information, see Credentials access\
-            \ keys."
+            \ The default is `SecretKey`. For more information, see [Credentials access\
+            \ keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html)."
           example: SecretKey
           minLength: 1
           nullable: true
@@ -29697,8 +29697,8 @@ components:
           nullable: true
           type: array
         image:
-          description: "Docker image name. For more information, see Images. The image\
-            \ name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
+            \ The image name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -32451,8 +32451,8 @@ components:
           nullable: true
           type: array
         image:
-          description: "Docker image name. For more information, see Images. The image\
-            \ name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
+            \ The image name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -53766,8 +53766,8 @@ components:
           nullable: true
           type: array
         image:
-          description: "Docker image name. For more information, see Images. The image\
-            \ name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
+            \ The image name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -122749,8 +122749,8 @@ components:
           nullable: true
           type: array
         image:
-          description: "Docker image name. For more information, see Images. The image\
-            \ name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
+            \ The image name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -123701,8 +123701,8 @@ components:
         environmentVariables:
           $ref: '#/components/schemas/EnvironmentVariablesDefaults'
         image:
-          description: "Docker image name. For more information, see Images. The image\
-            \ name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
+            \ The image name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1

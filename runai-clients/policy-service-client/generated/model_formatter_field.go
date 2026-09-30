@@ -22,9 +22,9 @@ var _ MappedNullable = &FormatterField{}
 
 // FormatterField A single field defined by a formatter. Carries the JQ expressions that read (getExpr) and write (setExpr) the field's value in a workload spec, plus an optional arrayKey for itemized fields and argument type/enum information for the arguments referenced by those expressions.
 type FormatterField struct {
-	// The JQ expression used to write the field value into the workload spec. Consult the jq manual for further info.
+	// The JQ expression used to write the field value into the workload spec. Consult https://jqlang.org/manual/ for further info.
 	SetExpr NullableString `json:"setExpr,omitempty" validate:"regexp=.*"`
-	// The JQ expression used to read the field value from the workload spec. Consult the jq manual for further info.
+	// The JQ expression used to read the field value from the workload spec. Consult https://jqlang.org/manual/ for further info.
 	GetExpr  NullableString            `json:"getExpr,omitempty" validate:"regexp=.*"`
 	ArrayKey NullableFormatterArrayKey `json:"arrayKey,omitempty"`
 	// The data type of each argument referenced by the JQ expression as $ARGS.named.<argName>.

@@ -44,7 +44,7 @@ type EnvironmentAssetSpec struct {
 	HostIpc NullableBool `json:"hostIpc,omitempty"`
 	// Whether to enable host networking. Default to false.
 	HostNetwork NullableBool `json:"hostNetwork,omitempty"`
-	// Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
+	// Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
 	Image           NullableString          `json:"image,omitempty" validate:"regexp=.*"`
 	ImagePullPolicy NullableImagePullPolicy `json:"imagePullPolicy,omitempty"`
 	Probes          NullableProbes          `json:"probes,omitempty"`

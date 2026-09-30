@@ -9425,7 +9425,7 @@
         "nullable": true
       },
       "Image": {
-        "description": "Docker image name. For more information, see Images. The image name is mandatory for creating a workload.",
+        "description": "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.",
         "type": "string",
         "minLength": 1,
         "maxLength": 253,
@@ -9960,7 +9960,7 @@
       "Nfs": {
         "properties": {
           "path": {
-            "description": "Path that is exported by the NFS server (mandatory). For more information, see NFS.",
+            "description": "Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).",
             "type": "string",
             "minLength": 1,
             "maxLength": 4096,
@@ -10113,7 +10113,7 @@
             "$ref": "#/components/schemas/PvcClaimSize"
           },
           "storageClass": {
-            "description": "Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.",
+            "description": "Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).",
             "type": "string",
             "minLength": 1,
             "maxLength": 63,
@@ -12157,7 +12157,7 @@
         }
       },
       "InteractiveWorkload": {
-        "description": "An interactive workload ready for submission at the cluster.",
+        "description": "An interactive workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"",
         "type": "object"
       },
       "DisplayedJob": {
@@ -12344,7 +12344,7 @@
         }
       },
       "TrainingWorkload": {
-        "description": "A training workload ready for submission at the cluster.",
+        "description": "A training workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"",
         "type": "object"
       },
       "Training": {
@@ -14311,7 +14311,7 @@
         }
       },
       "InferenceWorkload": {
-        "description": "An inference workload ready for submission at the cluster.",
+        "description": "An inference workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"",
         "type": "object"
       },
       "Inference": {
@@ -16077,7 +16077,7 @@
             "pattern": "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
           },
           "secretKeyOfAccessKeyId": {
-            "description": "The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.",
+            "description": "The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).",
             "type": "string",
             "minLength": 1,
             "example": "AccessKeyId",
@@ -16085,7 +16085,7 @@
             "pattern": ".*"
           },
           "secretKeyOfSecretKey": {
-            "description": "The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.",
+            "description": "The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).",
             "type": "string",
             "minLength": 1,
             "example": "SecretKey",
