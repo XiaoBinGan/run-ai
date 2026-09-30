@@ -22,7 +22,7 @@ var _ MappedNullable = &NFSAssetSpec{}
 
 // NFSAssetSpec struct for NFSAssetSpec
 type NFSAssetSpec struct {
-	// Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
+	// Path that is exported by the NFS server (mandatory). For more information, see NFS.
 	Path NullableString `json:"path,omitempty" validate:"regexp=.*"`
 	// Force the NFS export to be mounted with read-only permissions.
 	ReadOnly NullableBool `json:"readOnly,omitempty"`

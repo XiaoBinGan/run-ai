@@ -10,10 +10,10 @@ info:
     To create a service account, in your UI, go to Access → Service Accounts (for organization-level service accounts) or User settings → Access Keys (for user access keys), and create a new one.
 
     After you have created a new service account, you will need to assign it access rules.
-    To assign access rules to the service account, see [Create access rules](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/authentication/accessrules#create-or-delete-rules).
-    Make sure you assign the correct rules to your service account. Use the [Roles](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/authentication/roles) to assign the correct access rules.
+    To assign access rules to the service account, see Create access rules.
+    Make sure you assign the correct rules to your service account. Use the Roles to assign the correct access rules.
 
-    To get your access token, follow the instructions in [Request a token](https://run-ai-docs.nvidia.com/self-hosted/latest/reference/api/rest-auth/#request-an-api-token).
+    To get your access token, follow the instructions in Request a token.
   title: NVIDIA Run:ai
   x-logo:
     url: ./runai-logo-api.png
@@ -38,178 +38,115 @@ tags:
   - name: AI Applications
   - name: Clusters
     x-parent: Organizations
-    description: Use these endpoints to create, manage and delete NVIDIA Run:ai Kubernetes clusters.
   - name: Departments
     x-parent: Organizations
-    description: "Departments, in the hierarchy of resource allocation, are above Projects. A Department can contain multiple Projects, and has its own quotas. \nA Department's quota supersedes the total of the Project quotas in the Department, so tt is recommended \nthat a Department's quota be the total, or more than of all the Project quotas in the Department. \nFor further information see, [Working with Departments](https://run-ai-docs.nvidia.com/self-hosted/latest/platform-management/aiinitiatives/organization/departments).\n"
   - name: Reports
     x-parent: Organizations
   - name: NodePools
     x-parent: Organizations
-    description: "Node pools assist in managing heterogeneous resources effectively. \nA node pool is a set of nodes grouped into a bucket of resources using a predefined (for example, GPU-Type) or \nadministrator-defined label (for example, key & value). \nFor more information, see [Node Pools](https://run-ai-docs.nvidia.com/self-hosted/latest/platform-management/aiinitiatives/resources/node-pools/#introduction).\n"
   - name: Nodes
     x-parent: Organizations
-    description: "Nodes are worker machines in Kubernetes and may be either a virtual or a physical machine, depending on the cluster. \nEach Node is managed by the NVIDIA Run:ai control plane. For more information, see [Nodes](https://run-ai-docs.nvidia.com/self-hosted/latest/platform-management/aiinitiatives/resources/nodes).\n"
   - name: Projects
     x-parent: Organizations
-    description: "Projects implement resource allocation policies and create segregation between \ndifferent initiatives. It can represent a team, an individual, or an initiative that \nshares resources or has a specific resources budget (quota). \nSee [Projects](https://run-ai-docs.nvidia.com/self-hosted/latest/platform-management/aiinitiatives/organization/projects) \nfor more information.\n"
   - name: Logo
     x-parent: Organizations
-    description: Use to manage tenant logo files.
   - name: Researcher Command Line Interface
     x-parent: Organizations
   - name: Researcher Command Line Interface Deprecated
     x-parent: Organizations
   - name: Network Topologies
     x-parent: Organizations
-    description: The Network Topologies API enables administrators to reflect the hierarchical network topology connectivity of nodes in a data center, such as racks, blocks, and other organizational units, to improve pod scheduling decisions for communication-intensive AI/ML workloads. To support topology-aware scheduling, this API allows administrators to define a multi-level network topology element using ordered Kubernetes node labels that represent the network connectivity of nodes in the data center. Nodes are labeled with the same key-value pairs labels that represent their location in the data center network. These labels are used by the NVIDIA Run:ai Scheduler to prefer scheduling pods on nodes that are "closer" to each other, minimizing communication overhead and optimizing workload performance.
   - name: Access Keys
     x-parent: Authentication and Authorization
-    description: |
-      Access Keys allow users to authenticate and interact programmatically with the NVIDIA Run:ai API.
-      Each access key consists of a client ID and secret that can be used to obtain authentication tokens.
-      Access keys can be managed by individual users for their own use, or by administrators for organization-wide access.
-      For more information, see [Access control](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/authentication/overview/#role-based-access-control).
   - name: Access rules
     x-parent: Authentication and Authorization
-    description: "Access rules provide user authorization to system resources and entities.\nIt is managed using Role-based access control (RBAC) which is a policy-neutral \naccess control mechanism defined around roles and privileges. \nThe components of RBAC make it simple to manage access to system resources and entities.\nFor more information, see [Access control](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/authentication/overview/#role-based-access-control).\n"
   - name: Service Accounts
     x-parent: Authentication and Authorization
-    description: "Service accounts enable programmatic access to the NVIDIA Run:ai API, allowing applications or automated systems to authenticate and interact securely. \nEach service account is associated with an access key which includes a client ID and secret used to generate access token. \nService accounts can be managed organization-wide or with a defined scope.\n"
   - name: Roles
     x-parent: Authentication and Authorization
-    description: "The Roles API allows administrators to define and manage roles within the NVIDIA Run:ai platform. \nA role represents a collection of permission sets that determine what actions can be performed across NVIDIA Run:ai resources.\nNVIDIA Run:ai provides a list of predefined roles that cover common operational needs, such as managing workloads, projects, or data and storage. \nAdministrators can also use this API to create custom roles by combining specific permission sets to match their organization's access model.\n"
   - name: Tokens
     x-parent: Authentication and Authorization
-    description: "Use tokens to facilitate authentication to the NVIDIA Run:ai API. \nThe API server must be configured to use the NVIDIA Run:ai identity \nservice to validate authentication tokens.\n"
   - name: Users
     x-parent: Authentication and Authorization
   - name: Idps
     x-parent: Authentication and Authorization
   - name: Me
     x-parent: Authentication and Authorization
-    description: "\"Me\" returns the authenticated user's permissions within the system. \nIt provides a comprehensive view of access rules (roles, subjects and scope) assigned to the current user.\nFor more information see [Access control](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/authentication/overview/#role-based-access-control).\n"
   - name: Events
     x-parent: Workloads
-    description: Workload events that occurred while the workload was running. Use to diagnose issue around workload scheduling.
   - name: Pods
     x-parent: Workloads
-    description: Retrieve data about workload pods from your NVIDIA Run:ai platform.
   - name: Workloads V2
     x-parent: Workloads
-    description: |
-      The Workloads V2 API allows you to create, retrieve, and delete workloads that originate from third-party ML frameworks, tools, or the broader Kubernetes ecosystem. These workloads are registered in the platform through the Workload Types API, some are already registered in NVIDIA Run:ai, while others can be added by administrators.
-      Each submission combines the user's Kubernetes manifest with NVIDIA Run:ai scheduling metadata, enabling consistent orchestration, monitoring, and governance. See [Extending workload support](https://run-ai-docs.nvidia.com/self-hosted/latest/workloads-in-nvidia-run-ai/workload-types/extending-workload-support) for more details.
   - name: NVIDIA NIM
     x-parent: Workloads
-    description: |
-      The NVIDIA NIM API provides endpoints to create and manage workloads that deploy NVIDIA Inference Microservices (NIM) through the NIM Operator. These workloads package optimized NVIDIA model servers and run as managed services on the NVIDIA Run:ai platform.
-      Each request includes NVIDIA Run:ai scheduling metadata (for example, project, priority, and category) and a NIM service specification that defines the container image, compute resources, environment variables, storage, and networking configuration. Once submitted, NVIDIA Run:ai handles scheduling, orchestration, and lifecycle management of the NIM service to ensure reliable and efficient model serving.
   - name: Workspaces
     x-parent: Workloads
-    description: "A Workspace is a simplified tool for researchers to conduct experiments, build AI models, access standard MLOps tools, and collaborate with their peers.\nWorkspaces abstract complex concepts related to running containerized workloads in a Kubernetes environment and are built from predefined setups that include\nnetworking, storage, secrets and other resources. All the setup and configurations for research, including container \nimages, data sets, resource requests, as well as all tools are included. for the research, in a single place. \nIt answers the research needs while ensuring infrastructure owners keep control and allocation efficiency.\nA workspace is associated with a specific NVIDIA Run:ai project and you can have multiple workspaces under a specific project. \nFor more information, see [Workspaces](https://run-ai-docs.nvidia.com/self-hosted/latest/workloads-in-nvidia-run-ai/using-workspaces/running-workspace).\n"
   - name: Trainings
     x-parent: Workloads
-    description: "Trainings are dedicated workloads that are specifically used for training models. \nThey are by design preemptible workloads because they are used in unattended sessions where the  \nscientists and researchers do not need to be present. These workloads are allowed to utilize \nresources over the project's quota.      \n"
   - name: Inferences
     x-parent: Workloads
-    description: Inference workloads deploy trained models into a production environment to generate predictions from live data. These workloads are prioritized over Trainings and Workspaces during scheduling. NVIDIA Run:ai Inference workloads support auto-scaling to maintain service-level agreements (SLAs) by dynamically adjusting resources as demand changes.
   - name: Revisions
     x-parent: Workloads
-    description: Revisions are associated with an inference workload and represent a snapshot of its configuration. A revision is created on each change to the inference workload.
   - name: Distributed
     x-parent: Workloads
-    description: "Distributed Training, is the ability to split the training of a model among multiple processors. \nIt is often a necessity when multi-GPU training no longer applies; \ntypically when you require more GPUs than exist on a single node. \nEach such split is a pod (see definition above). NVIDIA Run:ai spawns an additional launcher process that manages and \ncoordinates the other worker pods. For more information, see [Distributed training](https://run-ai-docs.nvidia.com/self-hosted/latest/workloads-in-nvidia-run-ai/using-training/distributed-training/distributed-training-models).\n"
   - name: Workloads batch
     x-parent: Workloads
   - name: Workload properties
     x-parent: Workloads
-    description: |
-      Workload properties define the behavioral and scheduling characteristics of a workload submitted to the NVIDIA Run:ai platform. These properties such as type, category, and priority determine how workloads are classified, monitored, and scheduled.
-      - Type - Defines the functional behavior of a workload, such as training or inference, and serves as the foundation for how it is classified within the platform. Each workload type includes a default category (used for monitoring) and a default priority (used for scheduling within a project).
-      - Category - Represents the role or purpose of a workload, such as  Build, Train, Deploy. Each workload type is assigned a default category to ensure consistent classification across the platform for monitoring purposes. See [Monitor workloads by category](https://run-ai-docs.nvidia.com/saas/platform-management/monitor-performance/workload-categories).
-      - Priority - Determines the scheduling order of workloads within a project and whether a workload can be preempted. Higher-priority workloads are scheduled first and may become non-preemptible, preventing interruption by lower-priority workloads. See [Workload priority control](https://run-ai-docs.nvidia.com/saas/platform-management/runai-scheduler/scheduling/workload-priority-control).
   - name: Workload templates
     x-parent: Workloads
-    description: "This set of endpoints manages workload templates used to define reusable workload configurations across various workload types in the NVIDIA Run:ai platform. \nTemplates help standardize workload definitions for consistent submission and resource usage across projects and users.\n"
   - name: Distributed Inferences
     x-parent: Workloads
-    description: "Distributed inference enables running inference workloads across multiple pods, typically to scale model serving beyond a single container or node. This approach is useful when a single instance cannot meet resource requirements.NVIDIA Run:ai supports this model using Leader Worker Set (LWS). \nEach pod plays a specific role, either as a leader or worker, and together they form a coordinated service. NVIDIA Run:ai manages the orchestration and configuration of these pods to ensure efficient and scalable inference execution\n"
   - name: Permissions
     x-parent: Authentication and Authorization
-    description: "Permissions define the actions that users can perform on specific resources within the NVIDIA Run:ai platform. \nEach permission consists of a resource type and an allowed action. \nThe Permission Sets API provides a catalog of all available permission sets in the NVIDIA Run:ai platform. \nEach permission set is a predefined collection of permissions that represent the permissions required for a role to perform specific operations. \nPermission sets serve as the building blocks for roles and are used in both NVIDIA Run:ai predefined roles and custom roles defined through the [Roles API](#tag/Roles).\n"
   - name: Settings
     x-parent: Organizations
-    description: |
-      View and manage configuration settings for your organization.
   - name: Org unit
     x-parent: Authentication and Authorization
-    description: Org unit.
   - name: AuditLogs
     x-parent: Audit
-    description: The audit log provides audit trail information for user activity, changes to business objects and other important information. For more information, see [Audit log](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/procedures/event-history).
   - name: Compute
     x-parent: Workload assets
-    description: "A compute resource is a building block that represents compute resources such as GPUs, CPU cores, and CPU memory.\nThe compute resources may consist of multiple physical resources, for example, 0.5 GPU, 8 cores and 200 Megabytes of CPU memory. \nA compute resource is available to a scope and and all of the organizational units within that scope. \n\nFor more information, see [Compute resource](https://run-ai-docs.nvidia.com/self-hosted/latest/workloads-in-nvidia-run-ai/assets/compute-resources).\n"
   - name: Credentials
     x-parent: Workload assets
-    description: Credentials are used to unlock protected resources such as applications, containers, and other assets. For more information, see [Credentials](https://run-ai-docs.nvidia.com/self-hosted/latest/workloads-in-nvidia-run-ai/assets/credentials).
   - name: Datasources
     x-parent: Workload assets
-    description: Data source assets.
   - name: Environment
     x-parent: Workload assets
-    description: "An environment resource designates the container image, the image pull policy, working directory, security parameters, and others. \nIt exposes all the necessary tools (open source, 3rd party, or custom tools) along \nwith their connection interfaces including external node port and the container ports.\nYou can also specify a standard, distributed, or inference workload architecture for the environment.\nAn environment is a mandatory building block for the creation of a workload.\nFor more information, see [Environments](https://run-ai-docs.nvidia.com/self-hosted/latest/workloads-in-nvidia-run-ai/assets/environments).\n"
   - name: Git
     x-parent: Workload assets
-    description: Use Git as a data source location for data sets that are relevant to the workload being submitted.
   - name: HostPath
     x-parent: Workload assets
-    description: Use a HostPath as a data source location for data sets that are relevant to the workload being submitted.
   - name: NFS
     x-parent: Workload assets
-    description: Use NFS as a data source location for data sets that are relevant to the workload being submitted.
   - name: PVC
     x-parent: Workload assets
-    description: Use a PVC as a data source location for data sets that are relevant to the workload being submitted.
   - name: Registry
     x-parent: Workload assets
-    description: Use an images registry to enable the listting of repositories and tags that can be used as a data source location for data sets that are relevant to the workload being submitted.
   - name: S3
     x-parent: Workload assets
-    description: Use an S3 simple storage service as a data source location for data sets that are relevant to the workload being submitted.
   - name: ConfigMap
     x-parent: Workload assets
-    description: Use a ConfigMap as a data source location for data sets that are relevant to the workload being submitted.
   - name: Secret
     x-parent: Workload assets
-    description: Use a credentials as a data source location for data sets that are relevant to the workload being submitted.
   - name: Template
     x-parent: Workload assets
-    description: Templates are a pre-set configuration used to quickly configure and submit workloads using existing assets.
   - name: Policy
     x-parent: Policies
-    description: "Policies allow administrators to impose restrictions and set default values for researcher workloads. \nRestrictions and default values can be placed on CPUs, GPUs, and other resources or entities. \nFor more information, see [Policies](https://run-ai-docs.nvidia.com/self-hosted/latest/platform-management/policies/#introduction).\n"
   - name: Notification State
     x-parent: Notifications
-    description: Use to manage notification state.
   - name: Notification Types
     x-parent: Notifications
-    description: Use to get notification types.
   - name: NotificationChannels
     x-parent: Notifications
-    description: Notification Channels are the medium through which notifications are sent.
   - name: Slack
     x-parent: Notifications
-    description: Configure Slack notifications for your organization.
   - name: Email
     x-parent: Notifications
-    description: Configure Email notifications for your organization.
   - name: Subscriptions
     x-parent: Notifications
-    description: Use to manage notifications subscriptions.
   - name: Synchronization
-    description: Internal interface for synchronizing assets between the clusters and the control plane.
 paths:
   /api/v1/clusters/{clusterUuid}/nodes/count:
     get:
@@ -13862,7 +13799,7 @@ components:
         - restricted
         - single-numa-node
       nullable: true
-      description: The Kubernetes topology manager policy configured on the node, controlling how NUMA-aligned resource allocation is enforced. For more details, see [Kubernetes topology manager policies](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/#topology-manager-policies).
+      description: The Kubernetes topology manager policy configured on the node, controlling how NUMA-aligned resource allocation is enforced. For more details, see Kubernetes topology manager policies.
       x-schema-name: TopologyManagerPolicy
     NumaInfo:
       type: object
@@ -15813,7 +15750,7 @@ components:
           type: number
           format: double
           description: |
-            The weight assigned to determine the org-unit's share of over-quota resources within its rank. When multiple org-units share the same rank in a node pool, resources are distributed proportionally based on their weights. Valid values: 1–20. Requires over-quota weight to be enabled. When enabled, the default is 2. See [GPU over quota](https://run-ai-docs.nvidia.com/self-hosted/latest/platform-management/aiinitiatives/organization/projects#gpu-over-quota) for more details.
+            The weight assigned to determine the org-unit's share of over-quota resources within its rank. When multiple org-units share the same rank in a node pool, resources are distributed proportionally based on their weights. Valid values: 1–20. Requires over-quota weight to be enabled. When enabled, the default is 2. See GPU over quota for more details.
           nullable: true
           example: 2
     Resource:
@@ -15834,7 +15771,7 @@ components:
           type: number
           format: double
           description: |
-            The weight assigned to determine the org-unit's share of over-quota resources within its rank. When multiple org-units share the same rank in a node pool, resources are distributed proportionally based on their weights. Valid values: 1–20. Requires over-quota weight to be enabled. When enabled, the default is 2. See [GPU over quota](https://run-ai-docs.nvidia.com/self-hosted/latest/platform-management/aiinitiatives/organization/projects#gpu-over-quota) for more details.
+            The weight assigned to determine the org-unit's share of over-quota resources within its rank. When multiple org-units share the same rank in a node pool, resources are distributed proportionally based on their weights. Valid values: 1–20. Requires over-quota weight to be enabled. When enabled, the default is 2. See GPU over quota for more details.
           nullable: true
           example: 2
     units:
@@ -18771,7 +18708,7 @@ components:
           $ref: '#/components/schemas/SupplementalGroups'
       type: object
     AllowPrivilegeEscalation:
-      description: Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+      description: Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide
       type: boolean
       example: false
       nullable: true
@@ -18840,7 +18777,7 @@ components:
       example: false
       nullable: true
     Image:
-      description: Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+      description: Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
       type: string
       minLength: 1
       maxLength: 253
@@ -18966,7 +18903,7 @@ components:
       type: boolean
       nullable: true
     UidGidSource:
-      description: Indicate the way to determine the user and group ids of the container. The options are a. `fromTheImage` - user and group ids are determined by the docker image that the container runs. this is the default option. b. `custom` - user and group ids can be specified in the environment asset and/or the workload creation request. c. `idpToken` - user and group IDs are automatically taken from the identity provider (IdP) token (available only in SSO-enabled installations). For more information, see [User Identity](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers).
+      description: Indicate the way to determine the user and group ids of the container. The options are a. `fromTheImage` - user and group ids are determined by the docker image that the container runs. this is the default option. b. `custom` - user and group ids can be specified in the environment asset and/or the workload creation request. c. `idpToken` - user and group IDs are automatically taken from the identity provider (IdP) token (available only in SSO-enabled installations). For more information, see User Identity.
       type: string
       enum:
         - fromTheImage
@@ -19230,7 +19167,7 @@ components:
     Nfs:
       properties:
         path:
-          description: Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
+          description: Path that is exported by the NFS server (mandatory). For more information, see NFS.
           type: string
           minLength: 1
           maxLength: 4096
@@ -19337,7 +19274,7 @@ components:
         size:
           $ref: '#/components/schemas/PvcClaimSize'
         storageClass:
-          description: Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
+          description: Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
           type: string
           minLength: 1
           maxLength: 63
@@ -20164,7 +20101,7 @@ components:
       nullable: true
     NodeType1:
       deprecated: true
-      description: 'Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).'
+      description: 'Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.'
       type: string
       minLength: 1
       example: my-node-type
@@ -22142,7 +22079,7 @@ components:
             - group-b
           nullable: true
         exposeExternally:
-          description: Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the [inference requirements](https://run-ai-docs.nvidia.com/self-hosted/latest/getting-started/installation/system-requirements#inference). section.
+          description: Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the inference requirements section.
           type: boolean
           nullable: true
           default: true
@@ -22665,14 +22602,14 @@ components:
           nullable: true
           pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
         secretKeyOfAccessKeyId:
-          description: The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+          description: The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
           type: string
           minLength: 1
           example: AccessKeyId
           nullable: true
           pattern: .*
         secretKeyOfSecretKey:
-          description: The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+          description: The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
           type: string
           minLength: 1
           example: SecretKey
@@ -23267,7 +23204,7 @@ components:
       type: object
     NodeType2:
       deprecated: true
-      description: 'Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).'
+      description: 'Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.'
       type: string
       minLength: 1
       example: my-node-type
@@ -25691,7 +25628,7 @@ components:
       example: 8002
       nullable: true
     ServingPortExposeExternally:
-      description: Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the [inference requirements](https://run-ai-docs.nvidia.com/self-hosted/latest/getting-started/installation/system-requirements#inference). section.
+      description: Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the inference requirements section.
       type: boolean
       nullable: true
       default: true
@@ -26144,7 +26081,7 @@ components:
       maxLength: 1023
     FormatterSetExpression:
       type: string
-      description: The JQ expression used to write the field value into the workload spec. Consult https://jqlang.org/manual/ for further info.
+      description: The JQ expression used to write the field value into the workload spec. Consult the jq manual for further info.
       example: |
         {
           "env": [
@@ -26159,7 +26096,7 @@ components:
       pattern: .*
     FormatterGetExpression:
       type: string
-      description: The JQ expression used to read the field value from the workload spec. Consult https://jqlang.org/manual/ for further info.
+      description: The JQ expression used to read the field value from the workload spec. Consult the jq manual for further info.
       example: .securityContext | .privileged
       minLength: 1
       maxLength: 4095
@@ -26245,7 +26182,7 @@ components:
       pattern: ^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?$
     ItemSelectorQuery:
       type: string
-      description: The JQ query used to filter items of an itemized field. Consult https://jqlang.org/manual/ for further info.
+      description: The JQ query used to filter items of an itemized field. Consult the jq manual for further info.
       example: |
         (.ports // [])[]
         | select(.containerPort == $ARGS.named.containerPort)
@@ -26277,7 +26214,7 @@ components:
           example: Deployment
     SpecSelectorQuery:
       type: string
-      description: The JQ query used to select a subtree of the workload spec. Consult https://jqlang.org/manual/ for further info.
+      description: The JQ query used to select a subtree of the workload spec. Consult the jq manual for further info.
       example: |
         (
            .spec.template.spec.containers[]?,
@@ -29763,7 +29700,7 @@ components:
               type:
                 type: string
         urls:
-          description: '**DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.'
+          description: '**DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.'
           type: array
           items:
             type: string
@@ -29776,7 +29713,7 @@ components:
           items:
             $ref: '#/components/schemas/Environment'
         externalConnections:
-          description: '**DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.'
+          description: '**DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.'
           type: array
           items:
             $ref: '#/components/schemas/Connection1'
@@ -30489,7 +30426,7 @@ components:
           nullable: true
     NodeType3:
       deprecated: true
-      description: 'Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).'
+      description: 'Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.'
       type: string
       minLength: 1
       example: my-node-type

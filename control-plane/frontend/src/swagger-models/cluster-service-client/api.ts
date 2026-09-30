@@ -5035,7 +5035,7 @@ export type TimeBasedFairShareWindowType = typeof TimeBasedFairShareWindowType[k
 
 
 /**
- * The Kubernetes topology manager policy configured on the node, controlling how NUMA-aligned resource allocation is enforced. For more details, see [Kubernetes topology manager policies](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/#topology-manager-policies).
+ * The Kubernetes topology manager policy configured on the node, controlling how NUMA-aligned resource allocation is enforced. For more details, see Kubernetes topology manager policies.
  * @export
  * @enum {string}
  */

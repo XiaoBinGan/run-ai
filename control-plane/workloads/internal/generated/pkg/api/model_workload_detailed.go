@@ -203,7 +203,7 @@ type WorkloadDetailed struct {
 	ChildrenIds []WorkloadChildrenIdsInner `json:"childrenIds,omitempty" gorm:"serializer:json; type:jsonb;not null;"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// **DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
+	// **DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Urls []string `json:"urls,omitempty"`
 	Urls []string `json:"urls,omitempty" gorm:"serializer:json; type:jsonb;not null;"`
@@ -219,7 +219,7 @@ type WorkloadDetailed struct {
 	Environments []Environment `json:"environments,omitempty" gorm:"serializer:json; type:jsonb;not null;"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// **DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
+	// **DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//ExternalConnections []Connection `json:"externalConnections,omitempty"`
 	ExternalConnections []Connection `json:"externalConnections,omitempty" gorm:"serializer:json; type:jsonb;not null;"`

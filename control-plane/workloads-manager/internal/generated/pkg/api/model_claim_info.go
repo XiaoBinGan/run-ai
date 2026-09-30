@@ -29,7 +29,7 @@ type ClaimInfo struct {
 	Size *string `json:"size,omitempty" gorm:"" validate:"regexp=^([+]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
+	// Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//StorageClass *string `json:"storageClass,omitempty" validate:"regexp=^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"`
 	StorageClass *string `json:"storageClass,omitempty" gorm:"" validate:"regexp=^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"`

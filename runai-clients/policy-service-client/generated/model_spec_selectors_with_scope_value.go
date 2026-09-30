@@ -26,7 +26,7 @@ var _ MappedNullable = &SpecSelectorsWithScopeValue{}
 type SpecSelectorsWithScopeValue struct {
 	// A free-text description of the element.
 	Description NullableString `json:"description,omitempty" validate:"regexp=.*"`
-	// The JQ query used to select a subtree of the workload spec. Consult https://jqlang.org/manual/ for further info.
+	// The JQ query used to select a subtree of the workload spec. Consult the jq manual for further info.
 	Query *string `json:"query,omitempty" validate:"regexp=.*"`
 	// The data type of each argument referenced by the JQ expression as $ARGS.named.<argName>.
 	ArgsInfo *map[string]MappingFieldType `json:"argsInfo,omitempty"`

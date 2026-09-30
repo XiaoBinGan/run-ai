@@ -29,13 +29,13 @@ type BreakdownFormatter struct {
 	Builtin *string `json:"builtin,omitempty" gorm:"" validate:"regexp=^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?$"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// The JQ expression used to write the field value into the workload spec. Consult https://jqlang.org/manual/ for further info.
+	// The JQ expression used to write the field value into the workload spec. Consult the jq manual for further info.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//SetExpr *string `json:"setExpr,omitempty" validate:"regexp=.*"`
 	SetExpr *string `json:"setExpr,omitempty" gorm:"" validate:"regexp=.*"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// The JQ expression used to read the field value from the workload spec. Consult https://jqlang.org/manual/ for further info.
+	// The JQ expression used to read the field value from the workload spec. Consult the jq manual for further info.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//GetExpr *string `json:"getExpr,omitempty" validate:"regexp=.*"`
 	GetExpr *string `json:"getExpr,omitempty" gorm:"" validate:"regexp=.*"`

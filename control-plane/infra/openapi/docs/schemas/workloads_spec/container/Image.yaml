@@ -1,4 +1,4 @@
-description: Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).
+description: Docker image name. For more information, see Images.
   The image name is mandatory for creating a workload.
 type: string
 minLength: 1

@@ -11,9 +11,7 @@ security:
   - bearerAuth: []
 tags:
   - name: Policy
-    description: Administrator applied workload policies.
   - name: Synchronization
-    description: Policy synchronization from the control panel to the cluster.
 
 paths:
   /:

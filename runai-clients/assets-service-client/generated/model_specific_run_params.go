@@ -50,7 +50,7 @@ type SpecificRunParams struct {
 	NodeAffinityRequired NullableNodeAffinityRequired `json:"nodeAffinityRequired,omitempty"`
 	// A prioritized list of node pools for the scheduler to run the workload on. The scheduler will always try to use the first node pool before moving to the next one if the first is not available.
 	NodePools []string `json:"nodePools,omitempty"`
-	// Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+	// Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
 	// Deprecated
 	NodeType NullableString `json:"nodeType,omitempty" validate:"regexp=.*"`
 	// Used with Hyperparameter Optimization. Specifies the maximum number of pods the workload should run at any given time (applicable to standard training only).

@@ -62,11 +62,11 @@ type WorkloadDetailed struct {
 	CompletedAt                NullableTime                       `json:"completedAt,omitempty"`
 	Images                     []string                           `json:"images,omitempty"`
 	ChildrenIds                []WorkloadChildrenIdsInner         `json:"childrenIds,omitempty"`
-	// **DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
+	// **DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
 	Urls         []string      `json:"urls,omitempty"`
 	Datasources  []Datasource  `json:"datasources,omitempty"`
 	Environments []Environment `json:"environments,omitempty"`
-	// **DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
+	// **DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
 	ExternalConnections  []Connection           `json:"externalConnections,omitempty"`
 	DistributedFramework *string                `json:"distributedFramework,omitempty"`
 	AdditionalFields     map[string]interface{} `json:"additionalFields,omitempty"`

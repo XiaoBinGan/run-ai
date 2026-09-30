@@ -5,5 +5,5 @@ enum:
   - restricted
   - single-numa-node
 nullable: true
-description: The Kubernetes topology manager policy configured on the node, controlling how NUMA-aligned resource allocation is enforced. For more details, see [Kubernetes topology manager policies](https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/#topology-manager-policies).
+description: The Kubernetes topology manager policy configured on the node, controlling how NUMA-aligned resource allocation is enforced. For more details, see Kubernetes topology manager policies.
 x-schema-name: TopologyManagerPolicy

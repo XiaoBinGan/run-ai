@@ -8,7 +8,7 @@ properties:
     pattern: "^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"
   secretKeyOfAccessKeyId:
     description: The key to use for loading the access key id from the secret. The default is `AccessKeyId`.
-      For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+      For more information, see Credentials access keys.
     type: string
     minLength: 1
     example: AccessKeyId
@@ -16,7 +16,7 @@ properties:
     pattern: .*
   secretKeyOfSecretKey:
     description: The key to use for loading the secret key from the secret. The default is `SecretKey`.
-      For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+      For more information, see Credentials access keys.
     type: string
     minLength: 1
     example: SecretKey

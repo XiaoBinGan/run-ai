@@ -24,7 +24,7 @@ var _ MappedNullable = &ClaimInfo{}
 type ClaimInfo struct {
 	// Requested size for the PVC. Mandatory when existingPvc is false. Recommended sizes: TB/GB/MB/TIB/GIB/MIB
 	Size NullableString `json:"size,omitempty" validate:"regexp=^([+]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$"`
-	// Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
+	// Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
 	StorageClass NullableString         `json:"storageClass,omitempty" validate:"regexp=^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"`
 	AccessModes  NullablePvcAccessModes `json:"accessModes,omitempty"`
 	VolumeMode   NullablePvcVolumeMode  `json:"volumeMode,omitempty"`

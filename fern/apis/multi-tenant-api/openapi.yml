@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  version: "2.25"
-  description: ""
+  version: 2.0.0
+  description: "# Introduction\n\nThe NVIDIA Run:ai Management Interface API is a centralized API which enables platform owners to programmatically manage tenants, clusters, and access across a multi-tenant environment. This API is designed for use by host organizations operating the centralized control plane and is not accessible to individual tenants.\n\nNVIDIA Run:ai APIs are accessed using bearer tokens. To obtain a token, you need to create an Application using the `api/v1/apps` endpoint, which returns a `clientId` and `clientSecret`. Then, generate an access token using the `/api/v1/token` by sending a `client_credentials` grant request with those credentials. \n\nTo get your access token, follow the instructions in API Access Setup.\n"
   title: NVIDIA Run:ai
   x-logo:
     url: ./runai-logo-api.png
@@ -11,69 +11,41 @@ info:
     name: NVIDIA Run:ai
     url: https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/
 servers:
-  - url: https://app.run.ai
+  - url: http://localhost:8080
 security:
   - bearerAuth: []
 tags:
   - name: Organizations
   - name: Authentication and Authorization
   - name: Audit
-  - name: Clusters
-    x-parent: Organizations
-    description: Use these endpoints to create, manage and delete NVIDIA Run:ai Kubernetes clusters.
-  - name: Access Keys
-    x-parent: Authentication and Authorization
-    description: |
-      Access Keys allow users to authenticate and interact programmatically with the NVIDIA Run:ai API.
-      Each access key consists of a client ID and secret that can be used to obtain authentication tokens.
-      Access keys can be managed by individual users for their own use, or by administrators for organization-wide access.
-      For more information, see [Access control](https://run-ai-docs.nvidia.com/self-hosted/2.25/infrastructure-setup/authentication/overview/#role-based-access-control).
-  - name: Access rules
-    x-parent: Authentication and Authorization
-    description: "Access rules provide user authorization to system resources and entities.\nIt is managed using Role-based access control (RBAC) which is a policy-neutral \naccess control mechanism defined around roles and privileges. \nThe components of RBAC make it simple to manage access to system resources and entities.\nFor more information, see [Access control](https://run-ai-docs.nvidia.com/self-hosted/2.25/infrastructure-setup/authentication/overview/#role-based-access-control).\n"
-  - name: Permissions
-    x-parent: Authentication and Authorization
-    description: "Permissions define the actions that users can perform on specific resources within the NVIDIA Run:ai platform. \nEach permission consists of a resource type and an allowed action. \nThe Permission Sets API provides a catalog of all available permission sets in the NVIDIA Run:ai platform. \nEach permission set is a predefined collection of permissions that represent the permissions required for a role to perform specific operations. \nPermission sets serve as the building blocks for roles and are used in both NVIDIA Run:ai predefined roles and custom roles defined through the [Roles API](/2.25/#tag/Roles).\n"
-  - name: Applications
-    x-parent: Authentication and Authorization
-    description: |
-      **DEPRECATED:** Applications have been renamed to Service Accounts. Please use the [Service Accounts](/2.25/#tag/Service-Accounts) endpoints instead.
-
-      Create and manage applications in the tenant.
-  - name: Service Accounts
-    x-parent: Authentication and Authorization
-    description: "Service accounts enable programmatic access to the NVIDIA Run:ai API, allowing applications or automated systems to authenticate and interact securely. \nEach service account is associated with an access key which includes a client ID and secret used to generate access token. \nService accounts can be managed organization-wide or with a defined scope.\n"
-  - name: Roles
-    x-parent: Authentication and Authorization
-    description: "The Roles API allows administrators to define and manage roles within the NVIDIA Run:ai platform. \nA role represents a collection of permission sets that determine what actions can be performed across NVIDIA Run:ai resources.\nNVIDIA Run:ai provides a list of predefined roles that cover common operational needs, such as managing workloads, projects, or data and storage. \nAdministrators can also use this API to create custom roles by combining specific permission sets to match their organization's access model.\n"
-  - name: Tokens
-    x-parent: Authentication and Authorization
-    description: "Use tokens to facilitate authentication to the NVIDIA Run:ai API. \nThe API server must be configured to use the NVIDIA Run:ai identity \nservice to validate authentication tokens.\n"
-  - name: Users
-    x-parent: Authentication and Authorization
-  - name: User Applications
-    x-parent: Authentication and Authorization
-    description: |
-      **DEPRECATED:** User Applications have been renamed to Access Keys. Please use the [Access Keys](/2.25/#tag/Access-Keys) endpoints instead.
-
-      User Applications allow users to authenticate and interact programmatically with the NVIDIA Run:ai API.
-  - name: Idps
-    x-parent: Authentication and Authorization
-  - name: Me
-    x-parent: Authentication and Authorization
-    description: "\"Me\" returns the authenticated user's permissions within the system. \nIt provides a comprehensive view of access rules (roles, subjects and scope) assigned to the current user.\nFor more information see [Access control](https://run-ai-docs.nvidia.com/self-hosted/2.25/infrastructure-setup/authentication/overview/#role-based-access-control).\n"
-  - name: Settings
-    x-parent: Authentication and Authorization
-    description: |
-      View and manage configuration settings for your organization.
-  - name: AuditLogs
-    x-parent: Audit
-    description: The audit log provides audit trail information for user activity, changes to business objects and other important information. For more information, see [Audit log](https://run-ai-docs.nvidia.com/self-hosted/2.25/infrastructure-setup/procedures/event-history).
   - name: Workloads
   - name: Workload assets
   - name: Policies
   - name: Notifications
-
+  - name: Clusters
+    x-parent: Organizations
+  - name: Access Keys
+    x-parent: Authentication and Authorization
+  - name: Access rules
+    x-parent: Authentication and Authorization
+  - name: Service Accounts
+    x-parent: Authentication and Authorization
+  - name: Roles
+    x-parent: Authentication and Authorization
+  - name: Tokens
+    x-parent: Authentication and Authorization
+  - name: Users
+    x-parent: Authentication and Authorization
+  - name: Idps
+    x-parent: Authentication and Authorization
+  - name: Me
+    x-parent: Authentication and Authorization
+  - name: Permissions
+    x-parent: Authentication and Authorization
+  - name: Settings
+    x-parent: Organizations
+  - name: AuditLogs
+    x-parent: Audit
 paths:
   /api/v1/tenants:
     get:
@@ -817,14 +789,6 @@ paths:
       tags:
         - Users
       parameters:
-        - description: Filter results by user attribute.
-          in: query
-          name: filter
-          required: false
-          deprecated: true
-          schema:
-            type: string
-          example: runai.is_local:true
         - $ref: '#/components/parameters/usersFilterBy'
         - $ref: '#/components/parameters/usersSortBy'
         - $ref: '#/components/parameters/SortOrder'
@@ -876,6 +840,37 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         '409':
           $ref: '#/components/responses/409Conflict'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+        '503':
+          $ref: '#/components/responses/503ServiceUnavailable'
+  /api/v1/users-minimal:
+    get:
+      summary: Get minimal user display information.
+      description: |
+        Retrieve a list of users with minimal display information (id, username, firstName, lastName).
+        At least one of `search`, `id`, or `filterBy` is required to scope the lookup. Requires the users-minimal:read permission.
+      operationId: get_users_minimal
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/components/parameters/usersMinimalFilterBy'
+        - $ref: '#/components/parameters/usersMinimalSearch'
+        - $ref: '#/components/parameters/usersMinimalId'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        '200':
+          description: Executed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersMinimal'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
         '500':
           $ref: '#/components/responses/500InternalServerError'
         '503':
@@ -939,7 +934,7 @@ paths:
   /api/v1/users/{userId}/password:
     post:
       summary: Reset a user's password.
-      description: Use to to reset a user's password.
+      description: Use to reset a user's password.
       operationId: reset_user_password
       tags:
         - Users
@@ -978,6 +973,39 @@ paths:
         - Users
       parameters:
         - $ref: '#/components/parameters/userId'
+      responses:
+        '200':
+          description: Executed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+        '503':
+          $ref: '#/components/responses/503ServiceUnavailable'
+    patch:
+      summary: Update a user by id.
+      description: Use to update a local user's details by id. SSO users cannot be updated.
+      operationId: patch_user_by_id
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/components/parameters/userId'
+      requestBody:
+        description: User patch object with fields to update.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPatchRequest'
       responses:
         '200':
           description: Executed successfully.
@@ -1046,186 +1074,7 @@ paths:
                   newPassword:
                     type: string
                 example:
-                  tempPassword: Abcd!234
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-  /api/v1/apps:
-    get:
-      deprecated: true
-      summary: Get a list of applications.
-      description: Retrieve a list of applications.
-      operationId: get_applications
-      tags:
-        - Applications
-      responses:
-        '200':
-          description: Executed successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Applications'
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-    post:
-      deprecated: true
-      summary: Create an application.
-      description: Used to create an application.
-      operationId: create_application
-      tags:
-        - Applications
-      requestBody:
-        description: Application object to create
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ApplicationCreationRequest'
-      responses:
-        '201':
-          description: Executed successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApplicationPostResponse'
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '409':
-          $ref: '#/components/responses/409Conflict'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-  /api/v1/apps/{appId}:
-    get:
-      deprecated: true
-      summary: Get application by id.
-      description: Retrieve the details of an application by id.
-      operationId: get_application_by_id
-      tags:
-        - Applications
-      parameters:
-        - $ref: '#/components/parameters/appId'
-      responses:
-        '200':
-          description: Executed successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Application'
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-    patch:
-      deprecated: true
-      summary: Update application details by id.
-      description: Use to update the details of an application by id.
-      operationId: update_application_by_id
-      tags:
-        - Applications
-      parameters:
-        - $ref: '#/components/parameters/appId'
-      requestBody:
-        description: Application object that needs to be updated.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ApplicationPatchRequest'
-      responses:
-        '200':
-          description: Executed successfully.
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-    delete:
-      deprecated: true
-      summary: Delete an application by id.
-      description: Use to delete an application by id.
-      operationId: delete_application_by_id
-      tags:
-        - Applications
-      parameters:
-        - $ref: '#/components/parameters/appId'
-      responses:
-        '204':
-          description: Executed successfully.
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-  /api/v1/apps/{appId}/secret:
-    post:
-      deprecated: true
-      summary: Regenerate an application secret.
-      description: Use to regenerate the application secret by id.
-      operationId: regenerate_application_secret
-      tags:
-        - Applications
-      parameters:
-        - $ref: '#/components/parameters/appId'
-      responses:
-        '200':
-          description: Regenerated successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  secret:
-                    type: string
-                example:
-                  secret: 189ej2ijd92fj092k049fk0
+                  tempPassword: <temporary-password>
         '400':
           $ref: '#/components/responses/400BadRequest'
         '401':
@@ -1606,213 +1455,6 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
         '503':
           $ref: '#/components/responses/503ServiceUnavailable'
-  /api/v1/user-applications:
-    get:
-      deprecated: true
-      summary: Get a list of users applications.
-      description: Retrieve a list of the users applications.
-      operationId: get_user_applications
-      tags:
-        - User Applications
-      responses:
-        '200':
-          description: Executed successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserApps'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-    post:
-      deprecated: true
-      summary: Create a user application.
-      description: Used to create a user application.
-      operationId: create_user_application
-      tags:
-        - User Applications
-      requestBody:
-        description: Application object to create
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserAppCreationRequest'
-      responses:
-        '201':
-          description: Executed successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAppPostResponse'
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '409':
-          $ref: '#/components/responses/409Conflict'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-  /api/v1/user-applications/{appId}:
-    get:
-      deprecated: true
-      summary: Get user application by id.
-      description: Retrieve the details of a user's application by app id.
-      operationId: get_user_application_by_id
-      tags:
-        - User Applications
-      parameters:
-        - $ref: '#/components/parameters/appId'
-      responses:
-        '200':
-          description: Executed successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserApp'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-    delete:
-      deprecated: true
-      summary: Delete a user application byid.
-      description: Use to user a user application by id.
-      operationId: delete_user_application_by_id
-      tags:
-        - User Applications
-      parameters:
-        - $ref: '#/components/parameters/appId'
-      responses:
-        '204':
-          description: Executed successfully.
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-  /api/v1/user-applications/{appId}/secret:
-    post:
-      deprecated: true
-      summary: Regenerate a user application secret.
-      description: Use to regenerate the user application secret by id.
-      operationId: regenerate_user_application_secret
-      tags:
-        - User Applications
-      parameters:
-        - $ref: '#/components/parameters/appId'
-      responses:
-        '200':
-          description: Regenerated successfully.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  clientSecret:
-                    type: string
-                    description: Secret credential paired with the client ID. Used to obtain authentication tokens.
-                example:
-                  clientSecret: this-is-my-secret
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-  /api/v1/administration/user-applications:
-    get:
-      deprecated: true
-      summary: Get a list of all users applications.
-      description: Retrieve a list of all users applications.
-      operationId: get_user_applications_administration
-      tags:
-        - User Applications
-      parameters:
-        - description: Filter results by clientId
-          in: query
-          name: clientId
-          required: false
-          schema:
-            type: string
-          example: 3434c-12323ab-4ce2ea6-b44fc-db344d
-        - description: Filter results by creatdBy
-          in: query
-          name: createdBy
-          required: false
-          schema:
-            type: string
-          example: test@run.ai
-      responses:
-        '200':
-          description: Executed successfully.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserAppsAdministration'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
-  /api/v1/administration/user-applications/{appId}:
-    delete:
-      deprecated: true
-      summary: Delete a user application by id for adminstrations.
-      description: Use to delete a user application by id for adminstrations.
-      operationId: delete_user_application_by_id_administration
-      tags:
-        - User Applications
-      parameters:
-        - $ref: '#/components/parameters/appId'
-      responses:
-        '204':
-          description: Executed successfully.
-        '400':
-          $ref: '#/components/responses/400BadRequest'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403Forbidden'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-        '503':
-          $ref: '#/components/responses/503ServiceUnavailable'
   /api/v1/token:
     post:
       tags:
@@ -1850,12 +1492,6 @@ paths:
                 value:
                   grantType: external_token_exchange
                   externalToken: access token from external idp
-              app_token (deprecated):
-                value:
-                  grantType: app_token
-                  appID: appID
-                  appSecret: appSecret
-                description: Deprecated - Obtain the appID and the appSecret using applications or user applications endpoints
       responses:
         '200':
           description: Executed successfully.
@@ -2139,7 +1775,8 @@ paths:
           required: false
         - $ref: '#/components/parameters/StartRequired'
         - $ref: '#/components/parameters/EndRequired'
-        - $ref: '#/components/parameters/NumberOfSamples'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/NumberOfSamplesFileDownload'
         - $ref: '#/components/parameters/AuditLogFilter'
       responses:
         '200':
@@ -2517,16 +2154,13 @@ paths:
         - Access rules
       parameters:
         - $ref: '#/components/parameters/SubjectTypeOptional'
-        - $ref: '#/components/parameters/SubjectIdOptional'
         - $ref: '#/components/parameters/SubjectIds'
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Offset'
         - $ref: '#/components/parameters/LastUpdated'
         - $ref: '#/components/parameters/IncludeDeleted'
         - $ref: '#/components/parameters/FilterByCluster'
-        - $ref: '#/components/parameters/ScopeTypeOptionalQueryDeprecated'
         - $ref: '#/components/parameters/ScopeIdOptional'
-        - $ref: '#/components/parameters/RoleId'
         - $ref: '#/components/parameters/SortOrder'
         - $ref: '#/components/parameters/AccessRulesSort'
         - $ref: '#/components/parameters/AccessRulesFilter'
@@ -2698,6 +2332,38 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
         '503':
           $ref: '#/components/responses/503ServiceUnavailable'
+  /api/v1/authorization/access-rules/authenticated-users:
+    post:
+      summary: Create an access rule for authenticated users/service accounts
+      description: Creates an access rule bound to every authenticated user and service account for the given role and scope.
+      operationId: create_authenticated_users_access_rule
+      tags:
+        - Access rules
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticatedUsersAccessRuleCreationFields'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessRule'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+        '503':
+          $ref: '#/components/responses/503ServiceUnavailable'
   /api/v1/authorization/permissions:
     get:
       summary: Get a summary of user permissions.
@@ -2811,6 +2477,96 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
         '503':
           $ref: '#/components/responses/503ServiceUnavailable'
+  /api/v1/authorization/settings:
+    get:
+      summary: Get authorization settings
+      operationId: get_authorization_settings
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      tags:
+        - Settings
+      responses:
+        '200':
+          description: Executed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorizationSettingsGetResponse'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+        '503':
+          $ref: '#/components/responses/503ServiceUnavailable'
+  /api/v1/authorization/settings/{key}:
+    put:
+      summary: Update authorization setting by key
+      operationId: update_authorization_setting_by_key
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/AuthorizationSettingsKey'
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAuthorizationSettingByKeyRequest'
+            examples:
+              enableScopedAuthorization:
+                value:
+                  enabled: false
+      responses:
+        '200':
+          description: Setting successfully updated
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+        '503':
+          $ref: '#/components/responses/503ServiceUnavailable'
+    get:
+      summary: Get authorization setting by key
+      operationId: get_authorization_setting_by_key
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/AuthorizationSettingsKey'
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Executed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnableScopedAuthorizationSetting'
+              examples:
+                enableScopedAuthorization:
+                  value:
+                    enabled: false
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+        '503':
+          $ref: '#/components/responses/503ServiceUnavailable'
 components:
   schemas:
     TenantId:
@@ -2867,6 +2623,9 @@ components:
             - Deleted
             - Deleting
             - Ready
+        diagnostics:
+          type: string
+          description: Most recent provisioning failure message. Only populated by GET /tenants/{id} when status is Failed.
         createdAt:
           type: string
           format: date-time
@@ -2880,9 +2639,6 @@ components:
           enum:
             - normal
             - trial
-        eula:
-          type: string
-          description: The signer details for the tenant's EULA (End User License Agreement).
       example:
         id: 1
         name: example
@@ -2993,7 +2749,7 @@ components:
           type: string
           pattern: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
           description: The email of the tenant's admin user.
-          example: first@run.ai
+          example: admin@example.com
           minLength: 5
           maxLength: 254
         password:
@@ -3006,7 +2762,6 @@ components:
           type: string
           enum:
             - normal
-            - trial
             - ''
         role:
           $ref: '#/components/schemas/Roles'
@@ -3034,16 +2789,11 @@ components:
           displayName: Example
           status: Ready
           tenantId: 123
-          eulaSigningUser:
-            email: user@tenant
-            date: '2020-01-01T00:00:00Z'
-            ip: 192.168.10.210
-            contract_type: normal
           created_at: '2020-01-01T00:00:00Z'
           updated_at: '2020-01-02T00:00:00Z'
           deleted_at: null
         additionalData:
-          tenantDomain: tenant.test.run.ai
+          tenantDomain: tenant.example.com
           customerUser:
             user@tenant: Abc!23
     TenantUpdateRequest:
@@ -3098,6 +2848,69 @@ components:
           nullable: true
           type: string
           description: the cluster kubernetes version
+    ClusterReportedResourceRequirements:
+      description: Resource requests and limits reported by a cluster for a composed container.
+      type: object
+      properties:
+        limits:
+          type: object
+          additionalProperties:
+            type: string
+          description: Resource limits keyed by Kubernetes resource name.
+          example:
+            cpu: 100m
+            memory: 128Mi
+        requests:
+          type: object
+          additionalProperties:
+            type: string
+          description: Resource requests keyed by Kubernetes resource name.
+          example:
+            cpu: 100m
+            memory: 128Mi
+      nullable: true
+    FipsModeEnum:
+      type: string
+      nullable: true
+      enum:
+        - 'off'
+        - 'on'
+        - only
+      description: the cluster's Go FIPS 140-3 runtime mode (off, on, or only), propagated to injected init/sidecar containers via GODEBUG
+      example: only
+    ClusterReportedCustomCA:
+      description: Custom CA bundle reported by the cluster for a specific consumer (git-sync, S3, oauth2-proxy).
+      type: object
+      nullable: true
+      properties:
+        enabled:
+          type: boolean
+          nullable: true
+          description: indicates if a custom CA bundle is configured for this consumer
+          example: true
+        secretName:
+          type: string
+          nullable: true
+          description: the name of the Secret holding the custom CA bundle
+          example: runai-ca
+        secretKey:
+          type: string
+          nullable: true
+          description: the key within the Secret that holds the custom CA bundle
+          example: runai-ca.pem
+        optional:
+          type: boolean
+          nullable: true
+          description: indicates if the Secret is optional (the consumer should tolerate a missing Secret)
+          example: false
+    OpenshiftRouteTerminationPolicy:
+      type: string
+      nullable: true
+      enum:
+        - edge
+        - passthrough
+      description: TLS termination policy for Run:ai-generated OpenShift Routes.
+      example: edge
     ClusterReportedConfig:
       description: Holds cluster configuration values.
       type: object
@@ -3117,6 +2930,11 @@ components:
           nullable: true
           description: the ingress class that is configured for the cluster
           example: nginx
+        ingressEnabled:
+          type: boolean
+          nullable: true
+          description: indicates if Ingress or Route resources should be created for workload external URLs
+          example: true
         gatewayName:
           type: string
           nullable: true
@@ -3127,6 +2945,84 @@ components:
           nullable: true
           description: the namespace of the Gateway API gateway resource configured for the cluster
           example: gateway-system
+        gatewayAPIEnabled:
+          type: boolean
+          nullable: true
+          description: indicates if Gateway API HTTPRoute resources should be created for workload external URLs
+          example: false
+        gitSyncImage:
+          type: string
+          nullable: true
+          description: the fully qualified git-sync image reference used by init containers (format "registry/name:tag")
+          example: gcr.io/runai/git-sync:v4.2.0
+        gitSyncResources:
+          $ref: '#/components/schemas/ClusterReportedResourceRequirements'
+        s3FileSystemImage:
+          type: string
+          nullable: true
+          description: the fully qualified s3 file-system image reference used by init containers (format "registry/name:tag")
+          example: gcr.io/runai/goofys:v0.24.0
+        s3FileSystemResources:
+          $ref: '#/components/schemas/ClusterReportedResourceRequirements'
+        fipsMode:
+          $ref: '#/components/schemas/FipsModeEnum'
+        runaiOauth2ProxyImage:
+          type: string
+          nullable: true
+          description: the fully qualified runai oauth2-proxy image reference used by init containers (format "registry/name:tag")
+          example: gcr.io/runai/oauth2-proxy:v7.5.1
+        runaiOauth2ProxyResources:
+          $ref: '#/components/schemas/ClusterReportedResourceRequirements'
+        runaiOauth2ProxyUsernameLoaderImage:
+          type: string
+          nullable: true
+          description: the fully qualified runai oauth2-proxy username loader image reference used by init containers (format "registry/name:tag")
+          example: gcr.io/runai/oauth2-proxy-username-loader:v1.0.0
+        usernameLoaderResources:
+          $ref: '#/components/schemas/ClusterReportedResourceRequirements'
+        runaiOauth2ProxyRedisFQDN:
+          type: string
+          nullable: true
+          description: the FQDN of the Redis backing oauth2-proxy
+          example: cluster-redis.runai.svc.cluster.local:6379
+        runaiOauth2ProxyWorkloadAuthSecretName:
+          type: string
+          nullable: true
+          description: the name of the Secret holding the oauth2-proxy workload auth credentials
+          example: runai-workload-auth
+        runaiOauth2ProxySessionStoreType:
+          type: string
+          nullable: true
+          description: the session store type used by oauth2-proxy
+          example: cookie
+        runaiOauth2ProxyOidcIssuerUrl:
+          type: string
+          nullable: true
+          description: the absolute OIDC issuer URL oauth2-proxy uses to discover the OpenID provider
+          example: http://localhost:8080/auth/realms/runai
+        customCAGit:
+          $ref: '#/components/schemas/ClusterReportedCustomCA'
+        customCAS3:
+          $ref: '#/components/schemas/ClusterReportedCustomCA'
+        customCAOauth2Proxy:
+          $ref: '#/components/schemas/ClusterReportedCustomCA'
+        externalAuthUrlEnabled:
+          type: boolean
+          nullable: true
+          description: indicates if OAuth2 proxy is used when submitting workloads with an external URL
+          example: true
+        openshiftRouteTerminationPolicy:
+          $ref: '#/components/schemas/OpenshiftRouteTerminationPolicy'
+        distGPUNetworkAcceleration:
+          type: boolean
+          nullable: true
+          description: indicates if GPU network acceleration (MNNVL) is enabled for the workload-controller (distributed-training)
+          example: false
+        dinfGPUNetworkAcceleration:
+          type: boolean
+          nullable: true
+          description: indicates if GPU network acceleration (MNNVL) is enabled for the inference-workload-controller (distributed-inference)
+          example: false
       nullable: true
     ClusterDependencyStatus:
       type: object
@@ -3388,6 +3284,24 @@ components:
         $ref: '#/components/schemas/NetworkTopologyLabel'
       description: A list of Kubernetes node label key/value pairs that represent the node’s position in the cluster’s network topology (for example, region, zone, block, rack, or hostname). The topology is attached to the node pool on which the workload runs. The label order represents the hierarchy, from farthest (first) to closest (last). These labels are used by the NVIDIA Run:ai Scheduler when making placement decisions.
       nullable: true
+    TopologyManagerPolicy:
+      type: string
+      enum:
+        - none
+        - best-effort
+        - restricted
+        - single-numa-node
+      nullable: true
+      description: The Kubernetes topology manager policy configured on the node, controlling how NUMA-aligned resource allocation is enforced. For more details, see Kubernetes topology manager policies.
+      x-schema-name: TopologyManagerPolicy
+    NumaInfo:
+      type: object
+      nullable: true
+      description: NUMA configuration and per-NUMA-node resource data for the node.
+      properties:
+        topologyManagerPolicy:
+          $ref: '#/components/schemas/TopologyManagerPolicy'
+      x-schema-name: NumaInfo
     NodeInfo:
       type: object
       required:
@@ -3401,6 +3315,7 @@ components:
             - Ready
             - NotReady
             - Unknown
+            - MissingPrerequisites
           description: The calculated status of the node.
         conditions:
           type: array
@@ -3431,6 +3346,8 @@ components:
           nullable: true
         networkTopologyLabels:
           $ref: '#/components/schemas/NetworkTopologyLabelsOptional'
+        numa:
+          $ref: '#/components/schemas/NumaInfo'
       x-schema-name: NodeInfo
     NodeAdditionalFields:
       type: object
@@ -3442,33 +3359,6 @@ components:
           description: The name of the node
           example: worker-node-1
       x-schema-name: NodeAdditionalFields
-    ClusterId:
-      description: The id of the cluster.
-      type: string
-      format: uuid
-      example: 71f69d83-ba66-4822-adf5-55ce55efd210
-    NodeAdditionalReadFields:
-      type: object
-      required:
-        - clusterUuid
-        - updatedAt
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: The unique identifier of the node.
-        clusterUuid:
-          $ref: '#/components/schemas/ClusterId'
-        updatedAt:
-          type: string
-          format: date-time
-      x-schema-name: NodeAdditionalReadFields
-    Node:
-      allOf:
-        - $ref: '#/components/schemas/NodeInfo'
-        - $ref: '#/components/schemas/NodeAdditionalFields'
-        - $ref: '#/components/schemas/NodeAdditionalReadFields'
-      x-schema-name: Node
     NodeForSync:
       allOf:
         - $ref: '#/components/schemas/NodeAdditionalFields'
@@ -3479,6 +3369,60 @@ components:
             nodeInfo:
               $ref: '#/components/schemas/NodeInfo'
       x-schema-name: NodeForSync
+    NumaNodeDetails:
+      type: object
+      required:
+        - name
+        - totalCpuCores
+        - allocatedCpuCores
+        - totalCpuMemoryBytes
+        - allocatedCpuMemoryBytes
+        - totalGpus
+        - allocatedGpus
+      properties:
+        name:
+          type: string
+          description: The identifier of the NUMA node (for example, node-0).
+          example: node-0
+        totalCpuCores:
+          type: number
+          format: double
+          minimum: 0
+          multipleOf: 0.001
+          description: Total CPU cores on this NUMA node that are available for allocation.
+          example: 63.5
+        allocatedCpuCores:
+          type: number
+          format: double
+          minimum: 0
+          multipleOf: 0.001
+          description: CPU cores currently allocated to workloads on this NUMA node.
+          example: 8.5
+        totalCpuMemoryBytes:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Total CPU memory on this NUMA node that is available for allocation.
+          example: 270582939648
+        allocatedCpuMemoryBytes:
+          type: integer
+          format: int64
+          minimum: 0
+          description: CPU memory currently allocated to workloads on this NUMA node, in bytes.
+          example: 34359738368
+        totalGpus:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Total GPU devices on this NUMA node that are available for allocation.
+          example: 4
+        allocatedGpus:
+          type: integer
+          format: int32
+          minimum: 0
+          description: GPU devices currently allocated to workloads on this NUMA node.
+          example: 2
+      x-schema-name: NumaNodeDetails
     ClusterCreationRequest:
       type: object
       required:
@@ -3629,13 +3573,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/GroupedMeasurementResponse'
-    PlacementStrategy:
-      type: string
-      enum:
-        - spread
-        - binpack
-      example: spread
-      nullable: true
     NodepoolGPUNetworkAccelerationDetection:
       type: string
       enum:
@@ -3659,36 +3596,50 @@ components:
       nullable: true
       description: The unique identifier for the network topology
       example: 123e4567-e89b-12d3-a456-426614174000
-    GPUResourceOptimization:
+    PlacementStrategy:
+      type: string
+      enum:
+        - spread
+        - binpack
+      example: spread
+      nullable: true
+    GpuPodsPlacementStrategy:
       type: object
       nullable: true
+      description: Defines the placement strategy for GPU pods within the node pool.
       properties:
-        swapEnabled:
-          type: boolean
-          description: Indicates if swap is enabled on the node pool
-          example: true
-          default: false
-          nullable: true
-        cpuSwapMemorySize:
-          type: string
-          description: Size of the swap cpu memory. Only allowed when swapEnabled is true
-          example: 10000M
-          default: 100G
-          nullable: true
-          pattern: ^([+]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$
-        reservedGpuMemoryForSwapOperations:
-          type: string
-          description: Reserved GPU memory for swap operations. Only allowed when swapEnabled is true
-          example: 10G
-          default: 2G
-          nullable: true
-          pattern: ^([+]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$
-        nodeLevelSchedulerEnabled:
-          type: boolean
-          description: Indicates if node level scheduler is enabled on the node pool. Replaces the deprecated 'overProvisioningRatio' field
-          example: true
-          default: false
-          nullable: true
+        node:
+          description: |
+            Specifies how GPU pods are placed across nodes.
+             - binpack - Place as many GPU pods as possible on each node to use fewer nodes and maximize available capacity.
+             - spread - Distribute GPU pods across as many nodes as possible to balance load across nodes.
+          allOf:
+            - $ref: '#/components/schemas/PlacementStrategy'
+        device:
+          description: |
+            Specifies how GPU pods are placed across GPU devices within a node when using GPU fractions.
+
+
+
+
+
+
+             - binpack - Place as many GPU pods as possible on each GPU device to use fewer devices and maximize available capacity, minimizing GPU fraction fragmentation.
+             - spread - Distribute GPU pods across as many GPU devices as possible to balance load across devices.
+          allOf:
+            - $ref: '#/components/schemas/PlacementStrategy'
+    CpuPodsPlacementStrategy:
+      type: object
+      nullable: true
+      description: Defines the placement strategy for CPU pods within the node pool.
+      properties:
+        node:
+          description: |
+            Specifies how CPU pods are placed across nodes.
+             - binpack - Place as many CPU pods as possible on each node to use fewer nodes and maximize available capacity.
+             - spread - Distribute CPU pods across as many nodes as possible to balance load across nodes.
+          allOf:
+            - $ref: '#/components/schemas/PlacementStrategy'
     TimeBasedFairShareWindowType:
       type: string
       enum:
@@ -3769,8 +3720,16 @@ components:
       type: object
       nullable: true
       properties:
+        gpuPodsPlacementStrategy:
+          $ref: '#/components/schemas/GpuPodsPlacementStrategy'
+        cpuPodsPlacementStrategy:
+          $ref: '#/components/schemas/CpuPodsPlacementStrategy'
         placementStrategy:
-          description: Scheduling strategy per resource
+          description: |
+            Deprecated. Use gpuPodsPlacementStrategy and cpuPodsPlacementStrategy instead.
+            On write, when a new field is provided it takes precedence over the equivalent field here.
+            On read, both this field and the new fields are returned; this field reflects the node-level strategies.
+          deprecated: true
           properties:
             cpu:
               $ref: '#/components/schemas/PlacementStrategy'
@@ -3784,6 +3743,10 @@ components:
           pattern: ^(0|[+]?((\d+(\.\d+)?)(ns|us|µs|μs|ms|s|m|h|d|w))+$)
         timeBasedFairShare:
           $ref: '#/components/schemas/TimeBasedFairShare'
+        numaAwareScheduling:
+          description: When enabled, the Scheduler places workloads so that GPU, CPU, and CPU memory are allocated within the same NUMA node where possible, minimizing cross-NUMA fragmentation and improving performance. Requires the NodeResourceTopology (NRT) component and a Topology Manager policy other than 'none' on the pool's nodes. When disabled, the Scheduler places workloads using aggregate node capacity only, without considering NUMA topology.
+          type: boolean
+          nullable: true
     NodepoolCreateResponseFields:
       type: object
       required:
@@ -3810,22 +3773,6 @@ components:
           type: string
           format: uuid
           example: d73a738f-fab3-430a-8fa3-5241493d7128
-        overProvisioningRatio:
-          type: integer
-          example: 1
-          minimum: 1
-          maximum: 5
-          default: 1
-          nullable: true
-          deprecated: true
-        placementStrategy:
-          deprecated: true
-          description: scheduling strategy per resource
-          properties:
-            cpu:
-              $ref: '#/components/schemas/PlacementStrategy'
-            gpu:
-              $ref: '#/components/schemas/PlacementStrategy'
         gpuNetworkAccelerationLabelKey:
           description: Label key by which to determine GPUNetworkAccelerationDetection nodes
           type: string
@@ -3835,8 +3782,6 @@ components:
           $ref: '#/components/schemas/NetworkTopologyNameOptional'
         networkTopologyId:
           $ref: '#/components/schemas/NetworkTopologyIdOptional'
-        gpuResourceOptimization:
-          $ref: '#/components/schemas/GPUResourceOptimization'
         schedulingConfiguration:
           $ref: '#/components/schemas/SchedulingConfiguration'
     NodepoolPhase:
@@ -3847,9 +3792,45 @@ components:
         - Deleting
         - Empty
         - Unschedulable
+        - MissingPrerequisites
         - Ready
         - Deleted
       description: Phase of Node Pool
+    GPUResourceOptimization:
+      type: object
+      nullable: true
+      deprecated: true
+      properties:
+        swapEnabled:
+          type: boolean
+          description: Indicates if swap is enabled on the node pool
+          example: true
+          default: false
+          nullable: true
+          deprecated: true
+        cpuSwapMemorySize:
+          type: string
+          description: Size of the swap cpu memory. Only allowed when swapEnabled is true
+          example: 10000M
+          default: 100G
+          nullable: true
+          pattern: ^([+]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$
+          deprecated: true
+        reservedGpuMemoryForSwapOperations:
+          type: string
+          description: Reserved GPU memory for swap operations. Only allowed when swapEnabled is true
+          example: 10G
+          default: 2G
+          nullable: true
+          pattern: ^([+]?[0-9.]+)([eEinumkKMGTP]*[-+]?[0-9]*)$
+          deprecated: true
+        nodeLevelSchedulerEnabled:
+          type: boolean
+          description: Indicates if node level scheduler is enabled on the node pool
+          example: true
+          default: false
+          nullable: true
+          deprecated: true
     NodepoolSyncUpdateFields:
       type: object
       properties:
@@ -3865,14 +3846,6 @@ components:
           example: type-x
           minLength: 1
           nullable: true
-        overProvisioningRatio:
-          type: integer
-          example: 1
-          minimum: 1
-          maximum: 5
-          default: 1
-          nullable: true
-          deprecated: true
         placementStrategy:
           description: scheduling strategy per resource
           deprecated: true
@@ -3886,6 +3859,10 @@ components:
           type: string
         gpuNetworkAccelerationDetection:
           $ref: '#/components/schemas/NodepoolGPUNetworkAccelerationDetection'
+        overProvisioningRatio:
+          type: integer
+          deprecated: true
+          nullable: true
         gpuResourceOptimization:
           $ref: '#/components/schemas/GPUResourceOptimization'
         schedulingConfiguration:
@@ -4006,6 +3983,11 @@ components:
         - $ref: '#/components/schemas/NodepoolCreateResponseFields'
         - $ref: '#/components/schemas/NodepoolSyncFields'
         - $ref: '#/components/schemas/NodepoolCalculatedFields'
+    ClusterId:
+      description: The id of the cluster.
+      type: string
+      format: uuid
+      example: 71f69d83-ba66-4822-adf5-55ce55efd210
     LegacyPlacementStrategy:
       properties:
         cpu:
@@ -4028,10 +4010,6 @@ components:
           type: string
           description: Node Pool Name
           example: node-pool-a
-        overProvisioningRatio:
-          type: integer
-          example: 1
-          default: 1
         labelKey:
           type: string
           description: Label key for associated nodes to the Node Pool (with value as in labelValue)
@@ -4040,6 +4018,10 @@ components:
           type: string
           description: Label value for associated nodes to the Node Pool (with key as in labelKey)
           example: type-x
+        overProvisioningRatio:
+          type: integer
+          deprecated: true
+          nullable: true
         placementStrategy:
           $ref: '#/components/schemas/LegacyPlacementStrategy'
     LegacyNodePool:
@@ -4096,19 +4078,19 @@ components:
             createdBy:
               type: string
               description: Node Pool creator
-              example: user@run.ai
+              example: user@example.com
             updatedBy:
               type: string
               description: Node Pool updater
-              example: user@run.ai
+              example: user@example.com
             isDefault:
               type: boolean
               description: Is the Node Pool the default Node Pool for all nodes not assigned to any other Node Pool
               example: false
     NetworkTopologiesSource:
       type: string
-      description: Identifier of the the source of the topology. Useful for tracking where the topology data originated (i.e. Run:ai, Cluster).
-      example: Run.ai
+      description: Identifier of the source of the topology. Useful for tracking where the topology data originated (e.g. control-plane, cluster).
+      example: control-plane
       minLength: 1
       maxLength: 63
       pattern: ^[a-zA-Z0-9][a-zA-Z0-9_.-]*[a-zA-Z0-9]$
@@ -4139,7 +4121,7 @@ components:
         - installationStr
         - repositoryName
         - chartRepoURL
-        - clientSecret
+        - bootstrapToken
       properties:
         installationStr:
           type: string
@@ -4147,13 +4129,65 @@ components:
           type: string
         chartRepoURL:
           type: string
+        bootstrapToken:
+          type: string
+          description: |
+            Short-lived JWT (2h TTL) for the installer service account.
+            Pass to the Helm hook via --set controlPlane.bootstrapToken=<token>.
         clientSecret:
           type: string
+          deprecated: true
+          nullable: true
+          description: Deprecated. Omitted on CP >= 3.0. Use bootstrapToken instead.
       example:
-        installationStr: helm update --update repo/runai-cluster -n runai --set cluster.url=test_cluster
+        installationStr: helm upgrade -i runai-cluster runai/runai-cluster -n runai --set cluster.uid=... --set controlPlane.bootstrapToken=<installer-bootstrap-jwt>
         repositoryName: runai
-        chartRepoURL: https://runai.jfrog.io/artifactory/charts
-        clientSecret: ABC333DDD
+        chartRepoURL: https://charts.example.com
+        bootstrapToken: <installer-bootstrap-jwt>
+    NodeAdditionalReadFields:
+      type: object
+      required:
+        - clusterUuid
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The unique identifier of the node.
+        clusterUuid:
+          $ref: '#/components/schemas/ClusterId'
+        updatedAt:
+          type: string
+          format: date-time
+      x-schema-name: NodeAdditionalReadFields
+    Node:
+      allOf:
+        - $ref: '#/components/schemas/NodeInfo'
+        - $ref: '#/components/schemas/NodeAdditionalFields'
+        - $ref: '#/components/schemas/NodeAdditionalReadFields'
+      x-schema-name: Node
+    NumaInfoExtended:
+      allOf:
+        - $ref: '#/components/schemas/NumaInfo'
+        - type: object
+          required:
+            - nodes
+          properties:
+            nodes:
+              type: array
+              description: The list of NUMA nodes on the physical machine and their resource availability.
+              items:
+                $ref: '#/components/schemas/NumaNodeDetails'
+      description: NUMA configuration and per-NUMA-node resource data for the node.
+      x-schema-name: NumaInfoExtended
+    NodeExtended:
+      allOf:
+        - $ref: '#/components/schemas/Node'
+        - type: object
+          properties:
+            numa:
+              $ref: '#/components/schemas/NumaInfoExtended'
+      x-schema-name: NodeExtended
     NetworkTopologyUpdateFields:
       type: object
       required:
@@ -4180,6 +4214,45 @@ components:
       format: uuid
       description: The unique identifier for the network topology
       example: 123e4567-e89b-12d3-a456-426614174000
+    NetworkTopologyGroveCondition:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the condition
+        status:
+          type: string
+          description: Status of the condition
+        reason:
+          type: string
+          description: Indicates the reason for the condition's last transition
+        message:
+          type: string
+          description: A human-readable message describing the condition
+        observedGeneration:
+          type: integer
+          format: int64
+          description: Generation of the topology observed when this condition was last updated
+    NetworkTopologyGrove:
+      type: object
+      nullable: true
+      description: The linked Grove topology definition. Null if no Grove topology has been linked to this network topology
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Name of the linked Grove ClusterTopology
+        domains:
+          type: array
+          items:
+            type: string
+          description: Topology levels defined in the linked Grove ClusterTopology
+        conditions:
+          type: array
+          items:
+            $ref: '#/components/schemas/NetworkTopologyGroveCondition'
+          description: A list of conditions that describe the current state of the Grove ClusterTopology
     NetworkTopology:
       allOf:
         - $ref: '#/components/schemas/NetworkTopologyCreateRequest'
@@ -4217,6 +4290,8 @@ components:
               description: List of node-pools associated with this network topology
               example:
                 - a100
+            groveTopology:
+              $ref: '#/components/schemas/NetworkTopologyGrove'
       x-schema-name: NetworkTopology
     Metadata:
       type: object
@@ -4337,6 +4412,12 @@ components:
         email:
           type: string
           maxLength: 254
+        firstName:
+          type: string
+          maxLength: 255
+        lastName:
+          type: string
+          maxLength: 255
     Idp:
       type: object
       required:
@@ -4509,6 +4590,9 @@ components:
         - creationTime
         - lastUpdated
         - type
+        - firstName
+        - lastName
+        - fullName
     User:
       type: object
       required:
@@ -4546,6 +4630,12 @@ components:
           items:
             type: string
           nullable: true
+        firstName:
+          type: string
+          maxLength: 255
+        lastName:
+          type: string
+          maxLength: 255
       example:
         id: 3434c-12323ab-4ce2ea6-b44fc-db344d
         username: test@run.ai
@@ -4579,6 +4669,12 @@ components:
           type: boolean
           description: When true, send an email to the user. The email includes a link to reset the password.
           nullable: true
+        firstName:
+          type: string
+          maxLength: 255
+        lastName:
+          type: string
+          maxLength: 255
       example:
         email: test@run.ai
         resetPassword: false
@@ -4600,6 +4696,51 @@ components:
         id: 0eeaf222-e503-4f35-9d9c-c419816272e3
         username: test@run.ai
         tempPassword: asdasidjn9d
+    UserMinimal:
+      type: object
+      required:
+        - id
+        - username
+      properties:
+        id:
+          type: string
+          description: The user's unique identifier.
+        username:
+          type: string
+          description: The user's login name. Typically an email address.
+        firstName:
+          type: string
+          nullable: true
+          maxLength: 255
+          description: The user's first name.
+        lastName:
+          type: string
+          nullable: true
+          maxLength: 255
+          description: The user's last name.
+      example:
+        id: 3434c-12323ab-4ce2ea6-b44fc-db344d
+        username: test@run.ai
+        firstName: John
+        lastName: Doe
+    UsersMinimal:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserMinimal'
+    UserPatchRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          maxLength: 255
+          nullable: true
+        lastName:
+          type: string
+          maxLength: 255
+          nullable: true
+      example:
+        firstName: John
+        lastName: Doe
     UserChangePasswordRequest:
       type: object
       required:
@@ -4615,107 +4756,13 @@ components:
           minLength: 8
           maxLength: 255
       example:
-        currentPassword: Abcd!234
-        newPassword: Zxcv!567
+        currentPassword: <current-password>
+        newPassword: <new-password>
     Groups:
       type: array
       items:
         example: group-A
         type: string
-    Application:
-      type: object
-      required:
-        - name
-        - createdBy
-        - createdAt
-        - updatedAt
-        - enabled
-        - lastLogin
-        - id
-        - clientId
-      properties:
-        name:
-          type: string
-        createdBy:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-          nullable: true
-        updatedAt:
-          type: string
-          format: date-time
-          nullable: true
-        enabled:
-          type: boolean
-        tenantId:
-          type: string
-        lastLogin:
-          type: string
-          format: date-time
-          nullable: true
-        id:
-          type: string
-        clientId:
-          type: string
-      example:
-        name: app123
-        createdBy: test@run.ai
-        createdAt: '2020-01-01T00:00:00Z'
-        updatedAt: '2020-01-01T00:00:00Z'
-        enabled: true
-        tenantId: 1234567890
-        lastLogin: '2020-01-01T00:00:00Z'
-        id: 3434c-12323ab-4ce2ea6-b44fc-db344d
-        clientId: app123
-    Applications:
-      type: array
-      minItems: 0
-      maxItems: 1000
-      items:
-        $ref: '#/components/schemas/Application'
-    ApplicationCreationRequest:
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          pattern: ^[a-z][-_a-z0-9]*[a-z0-9]$
-          description: The name of the application. The name must be unique within the organization and can only contain lowercase alphanumeric characters and hyphens. It must start and end with a letter.
-          minLength: 2
-          maxLength: 255
-      example:
-        name: app-123
-    ApplicationPostResponse:
-      type: object
-      required:
-        - id
-        - name
-        - secret
-      properties:
-        id:
-          type: string
-        name:
-          type: string
-        secret:
-          type: string
-        clientId:
-          type: string
-      example:
-        id: 0eeaf222-e503-4f35-9d9c-c419816272e3
-        name: app123
-        secret: asdasidjn9d
-        clientId: app123
-    ApplicationPatchRequest:
-      type: object
-      required:
-        - enabled
-      properties:
-        enabled:
-          type: boolean
-      example:
-        enabled: true
     ServiceAccount:
       type: object
       required:
@@ -4992,123 +5039,8 @@ components:
             createdBy: user@run.ai
             createdAt: '2020-01-01T00:00:00Z'
             lastLogin: '2020-01-01T00:00:00Z'
-    UserApp:
-      type: object
-      required:
-        - name
-        - id
-        - clientId
-        - createdAt
-        - lastLogin
-      properties:
-        name:
-          type: string
-        clientId:
-          type: string
-        id:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-          nullable: true
-        lastLogin:
-          type: string
-          format: date-time
-          nullable: true
-      example:
-        name: my-user-app
-        id: 3434c-12323ab-4ce2ea6-b44fc-db344d
-        clientId: 3434c-12323ab-4ce2ea6
-        createdAt: '2019-01-01T00:00:00Z'
-        lastLogin: '2020-01-01T00:00:00Z'
-    UserApps:
-      type: array
-      minItems: 0
-      maxItems: 100
-      items:
-        $ref: '#/components/schemas/UserApp'
-    UserAppCreationRequest:
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-          pattern: ^[a-z][-_a-z0-9]*[a-z0-9]$
-          description: The name of the user application. The name must be unique within the user's applications list and can only contain lowercase alphanumeric characters and hyphens. It must start and end with a letter.
-          minLength: 2
-          maxLength: 255
-      example:
-        name: app-name
-    UserAppPostResponse:
-      type: object
-      required:
-        - id
-        - name
-        - secret
-        - clientId
-        - createdAt
-      properties:
-        id:
-          type: string
-        clientId:
-          type: string
-        name:
-          type: string
-        secret:
-          type: string
-        createdAt:
-          format: date-time
-          nullable: true
-          type: string
-      example:
-        id: 0eeaf222-e503-4f35-9d9c-c419816272e3
-        clientId: 5e7b3b7b4b7b4b7b
-        name: app123
-        secret: this-is-the-app-secret
-        createdAt: '2020-01-01T00:00:00Z'
-    UserAppAdministration:
-      type: object
-      required:
-        - name
-        - id
-        - clientId
-        - createdBy
-        - createdAt
-        - lastLogin
-      properties:
-        name:
-          type: string
-        id:
-          type: string
-        clientId:
-          type: string
-        createdBy:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-          nullable: true
-        lastLogin:
-          type: string
-          format: date-time
-          nullable: true
-      example:
-        name: my-user-app
-        id: 3434c-12323ab-4ce2ea6-b44fc-db344d
-        clientId: 1434c-123233ab-4ce2ea6-b44fc-db344d
-        createdBy: test@run.ai
-        createdAt: '2020-01-01T00:00:00Z'
-        lastLogin: '2020-01-01T00:00:00Z'
-    UserAppsAdministration:
-      type: array
-      minItems: 0
-      maxItems: 100
-      items:
-        $ref: '#/components/schemas/UserAppAdministration'
     TokenRequestGrantTypeEnum:
       enum:
-        - app_token
         - client_credentials
         - refresh_token
         - exchange_token
@@ -5119,14 +5051,6 @@ components:
       properties:
         grantType:
           $ref: '#/components/schemas/TokenRequestGrantTypeEnum'
-        appID:
-          deprecated: true
-          type: string
-          maxLength: 255
-        appSecret:
-          deprecated: true
-          type: string
-          maxLength: 500
         code:
           type: string
           maxLength: 2048
@@ -5151,6 +5075,9 @@ components:
         externalToken:
           type: string
           maxLength: 4096
+        codeVerifier:
+          type: string
+          maxLength: 128
     TokenResponse:
       type: object
       properties:
@@ -5353,32 +5280,6 @@ components:
           maxLength: 2048
       example:
         uri: https://example.com/logout-success
-    AppTokenRequest:
-      type: object
-      required:
-        - id
-        - name
-        - secret
-      properties:
-        id:
-          type: string
-          maxLength: 64
-        name:
-          type: string
-          maxLength: 255
-        secret:
-          type: string
-          maxLength: 500
-    AppTokenResponse:
-      type: object
-      required:
-        - access_token
-        - id_token
-      properties:
-        access_token:
-          type: string
-        id_token:
-          type: string
     IdpResourcdes:
       $ref: '#/components/schemas/IdpResources'
     UserGroups:
@@ -5497,6 +5398,7 @@ components:
         - nodes
         - settings
         - security-settings
+        - notification-settings
         - branding-settings
         - users
         - apps
@@ -5515,6 +5417,7 @@ components:
         - nfs-assets
         - s3-assets
         - compute-resources
+        - resource-claim-templates
         - templates
         - credentials
         - events-history
@@ -5523,6 +5426,7 @@ components:
         - datavolumes
         - secret-volume-assets
         - storage-class-configuration
+        - device-classes
         - access-keys
         - workload-properties
         - network-topologies
@@ -5530,6 +5434,7 @@ components:
         - workload-integration-metrics
         - nodepools-minimal
         - clusters-minimal
+        - users-minimal
     ResourceTypeGroupId:
       type: string
       enum:
@@ -5816,17 +5721,6 @@ components:
         - deletedAt
         - createdBy
         - phase
-    SubjectType:
-      type: string
-      description: |
-        Subject type enum for access rules.
-
-        Note: The 'app' subject type is DEPRECATED. Please use 'service-account' instead for service accounts.
-      enum:
-        - user
-        - app
-        - service-account
-        - group
     ScopeType:
       type: string
       enum:
@@ -5835,11 +5729,10 @@ components:
         - cluster
         - department
         - project
-    AccessRuleCreationFields:
+    AccessRuleCreationFieldsInternal:
       type: object
       required:
         - subjectId
-        - subjectType
         - roleId
         - scopeId
         - scopeType
@@ -5848,10 +5741,6 @@ components:
           type: string
           example: user@run.ai
           description: The unique identifier of the subject (e.g., user, group, or app).
-        subjectType:
-          allOf:
-            - $ref: '#/components/schemas/SubjectType'
-            - description: 'The subject assigned to the access rule. Valid values: user, group, app.'
         roleId:
           type: integer
           format: int32
@@ -5867,6 +5756,19 @@ components:
             - description: 'The type of scope the access rule applies to. Valid values: system, tenant, cluster, department, project.'
         clusterId:
           $ref: '#/components/schemas/ClusterId'
+    SubjectTypeExtended:
+      type: string
+      description: |
+        Subject type enum for access rule responses. Extends SubjectType with the built-in
+        all-authenticated-users subject, which applies to every authenticated user and service account.
+
+        Note: The 'app' subject type is DEPRECATED. Please use 'service-account' instead for service accounts.
+      enum:
+        - user
+        - app
+        - service-account
+        - group
+        - all-authenticated-users
     EnrichmentDataFields:
       type: object
       required:
@@ -5938,7 +5840,13 @@ components:
           example: 'NotReady: [cluster1-uuid]; Ready: [cluster2-uuid, cluster3-uuid]'
     AccessRule:
       allOf:
-        - $ref: '#/components/schemas/AccessRuleCreationFields'
+        - $ref: '#/components/schemas/AccessRuleCreationFieldsInternal'
+        - type: object
+          required:
+            - subjectType
+          properties:
+            subjectType:
+              $ref: '#/components/schemas/SubjectTypeExtended'
         - $ref: '#/components/schemas/EnrichmentDataFields'
         - $ref: '#/components/schemas/AccessRuleMetadataFields'
         - type: object
@@ -5952,9 +5860,35 @@ components:
       items:
         $ref: '#/components/schemas/AccessRule'
       x-schema-name: AccessRules
+    SubjectType:
+      type: string
+      description: |
+        Subject type enum for access rules.
+
+        Note: The 'app' subject type is DEPRECATED. Please use 'service-account' instead for service accounts.
+      enum:
+        - user
+        - app
+        - service-account
+        - group
+    AccessRuleCreationFields:
+      allOf:
+        - $ref: '#/components/schemas/AccessRuleCreationFieldsInternal'
+        - type: object
+          required:
+            - subjectType
+          properties:
+            subjectType:
+              $ref: '#/components/schemas/SubjectType'
     AccessRuleSync:
       allOf:
-        - $ref: '#/components/schemas/AccessRuleCreationFields'
+        - $ref: '#/components/schemas/AccessRuleCreationFieldsInternal'
+        - type: object
+          required:
+            - subjectType
+          properties:
+            subjectType:
+              $ref: '#/components/schemas/SubjectTypeExtended'
         - $ref: '#/components/schemas/EnrichmentDataFields'
         - $ref: '#/components/schemas/AccessRuleMetadataFields'
         - type: object
@@ -6172,6 +6106,33 @@ components:
               message:
                 type: string
                 description: A human-readable message describing the access rule IDs that failed to create.
+    AuthenticatedUsersAccessRuleCreationFields:
+      type: object
+      description: The role and scope to grant to all authenticated users and service accounts.
+      required:
+        - roleId
+        - scopeId
+        - scopeType
+      properties:
+        roleId:
+          type: integer
+          format: int32
+          description: The ID of the role to assign.
+          example: 53142648
+        scopeId:
+          type: string
+          description: The unique identifier of the scope.
+          example: a418ed33-9399-48c0-a890-122cadd13bfd
+        scopeType:
+          type: string
+          description: The type of scope the access rule applies to.
+          enum:
+            - tenant
+            - cluster
+            - department
+            - project
+        clusterId:
+          $ref: '#/components/schemas/ClusterId'
     PermittedScopes:
       type: object
       properties:
@@ -6183,10 +6144,6 @@ components:
           items:
             type: string
             example: '1'
-        tenant:
-          deprecated: true
-          type: string
-          example: '1'
         clusters:
           type: array
           items:
@@ -6219,7 +6176,13 @@ components:
           $ref: '#/components/schemas/PermittedScopes'
     MeAccessRule:
       allOf:
-        - $ref: '#/components/schemas/AccessRuleCreationFields'
+        - $ref: '#/components/schemas/AccessRuleCreationFieldsInternal'
+        - type: object
+          required:
+            - subjectType
+          properties:
+            subjectType:
+              $ref: '#/components/schemas/SubjectTypeExtended'
         - $ref: '#/components/schemas/EnrichmentDataFields'
         - required:
             - tenantId
@@ -6253,6 +6216,31 @@ components:
               example: 1
             accessRules:
               $ref: '#/components/schemas/MeAccessRules'
+    EnableScopedAuthorizationSetting:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          nullable: true
+      example:
+        enabled: false
+    AuthorizationSettingsGetResponse:
+      type: object
+      properties:
+        enableScopedAuthorization:
+          $ref: '#/components/schemas/EnableScopedAuthorizationSetting'
+    AuthorizationSettingsKeyEnum:
+      type: string
+      enum:
+        - enableScopedAuthorization
+    UpdateAuthorizationSettingByKeyRequest:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+          nullable: true
+      example:
+        enabled: false
     AccessRulesFilterFields:
       $ref: '#/components/schemas/AccessRulesSortFilterFields'
   responses:
@@ -6386,44 +6374,6 @@ components:
         format: uuid
         minLength: 1
         example: 9f55255e-11ed-47c7-acef-fc4054768dbc
-    QueryNodeName:
-      name: nodeName
-      in: query
-      description: Deprecated - use filterBy instead. The node name; Cannot be used together with filterBy, sort, offset, limit or search query params.
-      schema:
-        type: string
-      required: false
-    SortOrder:
-      name: sortOrder
-      in: query
-      required: false
-      description: Sort results in descending or ascending order.
-      schema:
-        type: string
-        enum:
-          - asc
-          - desc
-        default: asc
-    Offset:
-      name: offset
-      in: query
-      required: false
-      description: The offset of the first item returned in the collection.
-      schema:
-        type: integer
-        format: int32
-        example: 100
-    Limit:
-      name: limit
-      in: query
-      required: false
-      description: The maximum number of entries to return.
-      schema:
-        type: integer
-        format: int32
-        default: 50
-        minimum: 1
-        maximum: 500
     Search:
       name: search
       in: query
@@ -6474,6 +6424,26 @@ components:
         example:
           - name==my-cluster
       explode: false
+    Offset:
+      name: offset
+      in: query
+      required: false
+      description: The offset of the first item returned in the collection.
+      schema:
+        type: integer
+        format: int32
+        example: 100
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: The maximum number of entries to return.
+      schema:
+        type: integer
+        format: int32
+        default: 50
+        minimum: 1
+        maximum: 500
     QueryForceDelete:
       name: force
       in: query
@@ -6546,6 +6516,17 @@ components:
       schema:
         type: string
         example: default
+    SortOrder:
+      name: sortOrder
+      in: query
+      required: false
+      description: Sort results in descending or ascending order.
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
     ClusterVersion:
       name: version
       in: query
@@ -6571,12 +6552,6 @@ components:
         type: string
         format: uuid
         example: d73a738f-fab3-430a-8fa3-5241493d7128
-    nodeName:
-      $ref: '#/components/parameters/NodeName'
-    queryNodeName:
-      $ref: '#/components/parameters/QueryNodeName'
-    queryVerbosity:
-      $ref: '#/components/parameters/QueryVerbosity'
     TenantId:
       name: tenantId
       in: query
@@ -6586,6 +6561,10 @@ components:
       schema:
         type: string
         default: ''
+    nodeName:
+      $ref: '#/components/parameters/NodeName'
+    queryVerbosity:
+      $ref: '#/components/parameters/QueryVerbosity'
     idp:
       name: idp
       in: path
@@ -6602,7 +6581,7 @@ components:
         type: array
         items:
           type: string
-          pattern: ^(username|createdBy|lastLogin|creationTime|lastUpdated|isLocal)(==|<=|>=|=@).+$
+          pattern: ^((username|createdBy|lastLogin|creationTime|lastUpdated|isLocal)(==|<=|>=|=@)|(firstName|lastName|fullName)(=@)).+$
         example:
           - username=@test,lastLogin>=2024-09-24T00:00:00.00Z,isLocal==false
       explode: false
@@ -6632,18 +6611,50 @@ components:
       schema:
         type: string
         example: test@run
+    usersMinimalFilterBy:
+      name: filterBy
+      in: query
+      required: false
+      description: |
+        Filter results by username. Use the format field-name operator value. Supported operators are == (exact match) and =@ (contains).
+        Multiple entries (up to 25) are allowed only with the == operator.
+      schema:
+        type: array
+        maxItems: 25
+        items:
+          type: string
+          pattern: ^username(==|=@).+$
+        example:
+          - username==test@run.ai
+      explode: false
+    usersMinimalSearch:
+      name: search
+      in: query
+      required: false
+      description: Filter results by a free text search across username, firstName and lastName (OR logic). Minimum 2 characters.
+      schema:
+        type: string
+        minLength: 2
+        maxLength: 100
+        example: john
+    usersMinimalId:
+      name: id
+      in: query
+      required: false
+      description: Bulk lookup by user IDs (comma-separated). Returns the matching users in addition to any results from `search` or `filterBy`. Up to 25 IDs per request.
+      schema:
+        type: array
+        maxItems: 25
+        items:
+          type: string
+        example:
+          - 8e3f0a4b-4d3c-4f6e-9d2a-1c5e0a8b7f6d
+      explode: false
     userId:
       name: userId
       in: path
       required: true
       description: The id of the user
-      schema:
-        type: string
-    appId:
-      name: appId
-      in: path
-      required: true
-      description: The application id to retrieve
       schema:
         type: string
     serviceAccountId:
@@ -6742,6 +6753,16 @@ components:
         example:
           - cluster_name==my-cluster_name
           - entity_type==cluster,entity_name==test
+    NumberOfSamplesFileDownload:
+      name: numberOfSamples
+      in: query
+      description: Maximum number of records to include in the file. The hard cap is 100,000. Use the offset parameter to page through additional records.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 100000
+        default: 20
     RoleIdPath:
       name: roleIdPath
       in: path
@@ -6789,15 +6810,6 @@ components:
       schema:
         type: string
         example: user
-    SubjectIdOptional:
-      name: subjectIdFilter
-      in: query
-      required: false
-      description: Part of the subject id that we want to filter by.
-      deprecated: true
-      schema:
-        type: string
-        example: some.user
     SubjectIds:
       name: subjectIds
       in: query
@@ -6827,15 +6839,6 @@ components:
         type: boolean
         example: false
         default: false
-    ScopeTypeOptionalQueryDeprecated:
-      name: scopeType
-      in: query
-      required: false
-      description: The type of resource we want to filter by.
-      deprecated: true
-      schema:
-        type: string
-        example: project
     ScopeIdOptional:
       name: scopeId
       in: query
@@ -6844,16 +6847,6 @@ components:
       schema:
         type: string
         example: '2'
-    RoleId:
-      name: roleId
-      in: query
-      required: false
-      description: The role id we want to filter by.
-      deprecated: true
-      schema:
-        type: integer
-        format: int32
-        minimum: 1
     AccessRulesSort:
       name: sortBy
       in: query
@@ -6886,8 +6879,13 @@ components:
         type: integer
         format: int32
         minimum: 0
-    ScopeTypeQuery:
-      $ref: '#/components/parameters/ScopeTypeOptionalQueryDeprecated'
+    AuthorizationSettingsKey:
+      name: key
+      in: path
+      required: true
+      description: The settings key
+      schema:
+        $ref: '#/components/schemas/AuthorizationSettingsKeyEnum'
   securitySchemes:
     bearerAuth:
       type: http
@@ -6897,21 +6895,19 @@ components:
 x-tagGroups:
   - name: Organizations
     tags:
+      - Settings
       - Clusters
   - name: Authentication and Authorization
     tags:
       - Access Keys
       - Access rules
       - Permissions
-      - Applications
       - Service Accounts
       - Roles
       - Tokens
       - Users
-      - User Applications
       - Idps
       - Me
-      - Settings
   - name: Audit
     tags:
       - AuditLogs

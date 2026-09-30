@@ -22,7 +22,7 @@ var _ MappedNullable = &BreakdownItemSelector{}
 
 // BreakdownItemSelector The details of a single item selector in the breakdown: its JQ query, and the type and enum information for any arguments referenced by the query.
 type BreakdownItemSelector struct {
-	// The JQ query used to filter items of an itemized field. Consult https://jqlang.org/manual/ for further info.
+	// The JQ query used to filter items of an itemized field. Consult the jq manual for further info.
 	Query *string `json:"query,omitempty" validate:"regexp=.*"`
 	// The data type of each argument referenced by the JQ expression as $ARGS.named.<argName>.
 	ArgsInfo *map[string]MappingFieldType `json:"argsInfo,omitempty"`

@@ -28,7 +28,7 @@ type NfsInstance struct {
 	Name *string `json:"name,omitempty" gorm:""`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
+	// Path that is exported by the NFS server (mandatory). For more information, see NFS.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Path *string `json:"path,omitempty" validate:"regexp=.*"`
 	Path *string `json:"path,omitempty" gorm:"" validate:"regexp=.*"`

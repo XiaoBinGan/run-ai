@@ -28,7 +28,7 @@ type NimServiceDefaults struct {
 	Category             NullableString                         `json:"category,omitempty" validate:"regexp=.*"`
 	Compute              NullableNimServiceDefaultsAllOfCompute `json:"compute,omitempty"`
 	EnvironmentVariables NullableEnvironmentVariablesDefaults   `json:"environmentVariables,omitempty"`
-	// Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+	// Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
 	Image            NullableString                            `json:"image,omitempty" validate:"regexp=.*"`
 	ImagePullPolicy  NullableImagePullPolicy                   `json:"imagePullPolicy,omitempty"`
 	ImagePullSecrets NullableImagePullSecretsDefaults          `json:"imagePullSecrets,omitempty"`

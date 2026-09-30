@@ -6928,7 +6928,7 @@ components:
               type:
                 type: string
         urls:
-          description: '**DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.'
+          description: '**DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.'
           type: array
           items:
             type: string
@@ -6941,7 +6941,7 @@ components:
           items:
             $ref: '#/components/schemas/Environment'
         externalConnections:
-          description: '**DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.'
+          description: '**DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.'
           type: array
           items:
             $ref: '#/components/schemas/Connection'
@@ -8957,7 +8957,7 @@ components:
       maxItems: 1000
       nullable: true
     Image:
-      description: Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+      description: Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
       type: string
       minLength: 1
       maxLength: 253
@@ -9056,7 +9056,7 @@ components:
       nullable: true
     NodeType:
       deprecated: true
-      description: 'Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).'
+      description: 'Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.'
       type: string
       minLength: 1
       example: my-node-type
@@ -9294,7 +9294,7 @@ components:
         - OnFailure
       nullable: true
     AllowPrivilegeEscalation:
-      description: Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+      description: Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide
       type: boolean
       example: false
       nullable: true
@@ -9400,7 +9400,7 @@ components:
       nullable: true
       pattern: .*
     UidGidSource:
-      description: Indicate the way to determine the user and group ids of the container. The options are a. `fromTheImage` - user and group ids are determined by the docker image that the container runs. this is the default option. b. `custom` - user and group ids can be specified in the environment asset and/or the workload creation request. c. `idpToken` - user and group IDs are automatically taken from the identity provider (IdP) token (available only in SSO-enabled installations). For more information, see [User Identity](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers).
+      description: Indicate the way to determine the user and group ids of the container. The options are a. `fromTheImage` - user and group ids are determined by the docker image that the container runs. this is the default option. b. `custom` - user and group ids can be specified in the environment asset and/or the workload creation request. c. `idpToken` - user and group IDs are automatically taken from the identity provider (IdP) token (available only in SSO-enabled installations). For more information, see User Identity.
       type: string
       enum:
         - fromTheImage
@@ -9707,7 +9707,7 @@ components:
     Nfs:
       properties:
         path:
-          description: Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
+          description: Path that is exported by the NFS server (mandatory). For more information, see NFS.
           type: string
           minLength: 1
           maxLength: 4096
@@ -9837,7 +9837,7 @@ components:
         size:
           $ref: '#/components/schemas/PvcClaimSize'
         storageClass:
-          description: Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
+          description: Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
           type: string
           minLength: 1
           maxLength: 63
@@ -9938,14 +9938,14 @@ components:
           nullable: true
           pattern: ^[a-z0-9]([a-z0-9-]*[a-z0-9])?$
         secretKeyOfAccessKeyId:
-          description: The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+          description: The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
           type: string
           minLength: 1
           example: AccessKeyId
           nullable: true
           pattern: .*
         secretKeyOfSecretKey:
-          description: The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+          description: The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
           type: string
           minLength: 1
           example: SecretKey
@@ -10562,7 +10562,7 @@ components:
             - group-b
           nullable: true
         exposeExternally:
-          description: Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the [inference requirements](https://run-ai-docs.nvidia.com/self-hosted/latest/getting-started/installation/system-requirements#inference). section.
+          description: Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the inference requirements section.
           type: boolean
           nullable: true
           default: true

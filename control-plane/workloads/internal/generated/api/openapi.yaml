@@ -16485,9 +16485,9 @@ components:
           type: array
           writeOnly: true
         urls:
-          description: "**DEPRECATED:** This field is deprecated. Use [Get workload\
-            \ endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload\
-            \ network endpoints instead.Requires cluster version 2.25 or above."
+          description: '**DEPRECATED:** This field is deprecated. Use Get workload
+            endpoints to retrieve workload network endpoints instead.Requires cluster
+            version 2.25 or above.'
           items:
             type: string
           type: array
@@ -16500,9 +16500,9 @@ components:
             $ref: '#/components/schemas/Environment'
           type: array
         externalConnections:
-          description: "**DEPRECATED:** This field is deprecated. Use [Get workload\
-            \ endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload\
-            \ network endpoints instead.Requires cluster version 2.25 or above."
+          description: '**DEPRECATED:** This field is deprecated. Use Get workload
+            endpoints to retrieve workload network endpoints instead.Requires cluster
+            version 2.25 or above.'
           items:
             $ref: '#/components/schemas/Connection'
           type: array
@@ -24778,8 +24778,8 @@ components:
       nullable: true
       type: array
     Image:
-      description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
-        \ The image name is mandatory for creating a workload."
+      description: "Docker image name. For more information, see Images. The image\
+        \ name is mandatory for creating a workload."
       example: python:3.8
       maxLength: 253
       minLength: 1
@@ -25109,9 +25109,9 @@ components:
       description: "Deprecated: use a workload policy node selector to target node\
         \ types instead. Nodes (machines), or a group of nodes on which the workload\
         \ will run. To use this feature, your Administrator will need to label nodes.\
-        \ For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group).\
-        \ When using this flag with with Project-based affinity, it refines the list\
-        \ of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects)."
+        \ For more information, see Group Nodes. When using this flag with with Project-based\
+        \ affinity, it refines the list of allowable node groups set in the Project.\
+        \ For more information, see Projects."
       example: my-node-type
       minLength: 1
       nullable: true
@@ -25396,7 +25396,7 @@ components:
     AllowPrivilegeEscalation:
       description: Allow the container running the workload and all launched processes
         to gain additional privileges after the workload starts. For more information
-        consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+        consult the User Identity in Container guide
       example: false
       nullable: true
       type: boolean
@@ -25526,7 +25526,7 @@ components:
         \ `custom` - user and group ids can be specified in the environment asset\
         \ and/or the workload creation request. c. `idpToken` - user and group IDs\
         \ are automatically taken from the identity provider (IdP) token (available\
-        \ only in SSO-enabled installations). For more information, see [User Identity](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers)."
+        \ only in SSO-enabled installations). For more information, see User Identity."
       enum:
       - fromTheImage
       - fromIdpToken
@@ -25912,7 +25912,7 @@ components:
       properties:
         path:
           description: "Path that is exported by the NFS server (mandatory). For more\
-            \ information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs)."
+            \ information, see NFS."
           example: /container/nfs
           maxLength: 4096
           minLength: 1
@@ -26115,8 +26115,8 @@ components:
         storageClass:
           description: "Storage class name to associate with the PVC. This parameter\
             \ may be omitted if there is a single storage class in the system, or\
-            \ you are using the default storage class. For more information, see [Storage\
-            \ class](https://kubernetes.io/docs/concepts/storage/storage-classes)."
+            \ you are using the default storage class. For more information, see Storage\
+            \ class."
           example: my-storage-class
           maxLength: 63
           minLength: 1
@@ -26261,8 +26261,8 @@ components:
           type: string
         secretKeyOfAccessKeyId:
           description: "The key to use for loading the access key id from the secret.\
-            \ The default is `AccessKeyId`. For more information, see [Credentials\
-            \ access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html)."
+            \ The default is `AccessKeyId`. For more information, see Credentials\
+            \ access keys."
           example: AccessKeyId
           minLength: 1
           nullable: true
@@ -26270,8 +26270,8 @@ components:
           type: string
         secretKeyOfSecretKey:
           description: "The key to use for loading the secret key from the secret.\
-            \ The default is `SecretKey`. For more information, see [Credentials access\
-            \ keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html)."
+            \ The default is `SecretKey`. For more information, see Credentials access\
+            \ keys."
           example: SecretKey
           minLength: 1
           nullable: true
@@ -29697,8 +29697,8 @@ components:
           nullable: true
           type: array
         image:
-          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
-            \ The image name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see Images. The image\
+            \ name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -29729,10 +29729,9 @@ components:
           description: "Deprecated: use a workload policy node selector to target\
             \ node types instead. Nodes (machines), or a group of nodes on which the\
             \ workload will run. To use this feature, your Administrator will need\
-            \ to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group).\
-            \ When using this flag with with Project-based affinity, it refines the\
-            \ list of allowable node groups set in the Project. For more information,\
-            \ see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects)."
+            \ to label nodes. For more information, see Group Nodes. When using this\
+            \ flag with with Project-based affinity, it refines the list of allowable\
+            \ node groups set in the Project. For more information, see Projects."
           example: my-node-type
           minLength: 1
           nullable: true
@@ -29861,8 +29860,7 @@ components:
           description: "Indicates whether the inference serving endpoint should be\
             \ accessible outside the cluster. If set to true, the endpoint will be\
             \ exposed externally. To enable external access, your administrator must\
-            \ configure the cluster as described in the [inference requirements](https://run-ai-docs.nvidia.com/self-hosted/latest/getting-started/installation/system-requirements#inference).\
-            \ section."
+            \ configure the cluster as described in the inference requirements section."
           nullable: true
           type: boolean
         exposedUrl:
@@ -32453,8 +32451,8 @@ components:
           nullable: true
           type: array
         image:
-          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
-            \ The image name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see Images. The image\
+            \ name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -32499,10 +32497,9 @@ components:
           description: "Deprecated: use a workload policy node selector to target\
             \ node types instead. Nodes (machines), or a group of nodes on which the\
             \ workload will run. To use this feature, your Administrator will need\
-            \ to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group).\
-            \ When using this flag with with Project-based affinity, it refines the\
-            \ list of allowable node groups set in the Project. For more information,\
-            \ see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects)."
+            \ to label nodes. For more information, see Group Nodes. When using this\
+            \ flag with with Project-based affinity, it refines the list of allowable\
+            \ node groups set in the Project. For more information, see Projects."
           example: my-node-type
           minLength: 1
           nullable: true
@@ -53769,8 +53766,8 @@ components:
           nullable: true
           type: array
         image:
-          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
-            \ The image name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see Images. The image\
+            \ name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -53807,10 +53804,9 @@ components:
           description: "Deprecated: use a workload policy node selector to target\
             \ node types instead. Nodes (machines), or a group of nodes on which the\
             \ workload will run. To use this feature, your Administrator will need\
-            \ to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group).\
-            \ When using this flag with with Project-based affinity, it refines the\
-            \ list of allowable node groups set in the Project. For more information,\
-            \ see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects)."
+            \ to label nodes. For more information, see Group Nodes. When using this\
+            \ flag with with Project-based affinity, it refines the list of allowable\
+            \ node groups set in the Project. For more information, see Projects."
           example: my-node-type
           minLength: 1
           nullable: true
@@ -122753,8 +122749,8 @@ components:
           nullable: true
           type: array
         image:
-          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
-            \ The image name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see Images. The image\
+            \ name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -122777,10 +122773,9 @@ components:
           description: "Deprecated: use a workload policy node selector to target\
             \ node types instead. Nodes (machines), or a group of nodes on which the\
             \ workload will run. To use this feature, your Administrator will need\
-            \ to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group).\
-            \ When using this flag with with Project-based affinity, it refines the\
-            \ list of allowable node groups set in the Project. For more information,\
-            \ see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects)."
+            \ to label nodes. For more information, see Group Nodes. When using this\
+            \ flag with with Project-based affinity, it refines the list of allowable\
+            \ node groups set in the Project. For more information, see Projects."
           example: my-node-type
           minLength: 1
           nullable: true
@@ -123706,8 +123701,8 @@ components:
         environmentVariables:
           $ref: '#/components/schemas/EnvironmentVariablesDefaults'
         image:
-          description: "Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images).\
-            \ The image name is mandatory for creating a workload."
+          description: "Docker image name. For more information, see Images. The image\
+            \ name is mandatory for creating a workload."
           example: python:3.8
           maxLength: 253
           minLength: 1
@@ -123727,10 +123722,9 @@ components:
           description: "Deprecated: use a workload policy node selector to target\
             \ node types instead. Nodes (machines), or a group of nodes on which the\
             \ workload will run. To use this feature, your Administrator will need\
-            \ to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group).\
-            \ When using this flag with with Project-based affinity, it refines the\
-            \ list of allowable node groups set in the Project. For more information,\
-            \ see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects)."
+            \ to label nodes. For more information, see Group Nodes. When using this\
+            \ flag with with Project-based affinity, it refines the list of allowable\
+            \ node groups set in the Project. For more information, see Projects."
           example: my-node-type
           minLength: 1
           nullable: true
@@ -123842,7 +123836,7 @@ components:
         allowPrivilegeEscalation:
           description: Allow the container running the workload and all launched processes
             to gain additional privileges after the workload starts. For more information
-            consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+            consult the User Identity in Container guide
           example: false
           nullable: true
           type: boolean
@@ -131549,7 +131543,7 @@ components:
         allowPrivilegeEscalation:
           description: Allow the container running the workload and all launched processes
             to gain additional privileges after the workload starts. For more information
-            consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+            consult the User Identity in Container guide
           example: false
           nullable: true
           type: boolean

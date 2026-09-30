@@ -24,9 +24,9 @@ var _ MappedNullable = &BreakdownFormatter{}
 type BreakdownFormatter struct {
 	// The name of the built-in formatter, if used.
 	Builtin NullableString `json:"builtin,omitempty" validate:"regexp=^[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?$"`
-	// The JQ expression used to write the field value into the workload spec. Consult https://jqlang.org/manual/ for further info.
+	// The JQ expression used to write the field value into the workload spec. Consult the jq manual for further info.
 	SetExpr NullableString `json:"setExpr,omitempty" validate:"regexp=.*"`
-	// The JQ expression used to read the field value from the workload spec. Consult https://jqlang.org/manual/ for further info.
+	// The JQ expression used to read the field value from the workload spec. Consult the jq manual for further info.
 	GetExpr  NullableString            `json:"getExpr,omitempty" validate:"regexp=.*"`
 	ArrayKey NullableFormatterArrayKey `json:"arrayKey,omitempty"`
 	// The data type of each argument referenced by the JQ expression as $ARGS.named.<argName>.

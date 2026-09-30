@@ -30,9 +30,8 @@ paths:
   /v1/k8s/setting:
     get:
       deprecated: true
-      description: "Retrieve all tenant settings. This endpoint is deprecated and\
-        \ will be removed in a future release. Migrated settings are available under\
-        \ [/api/docs#tag/Settings](/api/docs#tag/Settings)."
+      description: Retrieve all tenant settings. This endpoint is deprecated and will
+        be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
       operationId: getTenantSettings
       parameters:
       - description: "When true, excludes settings that have been migrated to external\
@@ -107,9 +106,9 @@ paths:
       - src/test/suites/tenantSuite/tenantUserApi/tenantSystemApi.test.ts
     put:
       deprecated: true
-      description: "Use to update tenant settings. This endpoint is deprecated and\
-        \ will be removed in a future release. Migrated settings are available under\
-        \ [/api/docs#tag/Settings](/api/docs#tag/Settings)."
+      description: Use to update tenant settings. This endpoint is deprecated and
+        will be removed in a future release. Migrated settings are available under
+        /api/docs#tag/Settings.
       operationId: updateTenantSetting
       parameters:
       - explode: true
@@ -201,9 +200,9 @@ paths:
   /v1/k8s/setting/{settingKey}:
     get:
       deprecated: true
-      description: "Retrieve a specific tenant setting by key. This endpoint is deprecated\
-        \ and will be removed in a future release. Migrated settings are available\
-        \ under [/api/docs#tag/Settings](/api/docs#tag/Settings)."
+      description: Retrieve a specific tenant setting by key. This endpoint is deprecated
+        and will be removed in a future release. Migrated settings are available under
+        /api/docs#tag/Settings.
       operationId: getTenantSettingsByKey
       parameters:
       - description: The setting key to retrieve

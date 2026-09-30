@@ -31,7 +31,7 @@ type TenantAPI interface {
 	/*
 		GetTenantSettings Get all tenant settings.
 
-		Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+		Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
 
 		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 		@return ApiGetTenantSettingsRequest
@@ -48,7 +48,7 @@ type TenantAPI interface {
 	/*
 		GetTenantSettingsByKey Get a tenant setting by key.
 
-		Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+		Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
 
 		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 		@param settingKey The setting key to retrieve
@@ -66,7 +66,7 @@ type TenantAPI interface {
 	/*
 		UpdateTenantSetting Update a tenant setting.
 
-		Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+		Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
 
 		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 		@return ApiUpdateTenantSettingRequest
@@ -109,7 +109,7 @@ func (r ApiGetTenantSettingsRequest) Execute() ([]Setting, *http.Response, error
 /*
 GetTenantSettings Get all tenant settings.
 
-Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiGetTenantSettingsRequest
@@ -272,7 +272,7 @@ func (r ApiGetTenantSettingsByKeyRequest) Execute() (bool, *http.Response, error
 /*
 GetTenantSettingsByKey Get a tenant setting by key.
 
-Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param settingKey The setting key to retrieve
@@ -437,7 +437,7 @@ func (r ApiUpdateTenantSettingRequest) Execute() (*TenantSettingCreationResponse
 /*
 UpdateTenantSetting Update a tenant setting.
 
-Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@return ApiUpdateTenantSettingRequest

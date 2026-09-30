@@ -52,13 +52,13 @@ type S3Instance struct {
 	AccessKeySecret *string `json:"accessKeySecret,omitempty" gorm:"" validate:"regexp=^[a-z0-9]([a-z0-9-]*[a-z0-9])?$"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+	// The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//SecretKeyOfAccessKeyId *string `json:"secretKeyOfAccessKeyId,omitempty" validate:"regexp=.*"`
 	SecretKeyOfAccessKeyId *string `json:"secretKeyOfAccessKeyId,omitempty" gorm:"" validate:"regexp=.*"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+	// The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//SecretKeyOfSecretKey *string `json:"secretKeyOfSecretKey,omitempty" validate:"regexp=.*"`
 	SecretKeyOfSecretKey *string `json:"secretKeyOfSecretKey,omitempty" gorm:"" validate:"regexp=.*"`

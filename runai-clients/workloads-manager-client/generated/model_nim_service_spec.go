@@ -30,7 +30,7 @@ type NimServiceSpec struct {
 	Compute  NullableNimServiceSpecAllOfCompute `json:"compute,omitempty"`
 	// Set of environment variables to populate into the container running the workload.
 	EnvironmentVariables []EnvironmentVariable `json:"environmentVariables,omitempty"`
-	// Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+	// Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
 	Image           NullableString          `json:"image,omitempty" validate:"regexp=.*"`
 	ImagePullPolicy NullableImagePullPolicy `json:"imagePullPolicy,omitempty"`
 	// A list of references to Kubernetes secrets in the same namespace used for pulling container images.

@@ -1898,7 +1898,7 @@ export interface ClaimInfo {
      */
     'size'?: string | null;
     /**
-     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
+     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
      * @type {string}
      * @memberof ClaimInfo
      */
@@ -3391,7 +3391,7 @@ export interface DistributedInferenceLeaderDefaultsFieldsLeader {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderDefaultsFieldsLeader
      */
@@ -3421,7 +3421,7 @@ export interface DistributedInferenceLeaderDefaultsFieldsLeader {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceLeaderDefaultsFieldsLeader
      * @deprecated
@@ -3648,7 +3648,7 @@ export interface DistributedInferenceLeaderSpecFieldsLeader {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderSpecFieldsLeader
      */
@@ -3678,7 +3678,7 @@ export interface DistributedInferenceLeaderSpecFieldsLeader {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceLeaderSpecFieldsLeader
      * @deprecated
@@ -3777,7 +3777,7 @@ export interface DistributedInferenceLeaderTemplateSpecFieldsLeader {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderTemplateSpecFieldsLeader
      */
@@ -3801,7 +3801,7 @@ export interface DistributedInferenceLeaderTemplateSpecFieldsLeader {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceLeaderTemplateSpecFieldsLeader
      * @deprecated
@@ -3887,7 +3887,7 @@ export interface DistributedInferenceLeaderWorkerDefaultsV2 {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerDefaultsV2
      */
@@ -3917,7 +3917,7 @@ export interface DistributedInferenceLeaderWorkerDefaultsV2 {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerDefaultsV2
      * @deprecated
@@ -4351,7 +4351,7 @@ export interface DistributedInferenceLeaderWorkerSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerSpec
      */
@@ -4381,7 +4381,7 @@ export interface DistributedInferenceLeaderWorkerSpec {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerSpec
      * @deprecated
@@ -4571,7 +4571,7 @@ export interface DistributedInferenceLeaderWorkerTemplateSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerTemplateSpec
      */
@@ -4595,7 +4595,7 @@ export interface DistributedInferenceLeaderWorkerTemplateSpec {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceLeaderWorkerTemplateSpec
      * @deprecated
@@ -4784,7 +4784,7 @@ export interface DistributedInferenceServingPort {
      */
     'authorizedGroups'?: Array<string> | null;
     /**
-     * Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the [inference requirements](https://run-ai-docs.nvidia.com/self-hosted/latest/getting-started/installation/system-requirements#inference). section.
+     * Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the inference requirements section.
      * @type {boolean}
      * @memberof DistributedInferenceServingPort
      */
@@ -4821,7 +4821,7 @@ export interface DistributedInferenceServingPortAccess {
      */
     'authorizedGroups'?: Array<string> | null;
     /**
-     * Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the [inference requirements](https://run-ai-docs.nvidia.com/self-hosted/latest/getting-started/installation/system-requirements#inference). section.
+     * Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the inference requirements section.
      * @type {boolean}
      * @memberof DistributedInferenceServingPortAccess
      */
@@ -5535,7 +5535,7 @@ export interface DistributedInferenceWorkerDefaultsFieldsWorker {
      */
     'environmentVariables'?: EnvironmentVariablesDefaults | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceWorkerDefaultsFieldsWorker
      */
@@ -5565,7 +5565,7 @@ export interface DistributedInferenceWorkerDefaultsFieldsWorker {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceWorkerDefaultsFieldsWorker
      * @deprecated
@@ -5792,7 +5792,7 @@ export interface DistributedInferenceWorkerSpecFieldsWorker {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceWorkerSpecFieldsWorker
      */
@@ -5822,7 +5822,7 @@ export interface DistributedInferenceWorkerSpecFieldsWorker {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceWorkerSpecFieldsWorker
      * @deprecated
@@ -5921,7 +5921,7 @@ export interface DistributedInferenceWorkerTemplateSpecFieldsWorker {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedInferenceWorkerTemplateSpecFieldsWorker
      */
@@ -5945,7 +5945,7 @@ export interface DistributedInferenceWorkerTemplateSpecFieldsWorker {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedInferenceWorkerTemplateSpecFieldsWorker
      * @deprecated
@@ -6124,7 +6124,7 @@ export interface DistributedSpecSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedSpecSpec
      */
@@ -6178,7 +6178,7 @@ export interface DistributedSpecSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedSpecSpec
      * @deprecated
@@ -6378,7 +6378,7 @@ export interface DistributedSpecSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedSpecSpecAllOf
      */
@@ -6432,7 +6432,7 @@ export interface DistributedSpecSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedSpecSpecAllOf
      * @deprecated
@@ -6848,7 +6848,7 @@ export interface DistributedTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedTemplateSpec
      */
@@ -6896,7 +6896,7 @@ export interface DistributedTemplateSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedTemplateSpec
      * @deprecated
@@ -7096,7 +7096,7 @@ export interface DistributedTemplateSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof DistributedTemplateSpecAllOf
      */
@@ -7144,7 +7144,7 @@ export interface DistributedTemplateSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof DistributedTemplateSpecAllOf
      * @deprecated
@@ -9823,7 +9823,7 @@ export interface InferenceSpecSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceSpecSpec
      */
@@ -9859,7 +9859,7 @@ export interface InferenceSpecSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof InferenceSpecSpec
      * @deprecated
@@ -9999,7 +9999,7 @@ export interface InferenceSpecSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceSpecSpecAllOf
      */
@@ -10035,7 +10035,7 @@ export interface InferenceSpecSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof InferenceSpecSpecAllOf
      * @deprecated
@@ -10410,7 +10410,7 @@ export interface InferenceTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceTemplateSpec
      */
@@ -10440,7 +10440,7 @@ export interface InferenceTemplateSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof InferenceTemplateSpec
      * @deprecated
@@ -10580,7 +10580,7 @@ export interface InferenceTemplateSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceTemplateSpecAllOf
      */
@@ -10610,7 +10610,7 @@ export interface InferenceTemplateSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof InferenceTemplateSpecAllOf
      * @deprecated
@@ -10865,7 +10865,7 @@ export interface InferenceUpdateSpecSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceUpdateSpecSpec
      */
@@ -10895,7 +10895,7 @@ export interface InferenceUpdateSpecSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof InferenceUpdateSpecSpec
      * @deprecated
@@ -10987,7 +10987,7 @@ export interface InferenceUpdateSpecSpecAllOf {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof InferenceUpdateSpecSpecAllOf
      */
@@ -11017,7 +11017,7 @@ export interface InferenceUpdateSpecSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof InferenceUpdateSpecSpecAllOf
      * @deprecated
@@ -11581,7 +11581,7 @@ export interface MasterSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof MasterSpec
      */
@@ -11617,7 +11617,7 @@ export interface MasterSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof MasterSpec
      * @deprecated
@@ -11785,7 +11785,7 @@ export interface MasterTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof MasterTemplateSpec
      */
@@ -11815,7 +11815,7 @@ export interface MasterTemplateSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof MasterTemplateSpec
      * @deprecated
@@ -12174,7 +12174,7 @@ export interface MpiLauncherCreationPolicyRules {
  */
 export interface Nfs {
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
+     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
      * @type {string}
      * @memberof Nfs
      */
@@ -12211,7 +12211,7 @@ export interface NfsInstance {
      */
     'name'?: string | null;
     /**
-     * Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs).
+     * Path that is exported by the NFS server (mandatory). For more information, see NFS.
      * @type {string}
      * @memberof NfsInstance
      */
@@ -15077,13 +15077,13 @@ export interface S3AccessKey {
      */
     'accessKeySecret'?: string | null;
     /**
-     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
      * @type {string}
      * @memberof S3AccessKey
      */
     'secretKeyOfAccessKeyId'?: string | null;
     /**
-     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
      * @type {string}
      * @memberof S3AccessKey
      */
@@ -15157,13 +15157,13 @@ export interface S3Instance {
      */
     'accessKeySecret'?: string | null;
     /**
-     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+     * The key to use for loading the access key id from the secret. The default is `AccessKeyId`. For more information, see Credentials access keys.
      * @type {string}
      * @memberof S3Instance
      */
     'secretKeyOfAccessKeyId'?: string | null;
     /**
-     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+     * The key to use for loading the secret key from the secret. The default is `SecretKey`. For more information, see Credentials access keys.
      * @type {string}
      * @memberof S3Instance
      */
@@ -16212,7 +16212,7 @@ export interface SupersetDefaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetDefaults
      */
@@ -16260,7 +16260,7 @@ export interface SupersetDefaults {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof SupersetDefaults
      * @deprecated
@@ -16448,7 +16448,7 @@ export interface SupersetDefaultsAllOf {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetDefaultsAllOf
      */
@@ -16502,7 +16502,7 @@ export interface SupersetDefaultsAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof SupersetDefaultsAllOf
      * @deprecated
@@ -16715,7 +16715,7 @@ export interface SupersetDefaultsAllOfCompute {
  */
 export interface SupersetDefaultsAllOfSecurity {
     /**
-     * Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+     * Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide
      * @type {boolean}
      * @memberof SupersetDefaultsAllOfSecurity
      */
@@ -17918,7 +17918,7 @@ export interface SupersetSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetSpec
      */
@@ -17966,7 +17966,7 @@ export interface SupersetSpec {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof SupersetSpec
      * @deprecated
@@ -18160,7 +18160,7 @@ export interface SupersetSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof SupersetSpecAllOf
      */
@@ -18214,7 +18214,7 @@ export interface SupersetSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof SupersetSpecAllOf
      * @deprecated
@@ -19625,7 +19625,7 @@ export interface TrainingSpecSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingSpecSpec
      */
@@ -19661,7 +19661,7 @@ export interface TrainingSpecSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof TrainingSpecSpec
      * @deprecated
@@ -19837,7 +19837,7 @@ export interface TrainingSpecSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingSpecSpecAllOf
      */
@@ -19873,7 +19873,7 @@ export interface TrainingSpecSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof TrainingSpecSpecAllOf
      * @deprecated
@@ -20174,7 +20174,7 @@ export interface TrainingTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingTemplateSpec
      */
@@ -20204,7 +20204,7 @@ export interface TrainingTemplateSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof TrainingTemplateSpec
      * @deprecated
@@ -20380,7 +20380,7 @@ export interface TrainingTemplateSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof TrainingTemplateSpecAllOf
      */
@@ -20410,7 +20410,7 @@ export interface TrainingTemplateSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof TrainingTemplateSpecAllOf
      * @deprecated
@@ -20601,7 +20601,7 @@ export interface TrainingTemplatesListResponseItem {
     'complianceIssues'?: Array<ComplianceInfoReason>;
 }
 /**
- * Indicate the way to determine the user and group ids of the container. The options are a. `fromTheImage` - user and group ids are determined by the docker image that the container runs. this is the default option. b. `custom` - user and group ids can be specified in the environment asset and/or the workload creation request. c. `idpToken` - user and group IDs are automatically taken from the identity provider (IdP) token (available only in SSO-enabled installations). For more information, see [User Identity](https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers).
+ * Indicate the way to determine the user and group ids of the container. The options are a. `fromTheImage` - user and group ids are determined by the docker image that the container runs. this is the default option. b. `custom` - user and group ids can be specified in the environment asset and/or the workload creation request. c. `idpToken` - user and group IDs are automatically taken from the identity provider (IdP) token (available only in SSO-enabled installations). For more information, see User Identity.
  * @export
  * @enum {string}
  */
@@ -20879,7 +20879,7 @@ export interface UnifiedPolicyInfoPerReplicaTypeDefaults {
      */
     'exposedUrls'?: ExposedUrlsDefaults | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof UnifiedPolicyInfoPerReplicaTypeDefaults
      */
@@ -20927,7 +20927,7 @@ export interface UnifiedPolicyInfoPerReplicaTypeDefaults {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof UnifiedPolicyInfoPerReplicaTypeDefaults
      * @deprecated
@@ -21444,7 +21444,7 @@ export interface UnifiedSpecMaster {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof UnifiedSpecMaster
      */
@@ -21480,7 +21480,7 @@ export interface UnifiedSpecMaster {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof UnifiedSpecMaster
      * @deprecated
@@ -21736,7 +21736,7 @@ export interface UnifiedSpecWorker {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof UnifiedSpecWorker
      */
@@ -21784,7 +21784,7 @@ export interface UnifiedSpecWorker {
      */
     'nodeAffinityRequired'?: NodeAffinityRequired | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof UnifiedSpecWorker
      * @deprecated
@@ -22274,7 +22274,7 @@ export interface Workload {
      */
     'childrenIds'?: Array<WorkloadChildrenIdsInner>;
     /**
-     * **DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
+     * **DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
      * @type {Array<string>}
      * @memberof Workload
      */
@@ -22292,7 +22292,7 @@ export interface Workload {
      */
     'environments'?: Array<Environment>;
     /**
-     * **DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
+     * **DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
      * @type {Array<Connection>}
      * @memberof Workload
      */
@@ -22956,7 +22956,7 @@ export interface WorkloadDetailed {
      */
     'childrenIds'?: Array<WorkloadChildrenIdsInner>;
     /**
-     * **DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
+     * **DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
      * @type {Array<string>}
      * @memberof WorkloadDetailed
      */
@@ -22974,7 +22974,7 @@ export interface WorkloadDetailed {
      */
     'environments'?: Array<Environment>;
     /**
-     * **DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
+     * **DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above.
      * @type {Array<Connection>}
      * @memberof WorkloadDetailed
      */
@@ -25305,7 +25305,7 @@ export interface WorkspaceSpecSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspaceSpecSpec
      */
@@ -25341,7 +25341,7 @@ export interface WorkspaceSpecSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof WorkspaceSpecSpec
      * @deprecated
@@ -25505,7 +25505,7 @@ export interface WorkspaceSpecSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspaceSpecSpecAllOf
      */
@@ -25541,7 +25541,7 @@ export interface WorkspaceSpecSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof WorkspaceSpecSpecAllOf
      * @deprecated
@@ -25724,7 +25724,7 @@ export interface WorkspaceSpecSpecAllOfCompute {
  */
 export interface WorkspaceSpecSpecAllOfSecurity {
     /**
-     * Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+     * Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide
      * @type {boolean}
      * @memberof WorkspaceSpecSpecAllOfSecurity
      */
@@ -26049,7 +26049,7 @@ export interface WorkspaceTemplateSpec {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspaceTemplateSpec
      */
@@ -26079,7 +26079,7 @@ export interface WorkspaceTemplateSpec {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof WorkspaceTemplateSpec
      * @deprecated
@@ -26243,7 +26243,7 @@ export interface WorkspaceTemplateSpecAllOf {
      */
     'exposedUrls'?: Array<ExposedUrl> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof WorkspaceTemplateSpecAllOf
      */
@@ -26273,7 +26273,7 @@ export interface WorkspaceTemplateSpecAllOf {
      */
     'nodePools'?: Array<string> | null;
     /**
-     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+     * Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
      * @type {string}
      * @memberof WorkspaceTemplateSpecAllOf
      * @deprecated

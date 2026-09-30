@@ -12,7 +12,6 @@ security:
 
 tags:
   - name: Synchronization
-    description: Internal interface for synchronizing assets between the clusters and the control plane.
 
 paths:
   /:

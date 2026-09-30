@@ -26,7 +26,7 @@ var _ MappedNullable = &Workspace{}
 type Workspace struct {
 	Meta WorkloadMetaV1        `json:"meta"`
 	Spec SpecificRunInfoFields `json:"spec"`
-	// An interactive workload ready for submission at the cluster. Further details at https://github.com/dsx-ai-factory/run-ai/runai-cluster/tree/master/workload-controller/config/crd\"
+	// An interactive workload ready for submission at the cluster.
 	Workload map[string]interface{} `json:"workload,omitempty"`
 	Job      *DisplayedJob          `json:"job,omitempty"`
 }

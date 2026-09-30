@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Name** | Pointer to **NullableString** | unique name to identify the instance. primarily used for policy locked rules. | [optional] 
-**Path** | Pointer to **NullableString** | Path that is exported by the NFS server (mandatory). For more information, see [NFS](https://kubernetes.io/docs/concepts/storage/volumes#nfs). | [optional] 
+**Path** | Pointer to **NullableString** | Path that is exported by the NFS server (mandatory). For more information, see NFS. | [optional] 
 **ReadOnly** | Pointer to **NullableBool** | Force the NFS export to be mounted with read-only permissions. | [optional] [default to true]
 **Server** | Pointer to **NullableString** | The hostname or IP address of the NFS server. (mandatory) | [optional] 
 **MountPath** | Pointer to **NullableString** | The path that the NFS volume will be mounted to when in use. (mandatory) | [optional] 

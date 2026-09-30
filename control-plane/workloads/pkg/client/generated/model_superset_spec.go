@@ -63,7 +63,7 @@ type SupersetSpec struct {
 	EnvironmentVariables []EnvironmentVariable `json:"environmentVariables,omitempty"`
 	// Set of container ports that the workload exposes via URLs.
 	ExposedUrls []ExposedUrl `json:"exposedUrls,omitempty"`
-	// Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+	// Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
 	Image           NullableString          `json:"image,omitempty" validate:"regexp=.*"`
 	ImagePullPolicy NullableImagePullPolicy `json:"imagePullPolicy,omitempty"`
 	// A list of references to Kubernetes secrets in the same namespace used for pulling container images.
@@ -76,7 +76,7 @@ type SupersetSpec struct {
 	MinReplicas               NullableInt32                     `json:"minReplicas,omitempty"`
 	MpiLauncherCreationPolicy NullableMpiLauncherCreationPolicy `json:"mpiLauncherCreationPolicy,omitempty"`
 	NodeAffinityRequired      NullableNodeAffinityRequired      `json:"nodeAffinityRequired,omitempty"`
-	// Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see [Group Nodes](https://docs.run.ai/latest/admin/researcher-setup/limit-to-node-group). When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see [Projects](https://docshub.run.ai/guides/platform-management/aiinitiatives/organization/projects).
+	// Deprecated: use a workload policy node selector to target node types instead. Nodes (machines), or a group of nodes on which the workload will run. To use this feature, your Administrator will need to label nodes. For more information, see Group Nodes. When using this flag with with Project-based affinity, it refines the list of allowable node groups set in the Project. For more information, see Projects.
 	// Deprecated
 	NodeType NullableString `json:"nodeType,omitempty" validate:"regexp=.*"`
 	// the number of workers that will be allocated for running the workload.

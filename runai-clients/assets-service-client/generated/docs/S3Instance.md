@@ -9,8 +9,8 @@ Name | Type | Description | Notes
 **Path** | Pointer to **NullableString** | Local path within the workload to which the S3 bucket will be mapped. (mandatory) | [optional] 
 **Url** | Pointer to **NullableString** | The url of the S3 service provider. The default is the URL of the Amazon AWS S3 service. | [optional] 
 **AccessKeySecret** | Pointer to **NullableString** | Name of the secret containing credentials of the S3 bucket. Used for private S3 buckets. | [optional] 
-**SecretKeyOfAccessKeyId** | Pointer to **NullableString** | The key to use for loading the access key id from the secret. The default is &#x60;AccessKeyId&#x60;. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html). | [optional] 
-**SecretKeyOfSecretKey** | Pointer to **NullableString** | The key to use for loading the secret key from the secret. The default is &#x60;SecretKey&#x60;. For more information, see [Credentials access keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html). | [optional] 
+**SecretKeyOfAccessKeyId** | Pointer to **NullableString** | The key to use for loading the access key id from the secret. The default is &#x60;AccessKeyId&#x60;. For more information, see Credentials access keys. | [optional] 
+**SecretKeyOfSecretKey** | Pointer to **NullableString** | The key to use for loading the secret key from the secret. The default is &#x60;SecretKey&#x60;. For more information, see Credentials access keys. | [optional] 
 **AwsSessionToken** | Pointer to **NullableString** | An AWS session token. It should be provided (in addition to the access key ID and secret access key) to authenticate to a bucket that is configured to use AWS Security Token Service (STS). | [optional] 
 **Exclude** | Pointer to **NullableBool** | Use &#39;true&#39; in case the item is defined in defaults of the policy, and you wish to exclude it from the workload. | [optional] [default to false]
 

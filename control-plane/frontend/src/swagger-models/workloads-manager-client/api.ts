@@ -215,7 +215,7 @@ export interface ClaimInfo {
      */
     'size'?: string | null;
     /**
-     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see [Storage class](https://kubernetes.io/docs/concepts/storage/storage-classes).
+     * Storage class name to associate with the PVC. This parameter may be omitted if there is a single storage class in the system, or you are using the default storage class. For more information, see Storage class.
      * @type {string}
      * @memberof ClaimInfo
      */
@@ -952,7 +952,7 @@ export interface NimServiceServingPort {
      */
     'metricsPort'?: number | null;
     /**
-     * Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the [inference requirements](https://run-ai-docs.nvidia.com/self-hosted/latest/getting-started/installation/system-requirements#inference). section.
+     * Indicates whether the inference serving endpoint should be accessible outside the cluster. If set to true, the endpoint will be exposed externally. To enable external access, your administrator must configure the cluster as described in the inference requirements section.
      * @type {boolean}
      * @memberof NimServiceServingPort
      */
@@ -1041,7 +1041,7 @@ export interface NimServiceSpec {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NimServiceSpec
      */
@@ -1168,7 +1168,7 @@ export interface NimServiceSpecAllOf {
      */
     'environmentVariables'?: Array<EnvironmentVariable> | null;
     /**
-     * Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+     * Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
      * @type {string}
      * @memberof NimServiceSpecAllOf
      */

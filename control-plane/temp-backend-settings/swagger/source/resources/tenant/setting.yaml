@@ -8,7 +8,7 @@ get:
   x-service: temp-backend-settings
   x-test-coverage:
   - src/test/suites/tenantSuite/tenantUserApi/tenantSystemApi.test.ts
-  description: Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+  description: Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
   parameters:
   - $ref: '../../parameters/excludeMigrated.yaml'
   - $ref: '../../parameters/tenantId.yaml'
@@ -41,7 +41,7 @@ put:
   x-service: temp-backend-settings
   x-test-coverage:
   - src/test/suites/tenantSuite/tenantUserApi/tenantSystemApi.test.ts
-  description: Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+  description: Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
   parameters:
   - $ref: '../../parameters/tenantId.yaml'
   requestBody:

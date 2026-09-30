@@ -22,7 +22,7 @@ var dummyNonOverridableSpecFields = runaihttp.AssertPattern
 
 type NonOverridableSpecFields struct {
 
-	// Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+	// Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//AllowPrivilegeEscalation *bool `json:"allowPrivilegeEscalation,omitempty"`
 	AllowPrivilegeEscalation *bool `json:"allowPrivilegeEscalation,omitempty" gorm:""`
@@ -52,7 +52,7 @@ type NonOverridableSpecFields struct {
 	HostNetwork *bool `json:"hostNetwork,omitempty" gorm:""`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
-	// Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+	// Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Image *string `json:"image,omitempty" validate:"regexp=.*"`
 	Image *string `json:"image,omitempty" gorm:"" validate:"regexp=.*"`

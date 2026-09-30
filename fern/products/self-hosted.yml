@@ -672,10 +672,12 @@ navigation:
             summary: ../../docs/rest-api/self-hosted/tags/events.md
         - pods:
             summary: ../../docs/rest-api/self-hosted/tags/pods.md
-        - workloads
+        - workloads:
+            summary: ../../docs/rest-api/self-hosted/tags/workloads.md
         - workloadsV2:
             summary: ../../docs/rest-api/self-hosted/tags/workloads-v2.md
-        - nvidiaNim
+        - nvidiaNim:
+            summary: ../../docs/rest-api/self-hosted/tags/nvidia-nim.md
         - workspaces:
             summary: ../../docs/rest-api/self-hosted/tags/workspaces.md
         - trainings:
@@ -709,8 +711,10 @@ navigation:
             summary: ../../docs/rest-api/self-hosted/tags/git.md
         - hostPath:
             summary: ../../docs/rest-api/self-hosted/tags/host-path.md
-        - nfs
-        - pvc
+        - nfs:
+            summary: ../../docs/rest-api/self-hosted/tags/nfs.md
+        - pvc:
+            summary: ../../docs/rest-api/self-hosted/tags/pvc.md
         - registry:
             summary: ../../docs/rest-api/self-hosted/tags/registry.md
         - s3:

@@ -22,7 +22,7 @@ var _ MappedNullable = &NonOverridableSpecFields{}
 
 // NonOverridableSpecFields struct for NonOverridableSpecFields
 type NonOverridableSpecFields struct {
-	// Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide at https://run-ai-docs.nvidia.com/self-hosted/latest/infrastructure-setup/advanced-setup/container-access/user-identity-in-containers
+	// Allow the container running the workload and all launched processes to gain additional privileges after the workload starts. For more information consult the User Identity in Container guide
 	AllowPrivilegeEscalation NullableBool `json:"allowPrivilegeEscalation,omitempty"`
 	// Add POSIX capabilities to running containers. Defaults to the default set of capabilities granted by the container runtime.
 	Capabilities []Capability `json:"capabilities,omitempty"`
@@ -32,7 +32,7 @@ type NonOverridableSpecFields struct {
 	HostIpc NullableBool `json:"hostIpc,omitempty"`
 	// Whether to enable host networking. Default to false.
 	HostNetwork NullableBool `json:"hostNetwork,omitempty"`
-	// Docker image name. For more information, see [Images](https://kubernetes.io/docs/concepts/containers/images). The image name is mandatory for creating a workload.
+	// Docker image name. For more information, see Images. The image name is mandatory for creating a workload.
 	Image           NullableString          `json:"image,omitempty" validate:"regexp=.*"`
 	ImagePullPolicy NullableImagePullPolicy `json:"imagePullPolicy,omitempty"`
 	Probes          NullableProbes          `json:"probes,omitempty"`

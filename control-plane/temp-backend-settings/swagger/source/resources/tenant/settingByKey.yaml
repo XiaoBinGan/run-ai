@@ -8,7 +8,7 @@ get:
   x-service: temp-backend-settings
   x-test-coverage:
   - src/test/suites/tenantSuite/tenantUserApi/tenantSystemApi.test.ts
-  description: Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+  description: Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
   parameters:
   - $ref: '../../parameters/settingKey.yaml'
   - $ref: '../../parameters/tenantId.yaml'

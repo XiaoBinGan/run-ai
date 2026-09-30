@@ -461,7 +461,7 @@ export class InternalApi extends BaseAPI {
 export const TenantApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Get all tenant settings.
          * @param {boolean} [excludeMigrated] When true, excludes settings that have been migrated to external services (e.g., Identity Manager).
          * @param {string} [tenantId] 
@@ -502,7 +502,7 @@ export const TenantApiAxiosParamCreator = function (configuration?: Configuratio
             };
         },
         /**
-         * Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Get a tenant setting by key.
          * @param {string} settingKey The setting key to retrieve
          * @param {string} [tenantId] 
@@ -542,7 +542,7 @@ export const TenantApiAxiosParamCreator = function (configuration?: Configuratio
             };
         },
         /**
-         * Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Update a tenant setting.
          * @param {string} [tenantId] 
          * @param {TenantSettingCreationRequest} [tenantSettingCreationRequest] 
@@ -592,7 +592,7 @@ export const TenantApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = TenantApiAxiosParamCreator(configuration)
     return {
         /**
-         * Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Get all tenant settings.
          * @param {boolean} [excludeMigrated] When true, excludes settings that have been migrated to external services (e.g., Identity Manager).
          * @param {string} [tenantId] 
@@ -605,7 +605,7 @@ export const TenantApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Get a tenant setting by key.
          * @param {string} settingKey The setting key to retrieve
          * @param {string} [tenantId] 
@@ -618,7 +618,7 @@ export const TenantApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Update a tenant setting.
          * @param {string} [tenantId] 
          * @param {TenantSettingCreationRequest} [tenantSettingCreationRequest] 
@@ -641,7 +641,7 @@ export const TenantApiFactory = function (configuration?: Configuration, basePat
     const localVarFp = TenantApiFp(configuration)
     return {
         /**
-         * Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Get all tenant settings.
          * @param {boolean} [excludeMigrated] When true, excludes settings that have been migrated to external services (e.g., Identity Manager).
          * @param {string} [tenantId] 
@@ -653,7 +653,7 @@ export const TenantApiFactory = function (configuration?: Configuration, basePat
             return localVarFp.getTenantSettings(excludeMigrated, tenantId, options).then((request) => request(axios, basePath));
         },
         /**
-         * Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Get a tenant setting by key.
          * @param {string} settingKey The setting key to retrieve
          * @param {string} [tenantId] 
@@ -665,7 +665,7 @@ export const TenantApiFactory = function (configuration?: Configuration, basePat
             return localVarFp.getTenantSettingsByKey(settingKey, tenantId, options).then((request) => request(axios, basePath));
         },
         /**
-         * Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+         * Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
          * @summary Update a tenant setting.
          * @param {string} [tenantId] 
          * @param {TenantSettingCreationRequest} [tenantSettingCreationRequest] 
@@ -687,7 +687,7 @@ export const TenantApiFactory = function (configuration?: Configuration, basePat
  */
 export class TenantApi extends BaseAPI {
     /**
-     * Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+     * Retrieve all tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
      * @summary Get all tenant settings.
      * @param {boolean} [excludeMigrated] When true, excludes settings that have been migrated to external services (e.g., Identity Manager).
      * @param {string} [tenantId] 
@@ -701,7 +701,7 @@ export class TenantApi extends BaseAPI {
     }
 
     /**
-     * Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+     * Retrieve a specific tenant setting by key. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
      * @summary Get a tenant setting by key.
      * @param {string} settingKey The setting key to retrieve
      * @param {string} [tenantId] 
@@ -715,7 +715,7 @@ export class TenantApi extends BaseAPI {
     }
 
     /**
-     * Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under [/api/docs#tag/Settings](/api/docs#tag/Settings).
+     * Use to update tenant settings. This endpoint is deprecated and will be removed in a future release. Migrated settings are available under /api/docs#tag/Settings.
      * @summary Update a tenant setting.
      * @param {string} [tenantId] 
      * @param {TenantSettingCreationRequest} [tenantSettingCreationRequest] 

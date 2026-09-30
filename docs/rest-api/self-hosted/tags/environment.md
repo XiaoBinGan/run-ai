@@ -4,3 +4,8 @@ with their connection interfaces including external node port and the container 
 You can also specify a standard, distributed, or inference workload architecture for the environment.
 An environment is a mandatory building block for the creation of a workload.
 For more information, see [Environments](/run-ai/self-hosted/documentation/workloads-in-nvidia-run-ai/assets/environments).
+
+## Related documentation
+
+- [Images](https://kubernetes.io/docs/concepts/containers/images)
+- [User identity in containers](/run-ai/self-hosted/documentation/installation-and-configuration/configuration/security/user-identity-in-containers)

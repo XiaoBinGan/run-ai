@@ -148,7 +148,7 @@ properties:
         type:
           type: string
   urls:
-    description: "**DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above."
+    description: "**DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above."
     type: array
     items:
       type: string
@@ -161,7 +161,7 @@ properties:
     items:
       $ref: "./Environment.yaml"
   externalConnections:
-    description: "**DEPRECATED:** This field is deprecated. Use [Get workload endpoints](/latest/#operation/get_workload_endpoints) to retrieve workload network endpoints instead.Requires cluster version 2.25 or above."
+    description: "**DEPRECATED:** This field is deprecated. Use Get workload endpoints to retrieve workload network endpoints instead.Requires cluster version 2.25 or above."
     type: array
     items:
       $ref: "./Connection.yaml"
