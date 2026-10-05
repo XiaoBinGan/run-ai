@@ -7,16 +7,19 @@ package client_reconciler
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	iamMock "github.com/dsx-ai-factory/run-ai/control-plane/identity-manager/internal/iam/mocks"
 	iamModels "github.com/dsx-ai-factory/run-ai/control-plane/identity-manager/internal/iam/models"
 	reconciler_mocks "github.com/dsx-ai-factory/run-ai/control-plane/identity-manager/pkg/reconciler/client_reconciler/mocks"
 	tenant_mocks "github.com/dsx-ai-factory/run-ai/control-plane/identity-manager/pkg/reconciler/mocks"
+	"github.com/dsx-ai-factory/run-ai/control-plane/identity-manager/pkg/utils"
 	test_utils "github.com/dsx-ai-factory/run-ai/control-plane/identity-manager/pkg/utils/mocks"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"k8s.io/utils/ptr"
 )
 
 const TenantId = "1001"
@@ -57,11 +60,27 @@ func defaultTenantResolverMockSetup(tenantResolverMock *tenant_mocks.TenantResol
 	tenantResolverMock.On("GetRealmTenantId", context.Background(), mock.Anything).Return(tenantId, nil)
 }
 
+// getDefaultClients returns the default clients the reconciler manages: the shared installer client is retired and excluded.
+func getDefaultClients() []*iamModels.Client {
+	var clients []*iamModels.Client
+	for _, c := range test_utils.GetBasicReconcilerClientWithTenantIdMapperArray() {
+		if *c.ClientID != utils.RunaiInstallerClientId {
+			clients = append(clients, c)
+		}
+	}
+	return clients
+}
+
+func legacyInstallerLookupMockSetup(iamMock *iamMock.MockServicesContainer, realmName string, legacyClient *iamModels.Client) {
+	iamMock.MockClientService.On("GetClientByClientId", context.Background(), realmName, utils.RunaiInstallerClientId).Return(legacyClient, nil)
+}
+
 func TestNonSSOMappersWithExistsClients(t *testing.T) {
 	iamMock, tenantResolverMock, reconcilerHelperMock, testSubject := initClientReconcilerTest(t)
-	clients := test_utils.GetBasicReconcilerClientWithTenantIdMapperArray()
+	clients := getDefaultClients()
 	realmName := "test-realm"
 	defaultIamMockSetup(iamMock, clients, realmName, true)
+	legacyInstallerLookupMockSetup(iamMock, realmName, nil)
 	defaultTenantResolverMockSetup(tenantResolverMock, TenantId)
 	reconcilerHelperMock.On("ReconcileClient", context.Background(), mock.Anything, mock.Anything).Return(nil)
 
@@ -81,9 +100,10 @@ func TestNonSSOMappersWithoutPreCreatedTenantIdMapper(t *testing.T) {
 
 func TestSSOMappersWithExistsClients(t *testing.T) {
 	iamMock, tenantResolverMock, reconcilerHelperMock, testSubject := initClientReconcilerTest(t)
-	clients := test_utils.GetBasicReconcilerClientWithTenantIdMapperArray()
+	clients := getDefaultClients()
 	realmName := "test-realm"
 	defaultIamMockSetup(iamMock, clients, realmName, true)
+	legacyInstallerLookupMockSetup(iamMock, realmName, nil)
 	defaultTenantResolverMockSetup(tenantResolverMock, TenantId)
 	reconcilerHelperMock.On("ReconcileClient", context.Background(), mock.Anything, mock.Anything).Return(nil)
 
@@ -92,4 +112,38 @@ func TestSSOMappersWithExistsClients(t *testing.T) {
 
 	tenantResolverMock.AssertNumberOfCalls(t, "GetRealmTenantId", 1)
 	reconcilerHelperMock.AssertNumberOfCalls(t, "ReconcileClient", len(clients))
+}
+
+func TestReconcileDeletesLegacySharedInstallerClient(t *testing.T) {
+	iamMock, tenantResolverMock, reconcilerHelperMock, testSubject := initClientReconcilerTest(t)
+	clients := getDefaultClients()
+	realmName := "test-realm"
+	defaultIamMockSetup(iamMock, clients, realmName, true)
+	defaultTenantResolverMockSetup(tenantResolverMock, TenantId)
+	reconcilerHelperMock.On("ReconcileClient", context.Background(), mock.Anything, mock.Anything).Return(nil)
+	legacy := &iamModels.Client{ID: ptr.To("legacy-installer-id"), ClientID: ptr.To(utils.RunaiInstallerClientId)}
+	legacyInstallerLookupMockSetup(iamMock, realmName, legacy)
+	iamMock.MockClientService.On("DeleteClient", context.Background(), realmName, "legacy-installer-id").Return(nil)
+
+	err := testSubject.Reconcile(context.Background(), realmName, true)
+	assert.Nil(t, err)
+	reconcilerHelperMock.AssertNumberOfCalls(t, "ReconcileClient", len(clients))
+	iamMock.MockClientService.AssertCalled(t, "DeleteClient", context.Background(), realmName, "legacy-installer-id")
+}
+
+func TestReconcileDoesNotRecreateLegacySharedInstallerClient(t *testing.T) {
+	iamMock, tenantResolverMock, reconcilerHelperMock, testSubject := initClientReconcilerTest(t)
+	clients := getDefaultClients()
+	realmName := "test-realm"
+	defaultIamMockSetup(iamMock, clients, realmName, true)
+	defaultTenantResolverMockSetup(tenantResolverMock, TenantId)
+	reconcilerHelperMock.On("ReconcileClient", context.Background(), mock.Anything, mock.Anything).Return(nil)
+	legacyInstallerLookupMockSetup(iamMock, realmName, nil)
+
+	err := testSubject.Reconcile(context.Background(), realmName, true)
+	assert.Nil(t, err)
+	iamMock.MockClientService.AssertNotCalled(t, "DeleteClient", mock.Anything, mock.Anything, mock.Anything)
+	reconcilerHelperMock.AssertNotCalled(t, "ReconcileClient", mock.Anything, mock.Anything, mock.MatchedBy(func(c any) bool {
+		return fmt.Sprint(c) == utils.RunaiInstallerClientId
+	}))
 }

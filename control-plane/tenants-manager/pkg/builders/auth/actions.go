@@ -27,8 +27,7 @@ import (
 )
 
 const (
-	AgentClientName     string = "runai_agent_"
-	InstallerClientName string = "runai-internal.installer"
+	AgentClientName string = "runai_agent_"
 )
 
 func (b *Builder) CreateRealmSupplements(ctx context.Context, tenant builders.TenantInfo, clients []config.Client, builderResponse map[string]interface{}) (err error) {
@@ -122,24 +121,6 @@ func (b *Builder) setAgentPermissions(ctx context.Context, agent config.Client, 
 	_, resp, err := b.authClient.CreateInternalAccessRuleExecute(request)
 	if err != nil && !isAlreadyExists(resp, err) {
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Warnf("Failed to set runai agent permissions for tenant id %d. Response: %+v, Error: %+v", tenantId, resp, err)
-		return err
-	}
-	return nil
-}
-
-func (b *Builder) setInstallerPermissions(ctx context.Context, installer config.Client, tenantId uint, tenantName string) error {
-	logging.WithCtx(runaictx.LoggerHook(ctx)).Debugf("Set installer permissions for tenant %d", tenantId)
-
-	reqBody := authorization_api.NewInternalCreateAccessRuleRequest(installer.ClientId, authorization_api.SUBJECTTYPE_APP, authorization_api.ALLOWEDINTERNALCREATEROLES_INSTALLER_APPLICATION)
-	reqBody.SetScope(authorization_api.InternalCreateAccessRuleRequestScope{
-		Id:   fmt.Sprintf("%d", tenantId),
-		Type: authorization_api.SCOPETYPE_TENANT,
-		Name: ptr.String(tenantName),
-	})
-
-	_, resp, err := b.authClient.CreateInternalAccessRule(ctx).InternalCreateAccessRuleRequest(*reqBody).Execute()
-	if err != nil && !isAlreadyExists(resp, err) {
-		logging.WithCtx(runaictx.LoggerHook(ctx)).Warnf("Failed to set runai installer permissions for tenant id %d. Response: %+v, Error: %+v", tenantId, resp, err)
 		return err
 	}
 	return nil

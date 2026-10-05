@@ -386,101 +386,13 @@ func TestRegenerateServiceAccountSecret_PrivilegeEscalationForbidden(t *testing.
 	assert.Contains(t, utilsError.Message, "You're not authorized to regenerate client secret for the selected service account")
 }
 
-func TestGetInstallerServiceAccount_HappyFlow_EmptyTenantId(t *testing.T) {
-	iamMock, _, _, _, _, testSubject := initServiceAccountTest(t)
-	ctx := enrichContext()
-	appResp := getAppModelForResponse(AppName, TenantId, CreatedBy)
-	iamMock.MockClientService.On("GetClientByClientId", ctx, RealmName, utils.RunaiInstallerClientId).Return(appResp, nil)
-
-	response, err := testSubject.GetInstallerServiceAccount(ctx, "")
-	assert.Nil(t, err)
-	assert.NotNil(t, response)
-	assert.Equal(t, http.StatusOK, response.Code)
-}
-
-func TestGetInstallerServiceAccount_HappyFlow_MngRealm(t *testing.T) {
-	iamMock, _, _, realmDalMock, _, testSubject := initServiceAccountTest(t)
-	ctx := enrichContext()
-	ctxWithMng := context.WithValue(ctx, runaictx.CfIsManagementTenant, "true")
-	ctxWithMng = context.WithValue(ctxWithMng, structs.PermittedScopesKey, &authorization_api.PermittedScopes{System: ptr.To(true)})
-
-	appResp := getAppModelForResponse(AppName, TenantId, CreatedBy)
-	iamMock.MockClientService.On("GetClientByClientId", ctxWithMng, RealmName, utils.RunaiInstallerClientId).Return(appResp, nil)
-	realmDalMock.On("GetRealmByTenantId", mock.Anything, mock.Anything).Return(&idmModles.Realm{Realm: RealmName, TenantId: TenantId}, nil)
-
-	response, err := testSubject.GetInstallerServiceAccount(ctxWithMng, TenantId)
-	assert.Nil(t, err)
-	assert.NotNil(t, response)
-	assert.Equal(t, http.StatusOK, response.Code)
-}
-
-func TestGetInstallerServiceAccount_HappyFlow_FalseMngRealm(t *testing.T) {
+func TestGetInstallerServiceAccount_Retired(t *testing.T) {
 	_, _, _, _, _, testSubject := initServiceAccountTest(t)
-	ctx := enrichContext()
-	ctxWithMng := context.WithValue(ctx, runaictx.CfIsManagementTenant, "false")
-	ctxWithMng = context.WithValue(ctxWithMng, structs.PermittedScopesKey, &authorization_api.PermittedScopes{System: ptr.To(true)})
-	response, err := testSubject.GetInstallerServiceAccount(ctxWithMng, TenantId)
+
+	response, err := testSubject.GetInstallerServiceAccount(enrichContext(), TenantId)
 	assert.NotNil(t, err)
-	assert.NotNil(t, response)
-	assert.Equal(t, http.StatusUnauthorized, response.Code)
-}
-
-func TestGetInstallerServiceAccount_HappyFlow_MngRealm_NoSystem(t *testing.T) {
-	_, _, _, _, _, testSubject := initServiceAccountTest(t)
-	ctx := enrichContext()
-	ctxWithMng := context.WithValue(ctx, runaictx.CfIsManagementTenant, "true")
-
-	response, err := testSubject.GetInstallerServiceAccount(ctxWithMng, TenantId)
-	assert.NotNil(t, err)
-	assert.NotNil(t, response)
-	assert.Equal(t, http.StatusUnauthorized, response.Code)
-}
-
-func TestGetInstallerServiceAccount_HappyFlow_NilMngRealm(t *testing.T) {
-	_, _, _, _, _, testSubject := initServiceAccountTest(t)
-	ctx := enrichContext()
-	ctxWithMng := context.WithValue(ctx, runaictx.CfIsManagementTenant, nil)
-
-	response, err := testSubject.GetInstallerServiceAccount(ctxWithMng, TenantId)
-	assert.NotNil(t, err)
-	assert.NotNil(t, response)
-	assert.Equal(t, http.StatusUnauthorized, response.Code)
-}
-
-func TestGetInstallerServiceAccount_HappyFlow_GetRealmError(t *testing.T) {
-	iamMock, _, _, realmDalMock, _, testSubject := initServiceAccountTest(t)
-	ctx := enrichContext()
-	ctxWithMng := context.WithValue(ctx, runaictx.CfIsManagementTenant, "true")
-	ctxWithMng = context.WithValue(ctxWithMng, structs.PermittedScopesKey, &authorization_api.PermittedScopes{System: ptr.To(true)})
-	appResp := getAppModelForResponse(AppName, TenantId, CreatedBy)
-	iamMock.MockClientService.On("GetClientByClientId", ctxWithMng, RealmName, utils.RunaiInstallerClientId).Return(appResp, nil)
-	realmDalMock.On("GetRealmByTenantId", mock.Anything, mock.Anything).Return(nil, fmt.Errorf("error"))
-
-	response, err := testSubject.GetInstallerServiceAccount(ctxWithMng, TenantId)
-	assert.NotNil(t, err)
-	assert.NotNil(t, response)
-	assert.Equal(t, http.StatusInternalServerError, response.Code)
-}
-
-func TestGetInstallerServiceAccount_HappyFlow_GetAppError(t *testing.T) {
-	iamMock, _, _, _, _, testSubject := initServiceAccountTest(t)
-	ctx := enrichContext()
-	iamMock.MockClientService.On("GetClientByClientId", ctx, RealmName, utils.RunaiInstallerClientId).Return(nil, fmt.Errorf("error"))
-
-	response, err := testSubject.GetInstallerServiceAccount(ctx, "")
-	assert.NotNil(t, err)
-	assert.NotNil(t, response)
-	assert.Equal(t, http.StatusInternalServerError, response.Code)
-}
-
-func TestGetInstallerServiceAccount_HappyFlow_GetAppError_nilError(t *testing.T) {
-	iamMock, _, _, _, _, testSubject := initServiceAccountTest(t)
-	ctx := enrichContext()
-	iamMock.MockClientService.On("GetClientByClientId", ctx, RealmName, utils.RunaiInstallerClientId).Return(nil, nil)
-
-	response, _ := testSubject.GetInstallerServiceAccount(ctx, "")
-	assert.NotNil(t, response)
 	assert.Equal(t, http.StatusNotFound, response.Code)
+	assert.Nil(t, response.Body)
 }
 
 func TestClusterDeleteCallback(t *testing.T) {
