@@ -72,15 +72,6 @@ func (b *Builder) setTenantData(ctx context.Context, tenant builders.TenantInfo,
 				}
 				return nil
 			})
-		case client.ClientId == InstallerClientName:
-			client := client
-			erg.Go(func() error {
-				if err := b.setInstallerPermissions(ctx, client, tenant.Id, tenant.Name); err != nil {
-					logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to set installer permissions for tenant %s: %v", tenant.Name, err.Error())
-					return err
-				}
-				return nil
-			})
 		}
 	}
 	return erg.Wait()

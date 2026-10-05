@@ -237,25 +237,9 @@ func (s *ServiceAccountsApiService) RegenerateServiceAccountSecret(ctx context.C
 	return api.Response(http.StatusOK, api.RegenerateServiceAccountSecretResponse{ClientSecret: secret}), nil
 }
 
+// POC: the shared installer client is retired, so its secret is no longer served.
 func (s *ServiceAccountsApiService) GetInstallerServiceAccount(ctx context.Context, tenantId string) (api.ImplResponse, error) {
-	clientId := utils.RunaiInstallerClientId
-	realmKey, err := s.getRealmKey(ctx, tenantId)
-	if err != nil {
-		if strings.HasPrefix(err.Error(), "unauthorized") {
-			return api.Response(http.StatusUnauthorized, err.Error()), utils.Error{Code: http.StatusUnauthorized, Message: `failed getting installer service account`}
-		}
-		return utils.HandleError(ctx, utils.ServiceAccount, utils.ClientId, clientId, err, `failed getting installer service account`)
-	}
-	serviceAccountClient, err := s.iamClients.GetClientByClientId(ctx, realmKey, clientId)
-	if err != nil {
-		errMsg := `failed getting installer service account`
-		return utils.HandleError(ctx, utils.ServiceAccount, utils.ClientId, clientId, err, errMsg)
-	}
-	if serviceAccountClient == nil {
-		return api.Response(http.StatusNotFound, nil), utils.Error{Code: http.StatusNotFound, Message: fmt.Sprintf(`installer service account with clientId: %s not found`, clientId)}
-	}
-	serviceAccount := buildServiceAccountResponse(serviceAccountClient)
-	return api.Response(http.StatusOK, serviceAccount), nil
+	return api.Response(http.StatusNotFound, nil), utils.Error{Code: http.StatusNotFound, Message: "shared installer service account has been retired"}
 }
 
 func (s *ServiceAccountsApiService) MintInstallerBootstrapToken(ctx context.Context, clusterId string, tenantId string) (api.ImplResponse, error) {

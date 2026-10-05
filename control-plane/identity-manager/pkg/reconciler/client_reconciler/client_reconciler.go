@@ -67,7 +67,20 @@ func (cr *ClientsReconciler) Reconcile(ctx context.Context, realm string, force 
 		return err
 	}
 
-	return nil
+	return cr.deleteLegacySharedInstallerClient(ctx, realm)
+}
+
+// POC: the shared tenant-wide installer client is retired; remove it from existing realms.
+func (cr *ClientsReconciler) deleteLegacySharedInstallerClient(ctx context.Context, realm string) error {
+	client, err := cr.iamServices.ClientService.GetClientByClientId(ctx, realm, utils.RunaiInstallerClientId)
+	if err != nil {
+		return fmt.Errorf("failed to look up legacy installer client in realm %s: %w", realm, err)
+	}
+	if client == nil || client.ID == nil {
+		return nil
+	}
+	logging.WithCtx(runaictx.LoggerHook(ctx)).Infof("Deleting legacy shared installer client %s in realm %s", utils.RunaiInstallerClientId, realm)
+	return cr.iamServices.ClientService.DeleteClient(ctx, realm, *client.ID)
 }
 
 func (cr *ClientsReconciler) reconcileDefaultClients(ctx context.Context, realm string, tenantId string) error {
@@ -75,7 +88,6 @@ func (cr *ClientsReconciler) reconcileDefaultClients(ctx context.Context, realm 
 		realm_client.NewAdminUiClient(realm, tenantId, cr.config.appHost, cr.config.hostTemplate),
 		realm_client.NewRunaiCliClient(realm, tenantId, cr.config.appHost, cr.config.hostTemplate),
 		realm_client.NewRunaiClient(realm, tenantId, cr.config.appHost, cr.config.hostTemplate),
-		realm_client.NewRunaiServiceAccountClient(utils.RunaiInstallerClientId, tenantId, nil, realm_client.ClientTypeInstaller),
 		realm_client.NewCLIClient(realm, tenantId, cr.config.appHost, cr.config.hostTemplate),
 		realm_client.NewTokenExchangeClient(realm, tenantId, cr.config.appHost, cr.config.hostTemplate),
 		realm_client.NewMcpClient(realm, tenantId),
