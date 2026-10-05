@@ -26,7 +26,6 @@ type IOrgUnitExternalClient interface {
 
 type IOrgUnitClient interface {
 	IOrgUnitExternalClient
-	GetClient() *openapi.APIClient
 	NodePoolCreated(ctx context.Context, clusterId string, nodePoolId string, nodePoolName string) error
 	NodePoolDeleted(ctx context.Context, clusterId string, nodePoolId string, nodePoolName string) error
 	DefaultNodePoolCreated(ctx context.Context, clusterId string, nodePoolId string) error

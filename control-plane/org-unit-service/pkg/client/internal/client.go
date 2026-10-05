@@ -29,10 +29,6 @@ type OrgUnitClient struct {
 	ApiClient *openapi.APIClient
 }
 
-func (client *OrgUnitClient) GetClient() *openapi.APIClient {
-	return client.ApiClient
-}
-
 func (client *OrgUnitClient) GetProjectsSync(ctx context.Context, clusterId string, limit int32, offset int32, UpdatedAfter time.Time, excludePermissions bool) (*openapi.GetSyncProjects200Response, error) {
 	response, h, err := client.ApiClient.ProjectsAPI.GetSyncProjects(ctx).
 		ClusterId(clusterId).
