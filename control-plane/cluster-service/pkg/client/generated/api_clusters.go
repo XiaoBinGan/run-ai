@@ -26,7 +26,6 @@ import (
 // //////////////////////////// RUNAI ///////////////////////////////
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-//go:generate mockery --name ClustersAPI --output ../mocks/
 type ClustersAPI interface {
 
 	/*

@@ -26,7 +26,6 @@ import (
 // //////////////////////////// RUNAI ///////////////////////////////
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-//go:generate mockery --name OrgUnitAPI --output ../mocks/
 type OrgUnitAPI interface {
 
 	/*

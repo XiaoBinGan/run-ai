@@ -25,7 +25,6 @@ import (
 // //////////////////////////// RUNAI ///////////////////////////////
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-//go:generate mockery --name ModelAPI --output ../mocks/
 type ModelAPI interface {
 
 	/*

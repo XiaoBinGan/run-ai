@@ -25,7 +25,6 @@ import (
 // //////////////////////////// RUNAI ///////////////////////////////
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-//go:generate mockery --name SpecMappingAPI --output ../mocks/
 type SpecMappingAPI interface {
 
 	/*

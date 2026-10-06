@@ -26,7 +26,6 @@ import (
 // //////////////////////////// RUNAI ///////////////////////////////
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-//go:generate mockery --name NodePoolsAPI --output ../mocks/
 type NodePoolsAPI interface {
 
 	/*

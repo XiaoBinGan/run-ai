@@ -24,7 +24,6 @@ import (
 // //////////////////////////// RUNAI ///////////////////////////////
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-//go:generate mockery --name PodGroupsAPI --output ../mocks/
 type PodGroupsAPI interface {
 
 	/*

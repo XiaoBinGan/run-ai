@@ -24,7 +24,6 @@ import (
 // //////////////////////////// RUNAI ///////////////////////////////
 // \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 //
-//go:generate mockery --name ClusterObjectsStatusAPI --output ../mocks/
 type ClusterObjectsStatusAPI interface {
 
 	/*
