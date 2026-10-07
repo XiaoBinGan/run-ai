@@ -70,7 +70,7 @@ coverage:
 lint: lint-go ## Run linter.
 .PHONY: lint
 
-validate: openapi-validate validate-mockery-go ## Run validate.
+validate: openapi-validate validate-mockery-go validate-mockery-client validate-mockery-go-client ## Run validate.
 .PHONY: validate
 
 purify: purify-go ## Purify the code.

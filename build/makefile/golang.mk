@@ -256,11 +256,24 @@ generate-mocks-go: git-config-command gocache
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: generate-mocks-go
 
+# //go:generate mockery inside the nested pkg/client module.
+generate-mocks-go-client: git-config-command gocache
+	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME} pkg/client" ${BASE_CONSOLE}
+	${DOCKER_GO_BASE_COMMAND} -e GO111MODULE=on --entrypoint /bin/sh ${DOCKERHUB_PROXY}library/golang:${GO_VERSION} -c 'set -e; GOBIN=/tmp/mockery-v2 go install github.com/vektra/mockery/v2@${MOCKERY_V2_VERSION} && export PATH=/tmp/mockery-v2:$$PATH && cd pkg/client && go generate -run mockery ./...' || ${FAILURE_MESSAGE_HANDLER}
+	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}
+	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh pkg/client
+	${SUCCESS_MESSAGE_HANDLER}
+.PHONY: generate-mocks-go-client
+
 # Service Makefiles pick one. validate-mockery runs generate-mocks (.mockery.yml).
 # validate-mockery-go runs generate-mocks-go (//go:generate).
+# validate-mockery-client runs generate-mocks-client (pkg/client/.mockery.yml).
+# validate-mockery-go-client runs generate-mocks-go-client (pkg/client //go:generate).
 validate-mockery: VALIDATE_MOCKS_TARGET=generate-mocks
 validate-mockery-go: VALIDATE_MOCKS_TARGET=generate-mocks-go
-validate-mockery validate-mockery-go: git-config-command
+validate-mockery-client: VALIDATE_MOCKS_TARGET=generate-mocks-client
+validate-mockery-go-client: VALIDATE_MOCKS_TARGET=generate-mocks-go-client
+validate-mockery validate-mockery-go validate-mockery-client validate-mockery-go-client: git-config-command
 	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Validating mocks are up to date for ${SERVICE_NAME}" ${BASE_CONSOLE}
 	@set -e; \
 	before=$$(git status --porcelain --untracked-files=all); \
@@ -273,7 +286,11 @@ validate-mockery validate-mockery-go: git-config-command
 		${FAILURE_MESSAGE_HANDLER}; \
 	fi
 	${SUCCESS_MESSAGE_HANDLER}
-.PHONY: validate-mockery validate-mockery-go
+.PHONY: validate-mockery validate-mockery-go validate-mockery-client validate-mockery-go-client
+
+validate-client:
+	$(MAKE) -C pkg/client validate
+.PHONY: validate-client
 
 # Same as generate-mocks, without Docker. The Renovate post-upgrade hook runs
 # inside the Renovate container, which has no Docker socket, so the containerised
