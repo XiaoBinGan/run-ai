@@ -25,7 +25,7 @@ test: test-go ## Run unit-tests.
 lint: lint-go ## Run linter.
 .PHONY: lint
 
-validate: openapi-validate validate-mockery-go-client ## Run validate.
+validate: openapi-validate validate-mockery-client ## Run validate.
 .PHONY: validate
 
 purify: purify-go ## Purify the code.
