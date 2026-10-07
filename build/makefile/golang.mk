@@ -25,6 +25,10 @@ GO_VERSION_BASE?=$(or $(strip $(if $(wildcard go.mod),$(shell awk '$$1=="go"{pri
 GO_VERSION?=$(GO_VERSION_BASE)
 GO_ALPINE_VERSION?=$(GO_VERSION_BASE)-alpine
 MOCKERY_VERSION=v3.8.0
+# //go:generate lines use the mockery v2 CLI (`mockery --name ...`). v3 reads
+# .mockery.yml instead and does not honor those flags. v2.53.3's x/tools
+# cannot read Go 1.27 export data ("package without types"); v2.53.7 can.
+MOCKERY_V2_VERSION?=v2.53.7
 # Must be new enough to decode the Go release's export data: v2.9.0 fails
 # every package on Go 1.27 with "export data version 4 ... (typecheck)".
 GOLANGCI_LINT_VERSION=v2.13.2
@@ -241,6 +245,35 @@ generate-mocks: git-config-command
 	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh .
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: generate-mocks
+
+# //go:generate mockery. A service Makefile calls this directly; it does not
+# look for a .mockery.yml.
+generate-mocks-go: git-config-command gocache
+	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME}" ${BASE_CONSOLE}
+	${DOCKER_GO_BASE_COMMAND} -e GO111MODULE=on --entrypoint /bin/sh ${DOCKERHUB_PROXY}library/golang:${GO_VERSION} -c 'set -e; GOBIN=/tmp/mockery-v2 go install github.com/vektra/mockery/v2@${MOCKERY_V2_VERSION} && export PATH=/tmp/mockery-v2:$$PATH && go generate -run mockery ./...' || ${FAILURE_MESSAGE_HANDLER}
+	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}
+	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh .
+	${SUCCESS_MESSAGE_HANDLER}
+.PHONY: generate-mocks-go
+
+# Service Makefiles pick one. validate-mockery runs generate-mocks (.mockery.yml).
+# validate-mockery-go runs generate-mocks-go (//go:generate).
+validate-mockery: VALIDATE_MOCKS_TARGET=generate-mocks
+validate-mockery-go: VALIDATE_MOCKS_TARGET=generate-mocks-go
+validate-mockery validate-mockery-go: git-config-command
+	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Validating mocks are up to date for ${SERVICE_NAME}" ${BASE_CONSOLE}
+	@set -e; \
+	before=$$(git status --porcelain --untracked-files=all); \
+	$(MAKE) $(VALIDATE_MOCKS_TARGET); \
+	after=$$(git status --porcelain --untracked-files=all); \
+	if [ "$$before" != "$$after" ]; then \
+		${ECHO_COMMAND} ${RED_CONSOLE} "${CONSOLE_PREFIX} mockery produced uncommitted changes in ${SERVICE_NAME}. Run 'make $(VALIDATE_MOCKS_TARGET)' and commit them." ${BASE_CONSOLE}; \
+		git --no-pager status --porcelain --untracked-files=all; \
+		git --no-pager diff; \
+		${FAILURE_MESSAGE_HANDLER}; \
+	fi
+	${SUCCESS_MESSAGE_HANDLER}
+.PHONY: validate-mockery validate-mockery-go
 
 # Same as generate-mocks, without Docker. The Renovate post-upgrade hook runs
 # inside the Renovate container, which has no Docker socket, so the containerised

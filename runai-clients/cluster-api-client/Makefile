@@ -16,7 +16,7 @@ lint:
 	# no op
 .PHONY: lint
 
-validate:
+validate: validate-mockery-go
 	# no op
 .PHONY: validate
 
