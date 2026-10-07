@@ -4,8 +4,9 @@ go 1.26.8
 
 require (
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/constants v0.0.0
+	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/dra v0.0.0-00010101000000-000000000000
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/getters v0.0.0-00010101000000-000000000000
-	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/go-operator v0.0.0-00010101000000-000000000000
+	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/scheme-init v0.0.0-00010101000000-000000000000
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/sdk v0.0.0-00010101000000-000000000000
 	github.com/dsx-ai-factory/run-ai/runai-common-packages/fips v1.0.0
 	github.com/hashicorp/go-multierror v1.1.1
@@ -120,6 +121,7 @@ require (
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kai-scheduler/kai-resource-management-api v0.1.3
+	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -172,7 +174,7 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/go-operator => ../go-operator
+replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/scheme-init => ../common/scheme-init
 
 replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/sdk => ../sdk
 
@@ -185,6 +187,8 @@ replace github.com/dsx-ai-factory/run-ai/runai-cluster/common/profiling => ../..
 replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/constants => ../../cluster/common/constants
 
 replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/getters => ../../cluster/common/getters
+
+replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/dra => ../../cluster/common/dra
 
 replace github.com/dsx-ai-factory/run-ai/runai-cluster/common/constants => ../../common/constants
 

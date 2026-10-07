@@ -42,6 +42,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/onsi/ginkgo/v2 v2.32.0
 	github.com/onsi/gomega v1.42.1
+	github.com/openshift/api v0.0.0-20260605005319-1194f4c62539
 	github.com/run-ai/karta v0.1.1-0.20260708043952-998140308a96
 	github.com/stretchr/testify v1.12.1
 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
@@ -120,7 +121,6 @@ require (
 	github.com/dsx-ai-factory/run-ai/runai-clients/assets-service-client v0.0.0 // indirect
 	github.com/dsx-ai-factory/run-ai/runai-clients/k8s-objects-tracker-client v0.0.0 // indirect
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/personalcreds v0.0.0 // indirect
-	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/go-operator v0.0.0-20250716113405-6ec301e09307 // indirect
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/sdk v0.0.0-20250907093507-4e419875bd3d // indirect
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/workload-common v0.0.0 // indirect
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/workload-controller v0.0.0 // indirect
@@ -142,7 +142,6 @@ require (
 	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
-	github.com/go-logr/zapr v1.3.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-openapi/jsonpointer v1.0.1 // indirect
 	github.com/go-openapi/jsonreference v1.0.1 // indirect
@@ -227,7 +226,6 @@ require (
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.1.1 // indirect
-	github.com/openshift/api v0.0.0-20260605005319-1194f4c62539 // indirect
 	github.com/paulmach/orb v0.13.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect
 	github.com/pierrec/lz4/v4 v4.1.31 // indirect
@@ -371,7 +369,6 @@ replace github.com/dsx-ai-factory/run-ai/control-plane/workloads => ../workloads
 
 replace github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies => ../workloads-and-policies
 
-replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/go-operator => ../../runai-cluster/cluster/go-operator
 
 replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/dromos/api/v1alpha1 => ../../runai-cluster/cluster/dromos/api/v1alpha1
 

@@ -21,8 +21,8 @@ require (
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/extensions v0.0.0-00010101000000-000000000000
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/getters v0.0.0-00010101000000-000000000000
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/resourceutils v0.0.0-00010101000000-000000000000
+	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/scheme-init v0.0.0-00010101000000-000000000000
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/dromos/api/v1alpha1 v0.0.0
-	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/go-operator v0.0.0-20250716113405-6ec301e09307
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/sdk v0.0.0-20250907093507-4e419875bd3d
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/workload-common v0.0.0
 	github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/workload-controller v0.0.0
@@ -242,7 +242,8 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/go-operator => ../go-operator
+
+replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/common/scheme-init => ../common/scheme-init
 
 replace github.com/dsx-ai-factory/run-ai/runai-cluster/cluster/sdk => ../sdk
 
