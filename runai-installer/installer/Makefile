@@ -63,7 +63,7 @@ lint-internal: git-config-command
 
 # Keeps the internal variant compiling and its command surface tested, so that
 # a change to the released commands cannot silently break the internal build.
-validate: git-config-command 
+validate: git-config-command
 	go build -tags "$(INTERNAL_TAG)" ./...
 	go test -tags "$(INTERNAL_TAG)" ./internal/cli/...
 .PHONY: validate
