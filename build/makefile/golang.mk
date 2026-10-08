@@ -230,7 +230,7 @@ test-go-acc-local: git-config-command gocache
 .PHONY: test-go-acc-local
 
 
-generate-mocks: git-config-command
+generate-mocks: git-config-command gocache
 	@if [ ! -f .mockery.yml ] && [ ! -f .mockery.yaml ]; then \
 		${ECHO_COMMAND} ${YELLOW_CONSOLE} "${CONSOLE_PREFIX} No .mockery.yml in ${SERVICE_NAME}; nothing to generate" ${BASE_CONSOLE}; \
 		exit 0; \
@@ -284,7 +284,7 @@ generate-mocks-local: git-config-command
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: generate-mocks-local
 
-generate-mocks-client: git-config-command
+generate-mocks-client: git-config-command gocache
 	@if [ ! -f pkg/client/.mockery.yml ] && [ ! -f pkg/client/.mockery.yaml ]; then \
 		${ECHO_COMMAND} ${YELLOW_CONSOLE} "${CONSOLE_PREFIX} No pkg/client/.mockery.yml in ${SERVICE_NAME}; nothing to generate" ${BASE_CONSOLE}; \
 		exit 0; \
