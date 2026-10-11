@@ -1,0 +1,20 @@
+type: object
+required: [id, workloadId, workloadName, subject, subjectType, action, acceptedAt]
+properties:
+  id:
+    type: string
+    format: uuid
+  workloadId:
+    type: string
+    format: uuid
+  workloadName:
+    type: string
+  subject:
+    type: string
+  subjectType:
+    type: string
+  action:
+    $ref: './WorkloadActionType.yaml'
+  acceptedAt:
+    type: string
+    format: date-time

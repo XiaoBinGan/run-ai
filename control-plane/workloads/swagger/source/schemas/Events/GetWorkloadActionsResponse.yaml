@@ -1,0 +1,11 @@
+type: object
+required: [actions]
+properties:
+  actions:
+    type: array
+    items:
+      $ref: './WorkloadActionRecord.yaml'
+  next:
+    type: integer
+    format: int32
+    example: 50
