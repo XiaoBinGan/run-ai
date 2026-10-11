@@ -49,6 +49,11 @@ func InitGoRoutines(stopCh <-chan struct{}) {
 	chartUploadConf := runai_config.Get[*config.ChartUploadConfig]()
 
 	cleanupQueries := []string{getWorkloadsDeleteQuery(dbCleanerConf), eventsDeleteQuery}
+	if dbCleanerConf.WorkloadActionsDaysToLive > 0 {
+		cleanupQueries = append(cleanupQueries, fmt.Sprintf("DELETE FROM workloads_action_history WHERE accepted_at < NOW() - INTERVAL '%d' DAY;", dbCleanerConf.WorkloadActionsDaysToLive))
+	} else {
+		logging.Warnf("workload_actions_days_to_live is %d; disabling workload action cleanup", dbCleanerConf.WorkloadActionsDaysToLive)
+	}
 	// A non-positive retention would reap every staged chart on the next run (0 => older than now,
 	// negative => a future cutoff), so treat <=0 as "cleanup disabled", matching InitRefresher below.
 	if chartUploadConf.RetentionMinutes > 0 {

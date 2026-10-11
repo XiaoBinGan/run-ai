@@ -68,6 +68,9 @@ func HandleClusterDeleteRequest(ctx context.Context, req *events.ClusterDelete) 
 	if err := dao.DbDeleteWorkloadEventsOfClusterId(ctx, tenantIdStr, req.ClusterId); err != nil {
 		resultErr = multierror.Append(resultErr, err)
 	}
+	if err := dao.DbDeleteWorkloadActionHistoryOfClusterId(ctx, tenantIdStr, req.ClusterId); err != nil {
+		resultErr = multierror.Append(resultErr, err)
+	}
 	if err := dao.DeletePrioritiesOfClusterId(ctx, tenantIdStr, req.ClusterId); err != nil {
 		resultErr = multierror.Append(resultErr, err)
 	}
@@ -89,6 +92,9 @@ func HandleTenantDeleteRequest(ctx context.Context, req *events.TenantDelete) er
 	}
 
 	if err := dao.DbDeleteWorkloadEventsOfTenantId(ctx, req.TenantId); err != nil {
+		resultErr = multierror.Append(resultErr, err)
+	}
+	if err := dao.DbDeleteWorkloadActionHistoryOfTenantId(ctx, req.TenantId); err != nil {
 		resultErr = multierror.Append(resultErr, err)
 	}
 

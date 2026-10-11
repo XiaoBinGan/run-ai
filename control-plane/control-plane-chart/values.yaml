@@ -3323,6 +3323,9 @@ workloads:
     # (CHART_RETENTION_MINUTES). Charts referenced by an already-deployed application
     # are removed regardless; this bounds abandoned/unclaimed uploads. Default 24h.
     chartRetentionMinutes: 1440
+    # Delete workload action history this many days after accepted_at. Workload deletion
+    # does not remove it. Tenant or cluster deletion removes its related action history.
+    workloadActionsDaysToLive: 90
     server:
       writeTimeout: 2m
       readTimeout: 2m

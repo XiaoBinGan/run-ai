@@ -26,6 +26,7 @@ func (c *ServerConfig) SetDefaults() {
 
 type DBCleanerConfig struct {
 	CleanerIntervalHours           int `mapstructure:"cleaner_interval_hours"`
+	WorkloadActionsDaysToLive      int `mapstructure:"workload_actions_days_to_live"`
 	DeletedWorkloadsDaysToLive     int `mapstructure:"deleted_workloads_days_to_live"`
 	FinishedWorkloadsDaysToLive    int `mapstructure:"finished_workloads_days_to_live"`
 	CreatingWorkloadsMinutesToLive int `mapstructure:"creating_workloads_minutes_to_live"`
@@ -33,6 +34,7 @@ type DBCleanerConfig struct {
 
 func (c *DBCleanerConfig) SetDefaults() {
 	c.CleanerIntervalHours = 24
+	c.WorkloadActionsDaysToLive = 90
 	c.DeletedWorkloadsDaysToLive = 14
 	c.FinishedWorkloadsDaysToLive = 28
 	c.CreatingWorkloadsMinutesToLive = 60
