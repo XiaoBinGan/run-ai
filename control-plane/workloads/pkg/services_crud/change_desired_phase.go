@@ -264,6 +264,7 @@ func (wbp *WorkloadBatchProcessor) processSingleWorkload(ctx context.Context, wo
 		return isGeneric, err
 	}
 
+	recordWorkspaceStateAction(ctx, workload, wbp.desiredPhase, *updateTime)
 	return isGeneric, nil
 }
 
@@ -367,6 +368,8 @@ func (wbp *WorkloadBatchProcessor) processGenericWorkloadsBatch(ctx context.Cont
 		return
 	}
 
+	acceptedAt := time.Now().UTC()
+
 	//
 	//   add workloads that failed in workloads manager to the list of errors
 	//
@@ -390,6 +393,8 @@ func (wbp *WorkloadBatchProcessor) processGenericWorkloadsBatch(ctx context.Cont
 			logging.WithCtx(runaictx.LoggerHook(ctx)).Warnf("unexpected workload %s reported by workloads manager", workloadId)
 			continue
 		}
+
+		recordWorkspaceStateAction(ctx, workload, wbp.desiredPhase, acceptedAt)
 
 		// Mirror the V1 behaviour: immediately patch the workloads table phase to
 		// Stopping/Resuming/Deleting so the UI shows the progress state right away,

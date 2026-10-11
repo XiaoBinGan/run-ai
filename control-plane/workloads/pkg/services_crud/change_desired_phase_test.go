@@ -19,6 +19,7 @@ import (
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/clients/clusterservice"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/clients/org_unit"
 	workloadsMgrClient "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/clients/workloads_mgr"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/dao"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models_crud"
 	testing "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/test"
@@ -37,6 +38,7 @@ import (
 // workloadsMgrMock is a minimal in-process mock for workloads_mgr.ClientInterface.
 // It records the last BatchWorkloads call so tests can assert on it.
 type workloadsMgrMock struct {
+	createResponse *workloads_mgr_api.WorkloadV2
 	lastAction     workloads_mgr_api.WorkloadsV2BatchAction
 	lastIds        []string
 	returnErr      *workloads_mgr_api.Error
@@ -58,7 +60,7 @@ func (m *workloadsMgrMock) BatchWorkloads(_ context.Context, batch workloads_mgr
 }
 
 func (m *workloadsMgrMock) CreateWorkloadV2(_ context.Context, _ workloads_mgr_api.WorkloadV2CreateRequest) (*workloads_mgr_api.WorkloadV2, *workloads_mgr_api.Error) {
-	return nil, nil
+	return m.createResponse, m.returnErr
 }
 
 func (m *workloadsMgrMock) GetWorkloadV2ById(_ context.Context, _ string) (*workloads_mgr_api.WorkloadV2GetResponse, *workloads_mgr_api.Error) {
@@ -138,6 +140,46 @@ var _ = Describe("ChangeDesiredStates — V2 proxy routing", func() {
 
 	AfterEach(func() {
 		testing.CleanTables()
+	})
+
+	DescribeTable("records exactly one accepted workspace state action", func(native bool, phase api.WorkloadDesiredPhase, expected string) {
+		id := insertV2Workload(randoms.TenantId, randoms.ClusterId, randoms.ProjectIdStr, true)
+		_, err := runaidb.DB().Table("workloads").Where("id = ?", id).Update("type", Workspace)
+		Expect(err).NotTo(HaveOccurred())
+		if native {
+			_, err = runaidb.DB().Table("workloads").Where("id = ?", id).Update("source_api", "WorkloadsV1")
+			Expect(err).NotTo(HaveOccurred())
+		}
+		if phase == api.WORKLOADDESIREDPHASE_RUNNING {
+			_, err = runaidb.DB().Table("workloads").Where("id = ?", id).Update("phase", string(api.PHASE_STOPPED))
+			Expect(err).NotTo(HaveOccurred())
+		}
+		response, err := ChangeDesiredStates(ctx, []string{id}, phase)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(response.Code).To(Equal(http.StatusAccepted))
+		rows, apiErr := dao.DbGetWorkloadActions(ctx, randoms.TenantId, uuid.MustParse(id), 0, 0)
+		Expect(apiErr).To(BeNil())
+		Expect(rows).To(HaveLen(1))
+		Expect(rows[0].Action).To(Equal(expected))
+		Expect(rows[0].Subject).To(Equal(testing.TestUser))
+		Expect(rows[0].SubjectType).To(Equal("user"))
+	},
+		Entry("native suspend", true, api.WORKLOADDESIREDPHASE_STOPPED, "suspend"),
+		Entry("native resume", true, api.WORKLOADDESIREDPHASE_RUNNING, "resume"),
+		Entry("native delete", true, api.WORKLOADDESIREDPHASE_DELETED, "delete"),
+		Entry("manager-backed suspend", false, api.WORKLOADDESIREDPHASE_STOPPED, "suspend"),
+		Entry("manager-backed resume", false, api.WORKLOADDESIREDPHASE_RUNNING, "resume"),
+		Entry("manager-backed delete", false, api.WORKLOADDESIREDPHASE_DELETED, "delete"),
+	)
+	It("does not record synchronously rejected workspace state changes", func() {
+		id := insertV2Workload(randoms.TenantId, randoms.ClusterId, randoms.ProjectIdStr, false)
+		_, err := runaidb.DB().Table("workloads").Where("id = ?", id).Update("type", Workspace)
+		Expect(err).NotTo(HaveOccurred())
+		response, _ := ChangeDesiredStates(ctx, []string{id}, api.WORKLOADDESIREDPHASE_STOPPED)
+		Expect(response.Code).To(Equal(http.StatusBadRequest))
+		rows, apiErr := dao.DbGetWorkloadActions(ctx, randoms.TenantId, uuid.MustParse(id), 0, 0)
+		Expect(apiErr).To(BeNil())
+		Expect(rows).To(BeEmpty())
 	})
 
 	Context("suspend request (STOPPED desired phase)", func() {
@@ -224,7 +266,6 @@ var _ = Describe("ChangeDesiredStates — V2 proxy routing", func() {
 			Expect(err).To(BeNil())
 			// The manager was reached (error path exercised).
 			Expect(mgr.lastIds).To(ConsistOf(id))
-			// The error is swallowed; the outer call still returns a 2xx code.
 			Expect(resp.Code).To(BeNumerically(">=", http.StatusOK))
 			Expect(resp.Code).To(BeNumerically("<", http.StatusMultipleChoices))
 		})
