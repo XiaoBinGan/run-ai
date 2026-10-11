@@ -249,9 +249,14 @@ validate-mockery-client: VALIDATE_MOCKS_TARGET=generate-mocks-client
 validate-mockery validate-mockery-client: git-config-command
 	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Validating mocks are up to date for ${SERVICE_NAME}" ${BASE_CONSOLE}
 	@set -e; \
-	before=$$(git status --porcelain --untracked-files=all); \
+	mocks_state() { \
+		git status --porcelain --untracked-files=all; \
+		git diff HEAD; \
+		git ls-files --others --exclude-standard | while IFS= read -r f; do git hash-object -- "$$f"; done; \
+	}; \
+	before=$$(mocks_state); \
 	$(MAKE) $(VALIDATE_MOCKS_TARGET); \
-	after=$$(git status --porcelain --untracked-files=all); \
+	after=$$(mocks_state); \
 	if [ "$$before" != "$$after" ]; then \
 		${ECHO_COMMAND} ${RED_CONSOLE} "${CONSOLE_PREFIX} mockery produced uncommitted changes in ${SERVICE_NAME}. Run 'make $(VALIDATE_MOCKS_TARGET)' and commit them." ${BASE_CONSOLE}; \
 		git --no-pager status --porcelain --untracked-files=all; \
