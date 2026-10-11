@@ -52,12 +52,6 @@ func recordWorkloadStateAction(ctx context.Context, workload *models.WorkloadVie
 	recordWorkloadAction(ctx, actionhistory.WorkloadDetails{ID: workload.ID, ClusterID: workload.ClusterID, Name: workload.Name, ProjectID: workload.ProjectID, DepartmentID: workload.DepartmentID}, action, acceptedAt)
 }
 
-func recordWorkspaceStateAction(ctx context.Context, workload *models.WorkloadView, desiredPhase api.WorkloadDesiredPhase, acceptedAt time.Time) {
-	if workload.Type == Workspace {
-		recordWorkloadStateAction(ctx, workload, desiredPhase, acceptedAt)
-	}
-}
-
 func supportsV1RunStateHistory(workloadType string) bool {
 	return workloadType == Workspace || workloadType == Training || workloadType == Distributed
 }

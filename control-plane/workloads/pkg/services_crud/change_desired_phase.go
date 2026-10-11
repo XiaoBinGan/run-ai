@@ -123,13 +123,13 @@ func (wbp *WorkloadBatchProcessor) processMultipleWorkloads(ctx context.Context,
 
 			workloads, failures := wbp.getWorkloadsWithFailures(ctx, workloadIdsBatch)
 			if failures != nil {
-				result.Failed = append(result.Failed, failures...)
+				resultChan <- openapi.BatchResponse{Failed: failures}
 				return
 			}
 
-			result.Failed = append(result.Failed, wbp.collectMissingWorkloadsFailures(workloadIdsBatch, workloads)...)
-
 			batchResult := wbp.processWorkloadsBatch(ctx, workloads)
+			missingFailures := wbp.collectMissingWorkloadsFailures(workloadIdsBatch, workloads)
+			batchResult.Failed = append(missingFailures, batchResult.Failed...)
 			resultChan <- batchResult
 		}(workloadIdsBatch)
 	}
@@ -264,11 +264,15 @@ func (wbp *WorkloadBatchProcessor) processSingleWorkload(ctx context.Context, wo
 		return isGeneric, err
 	}
 
-	recordWorkspaceStateAction(ctx, workload, wbp.desiredPhase, *updateTime)
+	recordWorkloadStateAction(ctx, workload, wbp.desiredPhase, *updateTime)
 	return isGeneric, nil
 }
 
 func isPermittedForWorkload(workload *models.WorkloadView, permittedScopes *authorization_api.PermittedScopes) bool {
+	if permittedScopes == nil {
+		return false
+	}
+
 	if convutils.BoolIsTrue(permittedScopes.System) {
 		return true
 	}
@@ -367,7 +371,6 @@ func (wbp *WorkloadBatchProcessor) processGenericWorkloadsBatch(ctx context.Cont
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("failed to process generic workloads batch: %s: %v", err.Message, err.Details)
 		return
 	}
-
 	acceptedAt := time.Now().UTC()
 
 	//
@@ -394,7 +397,7 @@ func (wbp *WorkloadBatchProcessor) processGenericWorkloadsBatch(ctx context.Cont
 			continue
 		}
 
-		recordWorkspaceStateAction(ctx, workload, wbp.desiredPhase, acceptedAt)
+		recordWorkloadStateAction(ctx, workload, wbp.desiredPhase, acceptedAt)
 
 		// Mirror the V1 behaviour: immediately patch the workloads table phase to
 		// Stopping/Resuming/Deleting so the UI shows the progress state right away,
