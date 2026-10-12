@@ -34,9 +34,9 @@ func NewEventsAPIService() *EventsAPIService {
 	return &EventsAPIService{}
 }
 
-// GetWorkloadActions - Get workload action history.
-func (s *EventsAPIService) GetWorkloadActions(ctx context.Context, workloadId string, offset int32, limit int32) (ImplResponse, error) {
-	// TODO - update GetWorkloadActions with the required logic for this service method.
+// GetWorkloadActionsHistory - Get workload action history.
+func (s *EventsAPIService) GetWorkloadActionsHistory(ctx context.Context, workloadId string, offset int32, limit int32) (ImplResponse, error) {
+	// TODO - update GetWorkloadActionsHistory with the required logic for this service method.
 	// Add api_events_service.go to the .openapi-generator-ignore to avoid overwriting this service implementation when updating open api generation.
 
 	// TODO: Uncomment the next line to return response Response(200, GetWorkloadActionsResponse{}) or use other options such as http.Ok ...
@@ -60,7 +60,7 @@ func (s *EventsAPIService) GetWorkloadActions(ctx context.Context, workloadId st
 	// TODO: Uncomment the next line to return response Response(503, Error{}) or use other options such as http.Ok ...
 	// return Response(503, Error{}), nil
 
-	return Response(http.StatusNotImplemented, nil), errors.New("GetWorkloadActions method not implemented")
+	return Response(http.StatusNotImplemented, nil), errors.New("GetWorkloadActionsHistory method not implemented")
 }
 
 // SyncEvents - Sync events.

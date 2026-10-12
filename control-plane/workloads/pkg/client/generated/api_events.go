@@ -57,19 +57,19 @@ type EventsAPI interface {
 	GetRevisionHistoryExecute(r ApiGetRevisionHistoryRequest) (*GetWorkloadHistory200Response, *http.Response, error)
 
 	/*
-		GetWorkloadActions Get workload action history.
+		GetWorkloadActionsHistory Get workload action history.
 
 		Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.
 
 		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 		@param workloadId The  Universally Unique Identifier (UUID) of the workload.
-		@return ApiGetWorkloadActionsRequest
+		@return ApiGetWorkloadActionsHistoryRequest
 	*/
-	GetWorkloadActions(ctx context.Context, workloadId string) ApiGetWorkloadActionsRequest
+	GetWorkloadActionsHistory(ctx context.Context, workloadId string) ApiGetWorkloadActionsHistoryRequest
 
-	// GetWorkloadActionsExecute executes the request
+	// GetWorkloadActionsHistoryExecute executes the request
 	//  @return GetWorkloadActionsResponse
-	GetWorkloadActionsExecute(r ApiGetWorkloadActionsRequest) (*GetWorkloadActionsResponse, *http.Response, error)
+	GetWorkloadActionsHistoryExecute(r ApiGetWorkloadActionsHistoryRequest) (*GetWorkloadActionsResponse, *http.Response, error)
 
 	/*
 		GetWorkloadEvents Get the workload events.
@@ -493,7 +493,7 @@ func (a *EventsAPIService) GetRevisionHistoryExecute(r ApiGetRevisionHistoryRequ
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetWorkloadActionsRequest struct {
+type ApiGetWorkloadActionsHistoryRequest struct {
 	ctx        context.Context
 	ApiService EventsAPI
 	workloadId string
@@ -502,32 +502,32 @@ type ApiGetWorkloadActionsRequest struct {
 }
 
 // The offset of the first item returned in the collection.
-func (r ApiGetWorkloadActionsRequest) Offset(offset int32) ApiGetWorkloadActionsRequest {
+func (r ApiGetWorkloadActionsHistoryRequest) Offset(offset int32) ApiGetWorkloadActionsHistoryRequest {
 	r.offset = &offset
 	return r
 }
 
 // The maximum number of entries to return.
-func (r ApiGetWorkloadActionsRequest) Limit(limit int32) ApiGetWorkloadActionsRequest {
+func (r ApiGetWorkloadActionsHistoryRequest) Limit(limit int32) ApiGetWorkloadActionsHistoryRequest {
 	r.limit = &limit
 	return r
 }
 
-func (r ApiGetWorkloadActionsRequest) Execute() (*GetWorkloadActionsResponse, *http.Response, error) {
-	return r.ApiService.GetWorkloadActionsExecute(r)
+func (r ApiGetWorkloadActionsHistoryRequest) Execute() (*GetWorkloadActionsResponse, *http.Response, error) {
+	return r.ApiService.GetWorkloadActionsHistoryExecute(r)
 }
 
 /*
-GetWorkloadActions Get workload action history.
+GetWorkloadActionsHistory Get workload action history.
 
 Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param workloadId The  Universally Unique Identifier (UUID) of the workload.
-	@return ApiGetWorkloadActionsRequest
+	@return ApiGetWorkloadActionsHistoryRequest
 */
-func (a *EventsAPIService) GetWorkloadActions(ctx context.Context, workloadId string) ApiGetWorkloadActionsRequest {
-	return ApiGetWorkloadActionsRequest{
+func (a *EventsAPIService) GetWorkloadActionsHistory(ctx context.Context, workloadId string) ApiGetWorkloadActionsHistoryRequest {
+	return ApiGetWorkloadActionsHistoryRequest{
 		ApiService: a,
 		ctx:        ctx,
 		workloadId: workloadId,
@@ -537,7 +537,7 @@ func (a *EventsAPIService) GetWorkloadActions(ctx context.Context, workloadId st
 // Execute executes the request
 //  @return GetWorkloadActionsResponse
 ///////// RUNAI (remove isResponseFile filter on pointer)//////////
-func (a *EventsAPIService) GetWorkloadActionsExecute(r ApiGetWorkloadActionsRequest) (*GetWorkloadActionsResponse, *http.Response, error) {
+func (a *EventsAPIService) GetWorkloadActionsHistoryExecute(r ApiGetWorkloadActionsHistoryRequest) (*GetWorkloadActionsResponse, *http.Response, error) {
 	var (
 		localVarHTTPMethod  = http.MethodGet
 		localVarPostBody    interface{}
@@ -546,7 +546,7 @@ func (a *EventsAPIService) GetWorkloadActionsExecute(r ApiGetWorkloadActionsRequ
 	)
 	///////////////////////////
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EventsAPIService.GetWorkloadActions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "EventsAPIService.GetWorkloadActionsHistory")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}

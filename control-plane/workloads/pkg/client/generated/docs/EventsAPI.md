@@ -6,7 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**GetRevisionEvents**](EventsAPI.md#GetRevisionEvents) | **Get** /api/v1/workloads/inferences/revisions/{revisionId}/events | Get revision events by id.
 [**GetRevisionHistory**](EventsAPI.md#GetRevisionHistory) | **Get** /api/v1/workloads/inferences/revisions/{revisionId}/history | Get the revision history.
-[**GetWorkloadActions**](EventsAPI.md#GetWorkloadActions) | **Get** /api/v1/workloads/{workloadId}/actions | Get workload action history.
+[**GetWorkloadActionsHistory**](EventsAPI.md#GetWorkloadActionsHistory) | **Get** /api/v1/workloads/{workloadId}/actions | Get workload action history.
 [**GetWorkloadEvents**](EventsAPI.md#GetWorkloadEvents) | **Get** /api/v1/workloads/{workloadId}/events | Get the workload events.
 [**GetWorkloadHistory**](EventsAPI.md#GetWorkloadHistory) | **Get** /api/v1/workloads/{workloadId}/history | Get the workload history.
 [**SyncEvents**](EventsAPI.md#SyncEvents) | **Post** /api/v1/workloads/events | Sync events.
@@ -163,9 +163,9 @@ Name | Type | Description  | Notes
 [[Back to README]](../README.md)
 
 
-## GetWorkloadActions
+## GetWorkloadActionsHistory
 
-> GetWorkloadActionsResponse GetWorkloadActions(ctx, workloadId).Offset(offset).Limit(limit).Execute()
+> GetWorkloadActionsResponse GetWorkloadActionsHistory(ctx, workloadId).Offset(offset).Limit(limit).Execute()
 
 Get workload action history.
 
@@ -190,13 +190,13 @@ func main() {
 
 	configuration := openapiclient.NewConfiguration()
 	apiClient := openapiclient.NewAPIClient(configuration)
-	resp, r, err := apiClient.EventsAPI.GetWorkloadActions(context.Background(), workloadId).Offset(offset).Limit(limit).Execute()
+	resp, r, err := apiClient.EventsAPI.GetWorkloadActionsHistory(context.Background(), workloadId).Offset(offset).Limit(limit).Execute()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error when calling `EventsAPI.GetWorkloadActions``: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Error when calling `EventsAPI.GetWorkloadActionsHistory``: %v\n", err)
 		fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
 	}
-	// response from `GetWorkloadActions`: GetWorkloadActionsResponse
-	fmt.Fprintf(os.Stdout, "Response from `EventsAPI.GetWorkloadActions`: %v\n", resp)
+	// response from `GetWorkloadActionsHistory`: GetWorkloadActionsResponse
+	fmt.Fprintf(os.Stdout, "Response from `EventsAPI.GetWorkloadActionsHistory`: %v\n", resp)
 }
 ```
 
@@ -210,7 +210,7 @@ Name | Type | Description  | Notes
 
 ### Other Parameters
 
-Other parameters are passed through a pointer to a apiGetWorkloadActionsRequest struct via the builder pattern
+Other parameters are passed through a pointer to a apiGetWorkloadActionsHistoryRequest struct via the builder pattern
 
 
 Name | Type | Description  | Notes

@@ -108,7 +108,7 @@ func NewEventsAPIController(s EventsAPIServicer, opts ...EventsAPIOption) *Event
 // Routes returns all the api routes for the EventsAPIController
 func (c *EventsAPIController) Routes() Routes {
 	return Routes{
-		"GetWorkloadActions": Route{
+		"GetWorkloadActionsHistory": Route{
 			strings.ToUpper("Get"),
 			"/api/v1/workloads/{workloadId}/actions",
 			////////////////////////////// RUNAI START (11.4) ///////////////////////////////
@@ -124,7 +124,7 @@ func (c *EventsAPIController) Routes() Routes {
 				},
 				func(next http.HandlerFunc) http.HandlerFunc {
 					////////////////////////////// RUNAI END (11.4) ///////////////////////////////
-					return c.GetWorkloadActions
+					return c.GetWorkloadActionsHistory
 					////////////////////////////// RUNAI START (11.5) ///////////////////////////////
 				},
 			),
@@ -243,8 +243,8 @@ func (c *EventsAPIController) Routes() Routes {
 	}
 }
 
-// GetWorkloadActions - Get workload action history.
-func (c *EventsAPIController) GetWorkloadActions(w http.ResponseWriter, r *http.Request) {
+// GetWorkloadActionsHistory - Get workload action history.
+func (c *EventsAPIController) GetWorkloadActionsHistory(w http.ResponseWriter, r *http.Request) {
 	query, err := parseQuery(r.URL.RawQuery)
 	if err != nil {
 		c.errorHandler(w, r, &ParsingError{Err: err}, nil, nil)
@@ -287,7 +287,7 @@ func (c *EventsAPIController) GetWorkloadActions(w http.ResponseWriter, r *http.
 		var param int32 = 50
 		limitParam = param
 	}
-	result, err := c.service.GetWorkloadActions(r.Context(), workloadIdParam, offsetParam, limitParam)
+	result, err := c.service.GetWorkloadActionsHistory(r.Context(), workloadIdParam, offsetParam, limitParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result, nil)

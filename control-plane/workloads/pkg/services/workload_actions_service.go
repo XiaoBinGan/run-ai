@@ -15,7 +15,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *EventsService) GetWorkloadActions(ctx context.Context, workloadId string, offset, limit int32) (api.ImplResponse, error) {
+func (s *EventsService) GetWorkloadActionsHistory(ctx context.Context, workloadId string, offset, limit int32) (api.ImplResponse, error) {
 	id, err := uuid.Parse(workloadId)
 	if err != nil {
 		return NewErrorResponse(api.NewValidationError("workload Id must be a valid uuid")), nil

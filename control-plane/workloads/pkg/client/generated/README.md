@@ -103,7 +103,7 @@ Class | Method | HTTP request | Description
 *DistributedInferencesAPI* | [**UpdateDistributedInferenceSpec**](docs/DistributedInferencesAPI.md#updatedistributedinferencespec) | **Patch** /api/v1/workloads/distributed-inferences/{workloadId} | Update distributed inference spec.
 *EventsAPI* | [**GetRevisionEvents**](docs/EventsAPI.md#getrevisionevents) | **Get** /api/v1/workloads/inferences/revisions/{revisionId}/events | Get revision events by id.
 *EventsAPI* | [**GetRevisionHistory**](docs/EventsAPI.md#getrevisionhistory) | **Get** /api/v1/workloads/inferences/revisions/{revisionId}/history | Get the revision history.
-*EventsAPI* | [**GetWorkloadActions**](docs/EventsAPI.md#getworkloadactions) | **Get** /api/v1/workloads/{workloadId}/actions | Get workload action history.
+*EventsAPI* | [**GetWorkloadActionsHistory**](docs/EventsAPI.md#getworkloadactionshistory) | **Get** /api/v1/workloads/{workloadId}/actions | Get workload action history.
 *EventsAPI* | [**GetWorkloadEvents**](docs/EventsAPI.md#getworkloadevents) | **Get** /api/v1/workloads/{workloadId}/events | Get the workload events.
 *EventsAPI* | [**GetWorkloadHistory**](docs/EventsAPI.md#getworkloadhistory) | **Get** /api/v1/workloads/{workloadId}/history | Get the workload history.
 *EventsAPI* | [**SyncEvents**](docs/EventsAPI.md#syncevents) | **Post** /api/v1/workloads/events | Sync events.

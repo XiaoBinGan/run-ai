@@ -28510,9 +28510,9 @@ export const EventsApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getWorkloadActions: async (workloadId: string, offset?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getWorkloadActionsHistory: async (workloadId: string, offset?: number, limit?: number, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'workloadId' is not null or undefined
-            assertParamExists('getWorkloadActions', 'workloadId', workloadId)
+            assertParamExists('getWorkloadActionsHistory', 'workloadId', workloadId)
             const localVarPath = `/api/v1/workloads/{workloadId}/actions`
                 .replace(`{${"workloadId"}}`, encodeURIComponent(String(workloadId)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -28734,8 +28734,8 @@ export const EventsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getWorkloadActions(workloadId: string, offset?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetWorkloadActionsResponse>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getWorkloadActions(workloadId, offset, limit, options);
+        async getWorkloadActionsHistory(workloadId: string, offset?: number, limit?: number, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<GetWorkloadActionsResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getWorkloadActionsHistory(workloadId, offset, limit, options);
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
@@ -28820,8 +28820,8 @@ export const EventsApiFactory = function (configuration?: Configuration, basePat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getWorkloadActions(workloadId: string, offset?: number, limit?: number, options?: any): AxiosPromise<GetWorkloadActionsResponse> {
-            return localVarFp.getWorkloadActions(workloadId, offset, limit, options).then((request) => request(axios, basePath));
+        getWorkloadActionsHistory(workloadId: string, offset?: number, limit?: number, options?: any): AxiosPromise<GetWorkloadActionsResponse> {
+            return localVarFp.getWorkloadActionsHistory(workloadId, offset, limit, options).then((request) => request(axios, basePath));
         },
         /**
          * Retrieve all the workload events using a workload id.
@@ -28907,8 +28907,8 @@ export class EventsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof EventsApi
      */
-    public getWorkloadActions(workloadId: string, offset?: number, limit?: number, options?: AxiosRequestConfig) {
-        return EventsApiFp(this.configuration).getWorkloadActions(workloadId, offset, limit, options).then((request) => request(this.axios, this.basePath));
+    public getWorkloadActionsHistory(workloadId: string, offset?: number, limit?: number, options?: AxiosRequestConfig) {
+        return EventsApiFp(this.configuration).getWorkloadActionsHistory(workloadId, offset, limit, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

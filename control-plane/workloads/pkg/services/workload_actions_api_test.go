@@ -53,13 +53,13 @@ var _ = Describe("Workload action history", func() {
 		duplicate.Subject = "changed"
 		Expect(dao.DbInsertWorkloadActions(ctx, []models.WorkloadActionHistory{duplicate})).To(Succeed())
 
-		first := getWorkloadActions(service, ctx, workloadID, 0, 2)
+		first := getWorkloadActionsHistory(service, ctx, workloadID, 0, 2)
 		Expect(first.Next).To(Equal(int32(2)))
 		Expect(first.Actions).To(HaveLen(2))
 		Expect(first.Actions[0].Id).To(Equal(testing.TestUuid3))
 		Expect(first.Actions[1].Id).To(Equal(testing.TestUuid2))
 
-		second := getWorkloadActions(service, ctx, workloadID, first.Next, 2)
+		second := getWorkloadActionsHistory(service, ctx, workloadID, first.Next, 2)
 		Expect(second.Next).To(BeZero())
 		Expect(second.Actions).To(HaveLen(1))
 		Expect(second.Actions[0].Subject).To(Equal(testing.TestUser))
@@ -76,7 +76,7 @@ var _ = Describe("Workload action history", func() {
 			{ctx, uuid.New()},
 		}
 		for _, request := range requests {
-			Expect(getWorkloadActions(service, request.ctx, request.id, 0, 0).Actions).To(BeEmpty())
+			Expect(getWorkloadActionsHistory(service, request.ctx, request.id, 0, 0).Actions).To(BeEmpty())
 		}
 	})
 
@@ -92,7 +92,7 @@ var _ = Describe("Workload action history", func() {
 			id            string
 			offset, limit int32
 		}{{"invalid", 0, 0}, {workloadID.String(), -1, 1}, {workloadID.String(), 0, -1}} {
-			response, err := service.GetWorkloadActions(ctx, request.id, request.offset, request.limit)
+			response, err := service.GetWorkloadActionsHistory(ctx, request.id, request.offset, request.limit)
 			Expect(err).NotTo(HaveOccurred())
 			Expect(response.Code).To(Equal(http.StatusBadRequest))
 		}
@@ -105,7 +105,7 @@ var _ = Describe("Workload action history", func() {
 			batch[i].ID = uuid.New()
 		}
 		Expect(dao.DbInsertWorkloadActions(ctx, batch)).To(Succeed())
-		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(50))
+		Expect(getWorkloadActionsHistory(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(50))
 		Expect(storedWorkloadActions(ctx, workloadID, 999)).To(HaveLen(500))
 	})
 
@@ -197,14 +197,14 @@ var _ = Describe("Workload action history", func() {
 		_, err = runaidb.DB().Exec(actionQuery)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(storedWorkloadActions(ctx, orphan.WorkloadID, 0)).To(BeEmpty())
-		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
+		Expect(getWorkloadActionsHistory(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
 
 		_, err = runaidb.DB().Model(&models.Workload{}).Where("id = ?", workloadID).Update("deleted_at", time.Now())
 		Expect(err).NotTo(HaveOccurred())
 		_, err = runaidb.DB().Exec(actionQuery)
 		Expect(err).NotTo(HaveOccurred())
 		expectWorkloadAncestorProject(ctx, workloadID, "current-project")
-		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
+		Expect(getWorkloadActionsHistory(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
 
 		_, err = runaidb.DB().Unscoped().Where("id = ?", workloadID).Delete(&models.Workload{})
 		Expect(err).NotTo(HaveOccurred())
@@ -237,9 +237,9 @@ func testWorkloadActionRecords(workloadID uuid.UUID) []models.WorkloadActionHist
 	return records
 }
 
-func getWorkloadActions(service api.EventsAPIServicer, ctx context.Context, workloadID uuid.UUID, offset, limit int32) api.GetWorkloadActionsResponse {
+func getWorkloadActionsHistory(service api.EventsAPIServicer, ctx context.Context, workloadID uuid.UUID, offset, limit int32) api.GetWorkloadActionsResponse {
 	GinkgoHelper()
-	response, err := service.GetWorkloadActions(ctx, workloadID.String(), offset, limit)
+	response, err := service.GetWorkloadActionsHistory(ctx, workloadID.String(), offset, limit)
 	Expect(err).NotTo(HaveOccurred())
 	Expect(response.Code).To(Equal(http.StatusOK))
 	return response.Body.(api.GetWorkloadActionsResponse)
