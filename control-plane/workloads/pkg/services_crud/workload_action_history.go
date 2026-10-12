@@ -22,7 +22,7 @@ import (
 
 // Log history write failures without failing the accepted workload action.
 func recordWorkloadAction(ctx context.Context, workload actionhistory.WorkloadToLog, action api.WorkloadActionType, acceptedAt time.Time) {
-	record, err := actionhistory.WorkloadActionRecord(ctx, action, workload, acceptedAt)
+	record, err := actionhistory.NewWorkloadActionRecord(ctx, action, workload, acceptedAt)
 	if err == nil {
 		err = dao.DbInsertWorkloadActions(ctx, []models.WorkloadActionHistory{*record})
 	}

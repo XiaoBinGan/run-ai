@@ -45,7 +45,7 @@ func TestAuthenticatedContextValidation(t *testing.T) {
 		{"wrong subject type value", context.WithValue(authenticatedContext("42", "user@example.test", "user"), runaictx.CfSubjectType, 1)},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			if _, err := actionhistory.WorkloadActionRecord(tc.ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now()); err == nil {
+			if _, err := actionhistory.NewWorkloadActionRecord(tc.ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now()); err == nil {
 				t.Fatal("invalid authenticated identity was accepted")
 			}
 		})
@@ -70,7 +70,7 @@ func TestAcceptedActionSnapshot(t *testing.T) {
 			workload := acceptedWorkload()
 			acceptedAt := time.Date(2026, 10, 11, 14, 15, 16, 123456789, time.FixedZone("offset", 3*60*60))
 			action := api.WORKLOADACTIONTYPE_CREATE
-			first, err := actionhistory.WorkloadActionRecord(ctx, action, workload, acceptedAt)
+			first, err := actionhistory.NewWorkloadActionRecord(ctx, action, workload, acceptedAt)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -89,7 +89,7 @@ func TestAcceptedActionSnapshot(t *testing.T) {
 			// Mutating caller data and replacing context cannot alter a retained record.
 			workload.Name = "changed"
 			ctx = context.WithValue(ctx, runaictx.CfSubjectID, "another-user@example.test")
-			second, err := actionhistory.WorkloadActionRecord(ctx, action, workload, acceptedAt)
+			second, err := actionhistory.NewWorkloadActionRecord(ctx, action, workload, acceptedAt)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -115,7 +115,7 @@ func TestAuthenticatedTenantBoundaries(t *testing.T) {
 		{"9223372036854775807", 9223372036854775807},
 	} {
 		ctx := authenticatedContext(tc.input, "user@example.test", "user")
-		record, err := actionhistory.WorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now())
+		record, err := actionhistory.NewWorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now())
 		if err != nil || record == nil || uint64(record.TenantID) != tc.want {
 			t.Fatalf("tenant %q produced %+v, %v", tc.input, record, err)
 		}
@@ -132,7 +132,7 @@ func TestConcurrentAcceptedBatchItems(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			record, err := actionhistory.WorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_DELETE, acceptedWorkload(), time.Now())
+			record, err := actionhistory.NewWorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_DELETE, acceptedWorkload(), time.Now())
 			if err != nil {
 				errors <- err
 				return

@@ -26,8 +26,8 @@ type WorkloadToLog struct {
 	Name         string
 }
 
-// WorkloadActionRecord builds a history record from the authenticated request context.
-func WorkloadActionRecord(ctx context.Context, action api.WorkloadActionType, workload WorkloadToLog, acceptedAt time.Time) (*models.WorkloadActionHistory, error) {
+// NewWorkloadActionRecord builds a history record from the authenticated request context.
+func NewWorkloadActionRecord(ctx context.Context, action api.WorkloadActionType, workload WorkloadToLog, acceptedAt time.Time) (*models.WorkloadActionHistory, error) {
 	if ctx == nil {
 		return nil, fmt.Errorf("missing authenticated context")
 	}
