@@ -8,7 +8,6 @@ package actionhistory_test
 import (
 	"context"
 	"sync"
-	"testing"
 	"time"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
@@ -16,6 +15,8 @@ import (
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/runaictx"
 	"github.com/google/uuid"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 func authenticatedContext(tenant, subject, subjectType string) context.Context {
@@ -28,133 +29,106 @@ func acceptedWorkload() actionhistory.WorkloadToLog {
 	return actionhistory.WorkloadToLog{ID: uuid.New(), ClusterID: uuid.New(), Name: "workload"}
 }
 
-func TestAuthenticatedContextValidation(t *testing.T) {
-	for _, tc := range []struct {
-		name string
-		ctx  context.Context
-	}{
-		{"nil context", nil},
-		{"missing identity", context.Background()},
-		{"negative tenant", authenticatedContext("-1", "user@example.test", "user")},
-		{"non-numeric tenant", authenticatedContext("not-a-tenant", "user@example.test", "user")},
-		{"bigint overflow", authenticatedContext("9223372036854775808", "user@example.test", "user")},
-		{"empty subject type", authenticatedContext("42", "user@example.test", "")},
-		{"blank subject type", authenticatedContext("42", "user@example.test", " \t")},
-		{"wrong subject type value", context.WithValue(authenticatedContext("42", "user@example.test", "user"), runaictx.CfSubjectType, 1)},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			if _, err := actionhistory.NewWorkloadActionRecord(tc.ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now()); err == nil {
-				t.Fatal("invalid authenticated identity was accepted")
-			}
-		})
-	}
+type authenticatedContextCase struct {
+	ctx context.Context
 }
 
-func TestAcceptedActionSnapshot(t *testing.T) {
-	for _, tc := range []struct {
-		name, subject, subjectType string
-	}{
-		{"gateway user", "user@example.test", "User"},
-		{"gateway service account", "service-account-id", "ServiceAccount"},
-		{"user", "user@example.test", "user"},
-		{"service account", "service-account-id", "service-account"},
-		{"legacy app", "app-id", "App"},
-		{"legacy lowercase app", "app-id", "app"},
-		{"future identity type", "identity-id", "FutureIdentity"},
-		{"value preserved without trimming", "identity-id", " User "},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			ctx := authenticatedContext("42", tc.subject, tc.subjectType)
-			workload := acceptedWorkload()
-			acceptedAt := time.Date(2026, 10, 11, 14, 15, 16, 123456789, time.FixedZone("offset", 3*60*60))
-			action := api.WORKLOADACTIONTYPE_CREATE
-			first, err := actionhistory.NewWorkloadActionRecord(ctx, action, workload, acceptedAt)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if first == nil || first.ID == uuid.Nil || first.ID.Version() != 4 {
-				t.Fatal("accepted command did not get a UUID")
-			}
-			if first.TenantID != 42 || first.Subject != tc.subject || first.SubjectType != tc.subjectType {
-				t.Fatalf("record identity differs from authenticated context: %+v", first)
-			}
-			if first.WorkloadID != workload.ID || first.ClusterID != workload.ClusterID || first.WorkloadName != workload.Name || first.Action != string(api.WORKLOADACTIONTYPE_CREATE) {
-				t.Fatalf("incorrect accepted workload snapshot: %+v", first)
-			}
-			if !first.AcceptedAt.Equal(acceptedAt.Truncate(time.Microsecond)) || first.AcceptedAt.Location() != time.UTC {
-				t.Fatalf("acceptance timestamp changed: %v", first.AcceptedAt)
-			}
-			// Mutating caller data and replacing context cannot alter a retained record.
-			workload.Name = "changed"
-			ctx = context.WithValue(ctx, runaictx.CfSubjectID, "another-user@example.test")
-			second, err := actionhistory.NewWorkloadActionRecord(ctx, action, workload, acceptedAt)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if first.ID == second.ID {
-				t.Fatal("separately accepted API retry reused a record ID")
-			}
-			if first.Subject != tc.subject || first.WorkloadName != "workload" {
-				t.Fatal("later caller changes modified the original snapshot")
-			}
-			if second.Subject != "another-user@example.test" {
-				t.Fatal("new command reused the previous actor")
-			}
-		})
-	}
-}
+var _ = Describe("NewWorkloadActionRecord", func() {
+	DescribeTable("rejects invalid authenticated context", func(tc authenticatedContextCase) {
+		record, apiErr := actionhistory.NewWorkloadActionRecord(tc.ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now())
+		Expect(record).To(BeNil())
+		Expect(apiErr).To(HaveOccurred())
+	},
+		Entry("nil context", authenticatedContextCase{}),
+		Entry("missing identity", authenticatedContextCase{context.Background()}),
+		Entry("negative tenant", authenticatedContextCase{authenticatedContext("-1", "user@example.test", "user")}),
+		Entry("non-numeric tenant", authenticatedContextCase{authenticatedContext("not-a-tenant", "user@example.test", "user")}),
+		Entry("bigint overflow", authenticatedContextCase{authenticatedContext("9223372036854775808", "user@example.test", "user")}),
+		Entry("empty subject type", authenticatedContextCase{authenticatedContext("42", "user@example.test", "")}),
+		Entry("blank subject type", authenticatedContextCase{authenticatedContext("42", "user@example.test", " \t")}),
+		Entry("wrong subject type value", authenticatedContextCase{context.WithValue(authenticatedContext("42", "user@example.test", "user"), runaictx.CfSubjectType, 1)}),
+	)
 
-func TestAuthenticatedTenantBoundaries(t *testing.T) {
-	for _, tc := range []struct {
-		input string
-		want  uint64
-	}{
-		{"0", 0},
-		{"9223372036854775807", 9223372036854775807},
-	} {
-		ctx := authenticatedContext(tc.input, "user@example.test", "user")
-		record, err := actionhistory.NewWorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now())
-		if err != nil || record == nil || uint64(record.TenantID) != tc.want {
-			t.Fatalf("tenant %q produced %+v, %v", tc.input, record, err)
-		}
-	}
-}
+	DescribeTable("snapshots authenticated identity", func(subject, subjectType string) {
+		ctx := authenticatedContext("42", subject, subjectType)
+		workload := acceptedWorkload()
+		acceptedAt := time.Date(2026, 10, 11, 14, 15, 16, 123456789, time.FixedZone("offset", 3*60*60))
+		first, apiErr := actionhistory.NewWorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_CREATE, workload, acceptedAt)
+		Expect(apiErr).NotTo(HaveOccurred())
+		Expect(first).NotTo(BeNil())
+		Expect(first.ID).NotTo(Equal(uuid.Nil))
+		Expect(first.ID.Version()).To(Equal(uuid.Version(4)))
+		Expect(first.TenantID).To(Equal(uint(42)))
+		Expect(first.Subject).To(Equal(subject))
+		Expect(first.SubjectType).To(Equal(subjectType))
+		Expect(first.WorkloadID).To(Equal(workload.ID))
+		Expect(first.ClusterID).To(Equal(workload.ClusterID))
+		Expect(first.WorkloadName).To(Equal(workload.Name))
+		Expect(first.Action).To(Equal(string(api.WORKLOADACTIONTYPE_CREATE)))
+		Expect(first.AcceptedAt).To(Equal(acceptedAt.UTC().Truncate(time.Microsecond)))
 
-func TestConcurrentAcceptedBatchItems(t *testing.T) {
-	ctx := authenticatedContext("42", "user@example.test", "user")
-	const count = 32
-	records := make(chan *models.WorkloadActionHistory, count)
-	errors := make(chan error, count)
-	var wg sync.WaitGroup
-	for range count {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			record, err := actionhistory.NewWorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_DELETE, acceptedWorkload(), time.Now())
-			if err != nil {
-				errors <- err
-				return
-			}
-			records <- record
-		}()
-	}
-	wg.Wait()
-	close(records)
-	close(errors)
-	for err := range errors {
-		t.Fatal(err)
-	}
-	ids := make(map[uuid.UUID]struct{}, count)
-	for record := range records {
-		if record == nil || record.Subject != "user@example.test" || record.TenantID != 42 {
-			t.Fatalf("incorrect concurrent record: %+v", record)
+		workload.Name = "changed"
+		ctx = context.WithValue(ctx, runaictx.CfSubjectID, "another-user@example.test")
+		second, apiErr := actionhistory.NewWorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_CREATE, workload, acceptedAt)
+		Expect(apiErr).NotTo(HaveOccurred())
+		Expect(second.ID).NotTo(Equal(first.ID))
+		Expect(first.Subject).To(Equal(subject))
+		Expect(first.WorkloadName).To(Equal("workload"))
+		Expect(second.Subject).To(Equal("another-user@example.test"))
+	},
+		Entry("gateway user", "user@example.test", "User"),
+		Entry("gateway service account", "service-account-id", "ServiceAccount"),
+		Entry("user", "user@example.test", "user"),
+		Entry("service account", "service-account-id", "service-account"),
+		Entry("legacy app", "app-id", "App"),
+		Entry("legacy lowercase app", "app-id", "app"),
+		Entry("future identity type", "identity-id", "FutureIdentity"),
+		Entry("value preserved without trimming", "identity-id", " User "),
+	)
+
+	DescribeTable("accepts tenant boundaries", func(tenant string, expected uint64) {
+		ctx := authenticatedContext(tenant, "user@example.test", "user")
+		record, apiErr := actionhistory.NewWorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now())
+		Expect(apiErr).NotTo(HaveOccurred())
+		Expect(uint64(record.TenantID)).To(Equal(expected))
+	},
+		Entry("zero", "0", uint64(0)),
+		Entry("maximum PostgreSQL bigint", "9223372036854775807", uint64(9223372036854775807)),
+	)
+
+	It("assigns unique IDs to concurrent batch items", func() {
+		ctx := authenticatedContext("42", "user@example.test", "user")
+		const count = 32
+		records := make(chan *models.WorkloadActionHistory, count)
+		errors := make(chan error, count)
+		var wg sync.WaitGroup
+		for range count {
+			wg.Add(1)
+			go func() {
+				defer GinkgoRecover()
+				defer wg.Done()
+				record, apiErr := actionhistory.NewWorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_DELETE, acceptedWorkload(), time.Now())
+				if apiErr != nil {
+					errors <- apiErr
+					return
+				}
+				records <- record
+			}()
 		}
-		if _, duplicate := ids[record.ID]; duplicate {
-			t.Fatal("different accepted items reused an action UUID")
+		wg.Wait()
+		close(records)
+		close(errors)
+		for err := range errors {
+			Expect(err).NotTo(HaveOccurred())
 		}
-		ids[record.ID] = struct{}{}
-	}
-	if len(ids) != count {
-		t.Fatalf("got %d records for %d accepted items", len(ids), count)
-	}
-}
+		ids := make(map[uuid.UUID]struct{}, count)
+		for record := range records {
+			Expect(record).NotTo(BeNil())
+			Expect(record.Subject).To(Equal("user@example.test"))
+			Expect(record.TenantID).To(Equal(uint(42)))
+			Expect(ids).NotTo(HaveKey(record.ID))
+			ids[record.ID] = struct{}{}
+		}
+		Expect(ids).To(HaveLen(count))
+	})
+})
