@@ -295,27 +295,32 @@ build-integration-tests-generic: git-config-command gocache
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: build-integration-tests-generic
 
+# The skip guard and the generation steps share one shell: make gives each
+# recipe line its own shell, so an `exit 0` on a separate line would end only
+# that line and the rest would still run.
 generate-mocks: git-config-command gocache
-	@if [ ! -f .mockery.yml ] && [ ! -f .mockery.yaml ]; then \
+	@set -e; \
+	if [ ! -f .mockery.yml ] && [ ! -f .mockery.yaml ]; then \
 		${ECHO_COMMAND} ${YELLOW_CONSOLE} "${CONSOLE_PREFIX} No .mockery.yml in ${SERVICE_NAME}; nothing to generate" ${BASE_CONSOLE}; \
 		exit 0; \
-	fi
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME}" ${BASE_CONSOLE}
-	${DOCKER_MOCKERY_COMMAND} mockery' || ${FAILURE_MESSAGE_HANDLER}
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}
-	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh .
+	fi; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME}" ${BASE_CONSOLE}; \
+	${DOCKER_MOCKERY_COMMAND} mockery' || ${FAILURE_MESSAGE_HANDLER}; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}; \
+	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh .; \
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: generate-mocks
 
 generate-mocks-client: git-config-command gocache
-	@if [ ! -f pkg/client/.mockery.yml ] && [ ! -f pkg/client/.mockery.yaml ]; then \
+	@set -e; \
+	if [ ! -f pkg/client/.mockery.yml ] && [ ! -f pkg/client/.mockery.yaml ]; then \
 		${ECHO_COMMAND} ${YELLOW_CONSOLE} "${CONSOLE_PREFIX} No pkg/client/.mockery.yml in ${SERVICE_NAME}; nothing to generate" ${BASE_CONSOLE}; \
 		exit 0; \
-	fi
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME} pkg/client" ${BASE_CONSOLE}
-	${DOCKER_MOCKERY_COMMAND} cd pkg/client && mockery' || ${FAILURE_MESSAGE_HANDLER}
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}
-	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh pkg/client
+	fi; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME} pkg/client" ${BASE_CONSOLE}; \
+	${DOCKER_MOCKERY_COMMAND} cd pkg/client && mockery' || ${FAILURE_MESSAGE_HANDLER}; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}; \
+	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh pkg/client; \
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: generate-mocks-client
 
@@ -325,15 +330,16 @@ generate-mocks-client: git-config-command gocache
 # override: the toolchain has to follow the module, or mockery is built by one Go
 # and shells out to the `go list` of another.
 generate-mocks-local: git-config-command
-	@if [ ! -f .mockery.yml ] && [ ! -f .mockery.yaml ]; then \
+	@set -e; \
+	if [ ! -f .mockery.yml ] && [ ! -f .mockery.yaml ]; then \
 		${ECHO_COMMAND} ${YELLOW_CONSOLE} "${CONSOLE_PREFIX} No .mockery.yml in ${SERVICE_NAME}; nothing to generate" ${BASE_CONSOLE}; \
 		exit 0; \
-	fi
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME} (no container)" ${BASE_CONSOLE}
-	@mkdir -p ${BIN_DIR}
-	GOBIN=${BIN_DIR} go install github.com/vektra/mockery/v3@${MOCKERY_VERSION}
-	${BIN_DIR}/mockery
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}
-	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh .
+	fi; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME} (no container)" ${BASE_CONSOLE}; \
+	mkdir -p ${BIN_DIR}; \
+	GOBIN=${BIN_DIR} go install github.com/vektra/mockery/v3@${MOCKERY_VERSION}; \
+	${BIN_DIR}/mockery; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}; \
+	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh .; \
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: generate-mocks-local
