@@ -6230,6 +6230,10 @@ components:
     workloadTypeId:
       $ref: '#/components/parameters/WorkloadTypeId'
   schemas:
+    WorkloadId:
+      description: A unique ID of the workload.
+      type: string
+      format: uuid
     WorkloadActionType:
       type: string
       enum:
@@ -6253,8 +6257,7 @@ components:
           type: string
           format: uuid
         workloadId:
-          type: string
-          format: uuid
+          $ref: '#/components/schemas/WorkloadId'
         workloadName:
           type: string
         subject:
@@ -10336,10 +10339,6 @@ components:
         - $ref: '#/components/schemas/SubmitWithTemplateId'
         - $ref: '#/components/schemas/SubmitWithAssetIds'
         - $ref: '#/components/schemas/WorkspaceSpec'
-    WorkloadId:
-      description: A unique ID of the workload.
-      type: string
-      format: uuid
     DepartmentId:
       description: The id of the department.
       type: string

@@ -51020,8 +51020,7 @@ components:
           type: string
           format: uuid
         workloadId:
-          type: string
-          format: uuid
+          $ref: '#/components/schemas/WorkloadId'
         workloadName:
           type: string
         subject:

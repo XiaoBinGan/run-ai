@@ -31,6 +31,7 @@ type WorkloadActionRecord struct {
 	Id string `json:"id" gorm:"not null;"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
+	// A unique ID of the workload.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//WorkloadId string `json:"workloadId"`
 	WorkloadId string `json:"workloadId" gorm:"not null;"`

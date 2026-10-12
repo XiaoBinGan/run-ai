@@ -5,8 +5,7 @@ properties:
     type: string
     format: uuid
   workloadId:
-    type: string
-    format: uuid
+    $ref: '../../../../../infra/openapi/docs/schemas/workloads/WorkloadId.yaml'
   workloadName:
     type: string
   subject:

@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | **string** |  | 
-**WorkloadId** | **string** |  | 
+**WorkloadId** | **string** | A unique ID of the workload. |
 **WorkloadName** | **string** |  | 
 **Subject** | **string** |  | 
 **SubjectType** | **string** |  | 

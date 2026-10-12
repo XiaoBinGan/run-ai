@@ -14464,6 +14464,10 @@ components:
             $ref: '#/components/schemas/Error'
       description: unexpected error
   schemas:
+    WorkloadId:
+      description: A unique ID of the workload.
+      format: uuid
+      type: string
     WorkloadActionType:
       enum:
       - create
@@ -14486,6 +14490,7 @@ components:
           format: uuid
           type: string
         workloadId:
+          description: A unique ID of the workload.
           format: uuid
           type: string
         workloadName:
@@ -28630,10 +28635,6 @@ components:
             url: https://my-url.com
           tty: null
           category: null
-    WorkloadId:
-      description: A unique ID of the workload.
-      format: uuid
-      type: string
     DepartmentId:
       description: The id of the department.
       example: "2"

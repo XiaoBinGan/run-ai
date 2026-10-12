@@ -9575,6 +9575,11 @@
       }
     },
     "schemas": {
+      "WorkloadId": {
+        "description": "A unique ID of the workload.",
+        "type": "string",
+        "format": "uuid"
+      },
       "WorkloadActionType": {
         "type": "string",
         "enum": [
@@ -9602,8 +9607,7 @@
             "format": "uuid"
           },
           "workloadId": {
-            "type": "string",
-            "format": "uuid"
+            "$ref": "#/components/schemas/WorkloadId"
           },
           "workloadName": {
             "type": "string"
@@ -15010,11 +15014,6 @@
             "$ref": "#/components/schemas/WorkspaceSpec"
           }
         ]
-      },
-      "WorkloadId": {
-        "description": "A unique ID of the workload.",
-        "type": "string",
-        "format": "uuid"
       },
       "DepartmentId": {
         "description": "The id of the department.",

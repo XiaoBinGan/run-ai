@@ -22469,7 +22469,7 @@ export interface WorkloadActionRecord {
      */
     'id': string;
     /**
-     * 
+     * A unique ID of the workload.
      * @type {string}
      * @memberof WorkloadActionRecord
      */
