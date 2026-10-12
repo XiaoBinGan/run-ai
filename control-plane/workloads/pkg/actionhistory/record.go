@@ -18,16 +18,16 @@ import (
 	"github.com/google/uuid"
 )
 
-type WorkloadDetails struct {
+type WorkloadToLog struct {
 	ID           uuid.UUID
 	ClusterID    uuid.UUID
-	Name         string
 	ProjectID    string
 	DepartmentID string
+	Name         string
 }
 
 // WorkloadActionRecord builds a history record from the authenticated request context.
-func WorkloadActionRecord(ctx context.Context, action api.WorkloadActionType, workload WorkloadDetails, acceptedAt time.Time) (*models.WorkloadActionHistory, error) {
+func WorkloadActionRecord(ctx context.Context, action api.WorkloadActionType, workload WorkloadToLog, acceptedAt time.Time) (*models.WorkloadActionHistory, error) {
 	if ctx == nil {
 		return nil, fmt.Errorf("missing authenticated context")
 	}

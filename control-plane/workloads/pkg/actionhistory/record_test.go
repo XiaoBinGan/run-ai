@@ -24,8 +24,8 @@ func authenticatedContext(tenant, subject, subjectType string) context.Context {
 	return context.WithValue(ctx, runaictx.CfSubjectType, subjectType)
 }
 
-func acceptedWorkload() actionhistory.WorkloadDetails {
-	return actionhistory.WorkloadDetails{ID: uuid.New(), ClusterID: uuid.New(), Name: "workload"}
+func acceptedWorkload() actionhistory.WorkloadToLog {
+	return actionhistory.WorkloadToLog{ID: uuid.New(), ClusterID: uuid.New(), Name: "workload"}
 }
 
 func TestAuthenticatedContextValidation(t *testing.T) {
@@ -114,13 +114,13 @@ func TestAcceptedCommandRejectsIncompleteRecord(t *testing.T) {
 		name     string
 		ctx      context.Context
 		action   api.WorkloadActionType
-		workload actionhistory.WorkloadDetails
+		workload actionhistory.WorkloadToLog
 		at       time.Time
 	}{
 		{"missing context", nil, valid, workload, time.Now()},
-		{"missing workload ID", ctx, valid, actionhistory.WorkloadDetails{ClusterID: workload.ClusterID, Name: workload.Name}, time.Now()},
-		{"missing cluster ID", ctx, valid, actionhistory.WorkloadDetails{ID: workload.ID, Name: workload.Name}, time.Now()},
-		{"missing name", ctx, valid, actionhistory.WorkloadDetails{ID: workload.ID, ClusterID: workload.ClusterID}, time.Now()},
+		{"missing workload ID", ctx, valid, actionhistory.WorkloadToLog{ClusterID: workload.ClusterID, Name: workload.Name}, time.Now()},
+		{"missing cluster ID", ctx, valid, actionhistory.WorkloadToLog{ID: workload.ID, Name: workload.Name}, time.Now()},
+		{"missing name", ctx, valid, actionhistory.WorkloadToLog{ID: workload.ID, ClusterID: workload.ClusterID}, time.Now()},
 		{"missing acceptance time", ctx, valid, workload, time.Time{}},
 		{"unknown action", ctx, api.WorkloadActionType("restart"), workload, time.Now()},
 	} {

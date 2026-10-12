@@ -21,7 +21,7 @@ import (
 )
 
 // Log history write failures without failing the accepted workload action.
-func recordWorkloadAction(ctx context.Context, workload actionhistory.WorkloadDetails, action api.WorkloadActionType, acceptedAt time.Time) {
+func recordWorkloadAction(ctx context.Context, workload actionhistory.WorkloadToLog, action api.WorkloadActionType, acceptedAt time.Time) {
 	record, err := actionhistory.WorkloadActionRecord(ctx, action, workload, acceptedAt)
 	if err == nil {
 		err = dao.DbInsertWorkloadActions(ctx, []models.WorkloadActionHistory{*record})
@@ -49,7 +49,7 @@ func recordWorkloadStateAction(ctx context.Context, workload *models.WorkloadVie
 	default:
 		return
 	}
-	recordWorkloadAction(ctx, actionhistory.WorkloadDetails{ID: workload.ID, ClusterID: workload.ClusterID, Name: workload.Name, ProjectID: workload.ProjectID, DepartmentID: workload.DepartmentID}, action, acceptedAt)
+	recordWorkloadAction(ctx, actionhistory.WorkloadToLog{ID: workload.ID, ClusterID: workload.ClusterID, ProjectID: workload.ProjectID, DepartmentID: workload.DepartmentID, Name: workload.Name}, action, acceptedAt)
 }
 
 func supportsV1RunStateHistory(workloadType string) bool {
@@ -67,9 +67,9 @@ func recordWorkloadResponseAction(ctx context.Context, response workloadsApi.Sup
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to record accepted workload %s for %s: invalid cluster ID: %v", action, workloadID, err)
 		return
 	}
-	recordWorkloadAction(ctx, actionhistory.WorkloadDetails{
-		ID: workloadID, ClusterID: clusterID, Name: response.Name,
-		ProjectID: response.ProjectId, DepartmentID: convutils.Deref(response.DepartmentId, ""),
+	recordWorkloadAction(ctx, actionhistory.WorkloadToLog{
+		ID: workloadID, ClusterID: clusterID,
+		ProjectID: response.ProjectId, DepartmentID: convutils.Deref(response.DepartmentId, ""), Name: response.Name,
 	}, action, acceptedAt)
 }
 
