@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/actionhistory"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/runaictx"
@@ -44,7 +45,7 @@ func TestAuthenticatedContextValidation(t *testing.T) {
 		{"wrong subject type value", context.WithValue(authenticatedContext("42", "user@example.test", "user"), runaictx.CfSubjectType, 1)},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
-			if _, err := actionhistory.WorkloadActionRecord(tc.ctx, actionhistory.Create, acceptedWorkload(), time.Now()); err == nil {
+			if _, err := actionhistory.WorkloadActionRecord(tc.ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now()); err == nil {
 				t.Fatal("invalid authenticated identity was accepted")
 			}
 		})
@@ -68,7 +69,7 @@ func TestAcceptedActionSnapshot(t *testing.T) {
 			ctx := authenticatedContext("42", tc.subject, tc.subjectType)
 			workload := acceptedWorkload()
 			acceptedAt := time.Date(2026, 10, 11, 14, 15, 16, 123456789, time.FixedZone("offset", 3*60*60))
-			action := actionhistory.Create
+			action := api.WORKLOADACTIONTYPE_CREATE
 			first, err := actionhistory.WorkloadActionRecord(ctx, action, workload, acceptedAt)
 			if err != nil {
 				t.Fatal(err)
@@ -79,7 +80,7 @@ func TestAcceptedActionSnapshot(t *testing.T) {
 			if first.TenantID != 42 || first.Subject != tc.subject || first.SubjectType != tc.subjectType {
 				t.Fatalf("record identity differs from authenticated context: %+v", first)
 			}
-			if first.WorkloadID != workload.ID || first.ClusterID != workload.ClusterID || first.WorkloadName != workload.Name || first.Action != string(actionhistory.Create) {
+			if first.WorkloadID != workload.ID || first.ClusterID != workload.ClusterID || first.WorkloadName != workload.Name || first.Action != string(api.WORKLOADACTIONTYPE_CREATE) {
 				t.Fatalf("incorrect accepted workload snapshot: %+v", first)
 			}
 			if !first.AcceptedAt.Equal(acceptedAt.Truncate(time.Microsecond)) || first.AcceptedAt.Location() != time.UTC {
@@ -107,12 +108,12 @@ func TestAcceptedActionSnapshot(t *testing.T) {
 
 func TestAcceptedCommandRejectsIncompleteRecord(t *testing.T) {
 	ctx := authenticatedContext("42", "user@example.test", "user")
-	valid := actionhistory.Update
+	valid := api.WORKLOADACTIONTYPE_UPDATE
 	workload := acceptedWorkload()
 	for _, tc := range []struct {
 		name     string
 		ctx      context.Context
-		action   actionhistory.Action
+		action   api.WorkloadActionType
 		workload actionhistory.WorkloadDetails
 		at       time.Time
 	}{
@@ -121,7 +122,7 @@ func TestAcceptedCommandRejectsIncompleteRecord(t *testing.T) {
 		{"missing cluster ID", ctx, valid, actionhistory.WorkloadDetails{ID: workload.ID, Name: workload.Name}, time.Now()},
 		{"missing name", ctx, valid, actionhistory.WorkloadDetails{ID: workload.ID, ClusterID: workload.ClusterID}, time.Now()},
 		{"missing acceptance time", ctx, valid, workload, time.Time{}},
-		{"unknown action", ctx, actionhistory.Action("restart"), workload, time.Now()},
+		{"unknown action", ctx, api.WorkloadActionType("restart"), workload, time.Now()},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			record, err := actionhistory.WorkloadActionRecord(tc.ctx, tc.action, tc.workload, tc.at)
@@ -141,7 +142,7 @@ func TestAuthenticatedTenantBoundaries(t *testing.T) {
 		{"9223372036854775807", 9223372036854775807},
 	} {
 		ctx := authenticatedContext(tc.input, "user@example.test", "user")
-		record, err := actionhistory.WorkloadActionRecord(ctx, actionhistory.Create, acceptedWorkload(), time.Now())
+		record, err := actionhistory.WorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_CREATE, acceptedWorkload(), time.Now())
 		if err != nil || record == nil || uint64(record.TenantID) != tc.want {
 			t.Fatalf("tenant %q produced %+v, %v", tc.input, record, err)
 		}
@@ -158,7 +159,7 @@ func TestConcurrentAcceptedBatchItems(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			record, err := actionhistory.WorkloadActionRecord(ctx, actionhistory.Delete, acceptedWorkload(), time.Now())
+			record, err := actionhistory.WorkloadActionRecord(ctx, api.WORKLOADACTIONTYPE_DELETE, acceptedWorkload(), time.Now())
 			if err != nil {
 				errors <- err
 				return

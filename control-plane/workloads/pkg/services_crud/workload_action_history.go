@@ -21,7 +21,7 @@ import (
 )
 
 // Log history write failures without failing the accepted workload action.
-func recordWorkloadAction(ctx context.Context, workload actionhistory.WorkloadDetails, action actionhistory.Action, acceptedAt time.Time) {
+func recordWorkloadAction(ctx context.Context, workload actionhistory.WorkloadDetails, action api.WorkloadActionType, acceptedAt time.Time) {
 	record, err := actionhistory.WorkloadActionRecord(ctx, action, workload, acceptedAt)
 	if err == nil {
 		err = dao.DbInsertWorkloadActions(ctx, []models.WorkloadActionHistory{*record})
@@ -32,20 +32,20 @@ func recordWorkloadAction(ctx context.Context, workload actionhistory.WorkloadDe
 }
 
 func recordWorkloadStateAction(ctx context.Context, workload *models.WorkloadView, desiredPhase api.WorkloadDesiredPhase, acceptedAt time.Time) {
-	var action actionhistory.Action
+	var action api.WorkloadActionType
 	switch desiredPhase {
 	case api.WORKLOADDESIREDPHASE_DELETED:
-		action = actionhistory.Delete
+		action = api.WORKLOADACTIONTYPE_DELETE
 	case api.WORKLOADDESIREDPHASE_STOPPED:
 		if !supportsV1RunStateHistory(workload.Type) {
 			return
 		}
-		action = actionhistory.Suspend
+		action = api.WORKLOADACTIONTYPE_SUSPEND
 	case api.WORKLOADDESIREDPHASE_RUNNING:
 		if !supportsV1RunStateHistory(workload.Type) {
 			return
 		}
-		action = actionhistory.Resume
+		action = api.WORKLOADACTIONTYPE_RESUME
 	default:
 		return
 	}
@@ -56,7 +56,7 @@ func supportsV1RunStateHistory(workloadType string) bool {
 	return workloadType == Workspace || workloadType == Training || workloadType == Distributed
 }
 
-func recordWorkloadResponseAction(ctx context.Context, response workloadsApi.SupersetWorkload, action actionhistory.Action, acceptedAt time.Time) {
+func recordWorkloadResponseAction(ctx context.Context, response workloadsApi.SupersetWorkload, action api.WorkloadActionType, acceptedAt time.Time) {
 	workloadID, err := uuid.Parse(response.WorkloadId)
 	if err != nil {
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to record accepted workload %s: invalid workload ID: %v", action, err)
@@ -74,5 +74,5 @@ func recordWorkloadResponseAction(ctx context.Context, response workloadsApi.Sup
 }
 
 func recordWorkloadCreate(ctx context.Context, params *createWorkloadParams) {
-	recordWorkloadResponseAction(ctx, params.Response, actionhistory.Create, params.AcceptedAt)
+	recordWorkloadResponseAction(ctx, params.Response, api.WORKLOADACTIONTYPE_CREATE, params.AcceptedAt)
 }

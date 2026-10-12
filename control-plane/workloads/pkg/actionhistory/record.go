@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/runaictx"
 	"github.com/google/uuid"
@@ -26,11 +27,11 @@ type WorkloadDetails struct {
 }
 
 // WorkloadActionRecord builds a history record from the authenticated request context.
-func WorkloadActionRecord(ctx context.Context, action Action, workload WorkloadDetails, acceptedAt time.Time) (*models.WorkloadActionHistory, error) {
+func WorkloadActionRecord(ctx context.Context, action api.WorkloadActionType, workload WorkloadDetails, acceptedAt time.Time) (*models.WorkloadActionHistory, error) {
 	if ctx == nil {
 		return nil, fmt.Errorf("missing authenticated context")
 	}
-	if !action.Valid() {
+	if !action.IsValid() {
 		return nil, fmt.Errorf("unsupported workload action %q", action)
 	}
 	if workload.ID == uuid.Nil {

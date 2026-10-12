@@ -18,7 +18,6 @@ import (
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer/composer_v1/runai_workloads"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
-	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/actionhistory"
 	workloadsApi "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/client/generated"
 	clients "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/clients/backend"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/dao_crud"
@@ -181,7 +180,7 @@ func UpdateDistributedInferenceSpec(ctx context.Context, workloadId string, tena
 		}
 		acceptedAt := time.Now().UTC()
 		sanitizeWorkloadResponse(ctx, response)
-		recordWorkloadResponseAction(ctx, *response, actionhistory.Update, acceptedAt)
+		recordWorkloadResponseAction(ctx, *response, api.WORKLOADACTIONTYPE_UPDATE, acceptedAt)
 
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Infof("Successfully updated distributed inference spec for workload id: <%s> name: <%s> in project id: <%s>", workloadId, nativeWorkload.Name, nativeWorkload.ProjectId)
 		return api.Response(http.StatusAccepted, *response), nil
@@ -238,7 +237,7 @@ func UpdateDistributedInferenceSpec(ctx context.Context, workloadId string, tena
 
 	logging.WithCtx(runaictx.LoggerHook(ctx)).Infof("Successfully updated distributed inference spec via workload-runner for workload id: <%s>", workloadId)
 	sanitizeWorkloadResponse(ctx, &response)
-	recordWorkloadResponseAction(ctx, response, actionhistory.Update, acceptedAt)
+	recordWorkloadResponseAction(ctx, response, api.WORKLOADACTIONTYPE_UPDATE, acceptedAt)
 	return api.Response(http.StatusAccepted, response), nil
 }
 
