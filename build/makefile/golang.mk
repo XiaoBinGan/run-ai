@@ -305,24 +305,24 @@ build-integration-tests-generic: git-config-command gocache
 generate-mocks: git-config-command gocache
 	@if [ ! -f .mockery.yml ] && [ ! -f .mockery.yaml ]; then \
 		${ECHO_COMMAND} ${YELLOW_CONSOLE} "${CONSOLE_PREFIX} No .mockery.yml in ${SERVICE_NAME}; nothing to generate" ${BASE_CONSOLE}; \
-		exit 0; \
+	else \
+		${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME}" ${BASE_CONSOLE}; \
+		${DOCKER_MOCKERY_COMMAND} mockery' || ${FAILURE_MESSAGE_HANDLER}; \
+		${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}; \
+		sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh .; \
 	fi
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME}" ${BASE_CONSOLE}
-	${DOCKER_MOCKERY_COMMAND} mockery' || ${FAILURE_MESSAGE_HANDLER}
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}
-	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh .
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: generate-mocks
 
 generate-mocks-client: git-config-command gocache
 	@if [ ! -d pkg/client ] || ([ ! -f pkg/client/.mockery.yml ] && [ ! -f pkg/client/.mockery.yaml ]); then \
 		${ECHO_COMMAND} ${YELLOW_CONSOLE} "${CONSOLE_PREFIX} No pkg/client/.mockery.yml in ${SERVICE_NAME}; nothing to generate" ${BASE_CONSOLE}; \
-		exit 0; \
+	else \
+		${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME} pkg/client" ${BASE_CONSOLE}; \
+		${DOCKER_MOCKERY_COMMAND} cd pkg/client && mockery' || ${FAILURE_MESSAGE_HANDLER}; \
+		${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}; \
+		sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh pkg/client; \
 	fi
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Generating mocks for ${SERVICE_NAME} pkg/client" ${BASE_CONSOLE}
-	${DOCKER_MOCKERY_COMMAND} cd pkg/client && mockery' || ${FAILURE_MESSAGE_HANDLER}
-	@ ${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} Stamping SPDX headers on generated mocks" ${BASE_CONSOLE}
-	sh ${BUILD_MAKEFILE_DIR}scripts/spdx-header-go.sh pkg/client
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: generate-mocks-client
 
