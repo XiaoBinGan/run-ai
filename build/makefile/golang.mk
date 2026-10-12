@@ -266,10 +266,6 @@ validate-mockery validate-mockery-client: git-config-command
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: validate-mockery validate-mockery-client
 
-validate-client:
-	$(MAKE) -C pkg/client validate
-.PHONY: validate-client
-
 # Same as generate-mocks, without Docker. The Renovate post-upgrade hook runs
 # inside the Renovate container, which has no Docker socket, so the containerised
 # target fails there with "Cannot connect to the Docker daemon". No GOTOOLCHAIN
