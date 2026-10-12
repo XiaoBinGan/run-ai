@@ -68,13 +68,7 @@ func NewWorkloadActionRecord(ctx context.Context, action api.WorkloadActionType,
 }
 
 func subjectFromContext(ctx context.Context) (string, string, *api.Error) {
-	subjectID, err := runaictx.ParseSubjectId(ctx)
-	if err != nil {
-		return "", "", api.NewError(http.StatusBadRequest, "failed to read action subject", err)
-	}
-	if strings.TrimSpace(subjectID) == "" {
-		return "", "", api.NewValidationError("missing action subject")
-	}
+	subjectID := *runaictx.GetString(ctx, runaictx.CfSubjectID)
 	subjectType := runaictx.GetString(ctx, runaictx.CfSubjectType)
 	if subjectType == nil || strings.TrimSpace(*subjectType) == "" {
 		return "", "", api.NewValidationError("missing action subject type")

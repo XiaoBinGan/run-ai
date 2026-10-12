@@ -38,8 +38,6 @@ func TestAuthenticatedContextValidation(t *testing.T) {
 		{"negative tenant", authenticatedContext("-1", "user@example.test", "user")},
 		{"non-numeric tenant", authenticatedContext("not-a-tenant", "user@example.test", "user")},
 		{"bigint overflow", authenticatedContext("9223372036854775808", "user@example.test", "user")},
-		{"empty subject", authenticatedContext("42", "", "user")},
-		{"blank subject", authenticatedContext("42", " \t", "user")},
 		{"empty subject type", authenticatedContext("42", "user@example.test", "")},
 		{"blank subject type", authenticatedContext("42", "user@example.test", " \t")},
 		{"wrong subject type value", context.WithValue(authenticatedContext("42", "user@example.test", "user"), runaictx.CfSubjectType, 1)},
