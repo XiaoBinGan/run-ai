@@ -133,7 +133,7 @@ paths:
       x-authorize:
         resource-type: workloads
         action: read
-        id: workloadId
+        resource-id: workloadId
   /api/v1/workloads/scrapeable-metrics:
     get:
       operationId: get_workloads_scrapeable_metrics

@@ -118,8 +118,8 @@ func (c *EventsAPIController) Routes() Routes {
 						next,
 						"workloads",
 						"read",
-						false,
-						"",
+						true,
+						"workloadId",
 					)
 				},
 				func(next http.HandlerFunc) http.HandlerFunc {

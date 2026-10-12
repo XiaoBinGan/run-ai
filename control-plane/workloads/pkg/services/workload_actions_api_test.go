@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	authorization_api "github.com/dsx-ai-factory/run-ai/control-plane/authorization/pkg/client/generated"
 	authorization_utils "github.com/dsx-ai-factory/run-ai/control-plane/authorization/pkg/client/helpers"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/common"
@@ -86,32 +85,6 @@ var _ = Describe("Workload action history", func() {
 		Expect(apiErr).NotTo(BeNil())
 		Expect(apiErr.Code).To(Equal(int32(http.StatusBadRequest)))
 
-		_, apiErr = dao.DbGetWorkloadActionScope(context.Background(), workloadID)
-		Expect(apiErr).NotTo(BeNil())
-		Expect(apiErr.Code).To(Equal(int32(http.StatusBadRequest)))
-	})
-
-	It("authorizes retained project scope without changing shared ancestor lookup", func() {
-		allowed := testing.SetProjectContext(testing.TestTenant, testing.TestUser, nil, testActionProject)
-		denied := testing.SetProjectContext(testing.TestTenant, testing.TestUser, nil, "project-2")
-		Expect(getWorkloadActions(service, allowed, workloadID, 0, 0).Actions).To(HaveLen(3))
-
-		response, err := service.GetWorkloadActions(denied, workloadID.String(), 0, 0)
-		Expect(err).NotTo(HaveOccurred())
-		Expect(response.Code).To(Equal(http.StatusForbidden))
-
-		response, err = NewWorkloadsService().GetWorkloadAncestors(ctx, workloadID.String())
-		Expect(err).NotTo(HaveOccurred())
-		Expect(response.Code).To(Equal(http.StatusNotFound))
-	})
-
-	It("denies missing and empty permissions", func() {
-		for _, scopes := range []*authorization_api.PermittedScopes{nil, {}} {
-			requestCtx := context.WithValue(ctx, authorization_utils.PermittedScopesKey, scopes)
-			response, err := service.GetWorkloadActions(requestCtx, workloadID.String(), 0, 0)
-			Expect(err).NotTo(HaveOccurred())
-			Expect(response.Code).To(Equal(http.StatusForbidden))
-		}
 	})
 
 	It("rejects malformed IDs and negative pagination", func() {
@@ -230,7 +203,7 @@ var _ = Describe("Workload action history", func() {
 		Expect(err).NotTo(HaveOccurred())
 		_, err = runaidb.DB().Exec(actionQuery)
 		Expect(err).NotTo(HaveOccurred())
-		expectWorkloadScopeProject(ctx, workloadID, "current-project")
+		expectWorkloadAncestorProject(ctx, workloadID, "current-project")
 		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
 
 		_, err = runaidb.DB().Unscoped().Where("id = ?", workloadID).Delete(&models.Workload{})
@@ -238,9 +211,6 @@ var _ = Describe("Workload action history", func() {
 		_, err = runaidb.DB().Exec(actionQuery)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(storedWorkloadActions(ctx, workloadID, 0)).To(BeEmpty())
-		_, apiErr := dao.DbGetWorkloadActionScope(ctx, workloadID)
-		Expect(apiErr).NotTo(BeNil())
-		Expect(apiErr.Code).To(Equal(int32(http.StatusNotFound)))
 	})
 })
 
@@ -300,9 +270,12 @@ func testActionWorkload(id uuid.UUID, scope models.WorkloadActionScope) models.W
 	}
 }
 
-func expectWorkloadScopeProject(ctx context.Context, workloadID uuid.UUID, projectID string) {
+func expectWorkloadAncestorProject(ctx context.Context, workloadID uuid.UUID, projectID string) {
 	GinkgoHelper()
-	scope, apiErr := dao.DbGetWorkloadActionScope(ctx, workloadID)
-	Expect(apiErr).To(BeNil())
-	Expect(scope.ProjectID).To(Equal(projectID))
+	response, err := NewWorkloadsService().GetWorkloadAncestors(ctx, workloadID.String())
+	Expect(err).NotTo(HaveOccurred())
+	Expect(response.Code).To(Equal(http.StatusOK))
+	ancestors := response.Body.(authorization_utils.Ancestors)
+	Expect(ancestors.ProjectId).NotTo(BeNil())
+	Expect(*ancestors.ProjectId).To(Equal(projectID))
 }

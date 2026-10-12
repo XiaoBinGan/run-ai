@@ -62,44 +62,6 @@ func DbGetWorkloadActions(ctx context.Context, workloadID uuid.UUID, offset, lim
 	return records, nil
 }
 
-// Use retained scope only when the workload row no longer exists.
-func DbGetWorkloadActionScope(ctx context.Context, workloadID uuid.UUID) (*models.WorkloadActionScope, *api.Error) {
-	scopes := []models.WorkloadActionScope{}
-	tenantID, apiErr := services_utils.ParseTenantId(ctx)
-	if apiErr != nil {
-		return nil, apiErr
-	}
-	db := runaidb.DB().WithContext(ctx)
-
-	err := db.Unscoped().
-		Table("workloads").
-		Select("tenant_id, cluster_id, project_id, department_id").
-		Where("tenant_id = ? AND id = ?", tenantID, workloadID).
-		Limit(1).
-		Find(&scopes)
-	if err != nil {
-		return nil, api.NewError(http.StatusInternalServerError, "Failed to get workload scope", err)
-	}
-	if len(scopes) > 0 {
-		return &scopes[0], nil
-	}
-
-	err = db.Table("workloads_action_history").
-		Select("tenant_id, cluster_id, project_id, department_id").
-		Where("tenant_id = ? AND workload_id = ?", tenantID, workloadID).
-		Order("accepted_at DESC, id DESC").
-		Limit(1). // Only the latest saved scope is needed for authorization.
-		Find(&scopes)
-	if err != nil {
-		return nil, api.NewError(http.StatusInternalServerError, "Failed to get retained workload scope", err)
-	}
-	if len(scopes) == 0 {
-		return nil, api.NewError(http.StatusNotFound, "Workload not found", nil)
-	}
-
-	return &scopes[0], nil
-}
-
 func DbDeleteWorkloadActionHistoryOfTenantId(ctx context.Context, tenantID string) *api.Error {
 	_, err := runaidb.DB().WithContext(ctx).
 		Where("tenant_id = ?", tenantID).
