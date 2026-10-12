@@ -22,12 +22,13 @@ import (
 
 // Log history write failures without failing the accepted workload action.
 func recordWorkloadAction(ctx context.Context, workload actionhistory.WorkloadToLog, action api.WorkloadActionType, acceptedAt time.Time) {
-	record, err := actionhistory.NewWorkloadActionRecord(ctx, action, workload, acceptedAt)
-	if err == nil {
-		err = dao.DbInsertWorkloadActions(ctx, []models.WorkloadActionHistory{*record})
+	record, apiErr := actionhistory.NewWorkloadActionRecord(ctx, action, workload, acceptedAt)
+	if apiErr != nil {
+		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to record accepted workload %s action for %s: %v", action, workload.ID, apiErr)
+		return
 	}
-	if err != nil {
-		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to record accepted workload %s action for %s: %v", action, workload.ID, err)
+	if apiErr := dao.DbInsertWorkloadActions(ctx, []models.WorkloadActionHistory{*record}); apiErr != nil {
+		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to record accepted workload %s action for %s: %v", action, workload.ID, apiErr)
 	}
 }
 

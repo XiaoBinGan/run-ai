@@ -7,7 +7,7 @@ package actionhistory
 
 import (
 	"context"
-	"fmt"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -27,21 +27,21 @@ type WorkloadToLog struct {
 }
 
 // NewWorkloadActionRecord builds a history record from the authenticated request context.
-func NewWorkloadActionRecord(ctx context.Context, action api.WorkloadActionType, workload WorkloadToLog, acceptedAt time.Time) (*models.WorkloadActionHistory, error) {
+func NewWorkloadActionRecord(ctx context.Context, action api.WorkloadActionType, workload WorkloadToLog, acceptedAt time.Time) (*models.WorkloadActionHistory, *api.Error) {
 	if ctx == nil {
-		return nil, fmt.Errorf("missing authenticated context")
+		return nil, api.NewValidationError("missing authenticated context")
 	}
-	tenantID, err := tenantIDFromContext(ctx)
-	if err != nil {
-		return nil, err
+	tenantID, apiErr := tenantIDFromContext(ctx)
+	if apiErr != nil {
+		return nil, apiErr
 	}
-	subjectID, subjectType, err := subjectFromContext(ctx)
-	if err != nil {
-		return nil, err
+	subjectID, subjectType, apiErr := subjectFromContext(ctx)
+	if apiErr != nil {
+		return nil, apiErr
 	}
 	recordID, err := uuid.NewRandom()
 	if err != nil {
-		return nil, fmt.Errorf("generate workload action id: %w", err)
+		return nil, api.NewError(http.StatusInternalServerError, "failed to generate workload action ID", err)
 	}
 	return &models.WorkloadActionHistory{
 		ID: recordID,
@@ -62,30 +62,30 @@ func NewWorkloadActionRecord(ctx context.Context, action api.WorkloadActionType,
 	}, nil
 }
 
-func tenantIDFromContext(ctx context.Context) (uint, error) {
+func tenantIDFromContext(ctx context.Context) (uint, *api.Error) {
 	tenant, err := runaictx.ParseTenantId(ctx)
 	if err != nil {
-		return 0, fmt.Errorf("read action tenant: %w", err)
+		return 0, api.NewError(http.StatusBadRequest, "failed to read action tenant", err)
 	}
 	// PostgreSQL bigint is signed.
 	tenantID, err := strconv.ParseUint(tenant, 10, 63)
 	if err != nil {
-		return 0, fmt.Errorf("parse action tenant: %w", err)
+		return 0, api.NewError(http.StatusBadRequest, "invalid action tenant", err)
 	}
 	return uint(tenantID), nil
 }
 
-func subjectFromContext(ctx context.Context) (string, string, error) {
+func subjectFromContext(ctx context.Context) (string, string, *api.Error) {
 	subjectID, err := runaictx.ParseSubjectId(ctx)
 	if err != nil {
-		return "", "", fmt.Errorf("read action subject: %w", err)
+		return "", "", api.NewError(http.StatusBadRequest, "failed to read action subject", err)
 	}
 	if strings.TrimSpace(subjectID) == "" {
-		return "", "", fmt.Errorf("missing action subject")
+		return "", "", api.NewValidationError("missing action subject")
 	}
 	subjectType := runaictx.GetString(ctx, runaictx.CfSubjectType)
 	if subjectType == nil || strings.TrimSpace(*subjectType) == "" {
-		return "", "", fmt.Errorf("missing action subject type")
+		return "", "", api.NewValidationError("missing action subject type")
 	}
 	return subjectID, *subjectType, nil
 }

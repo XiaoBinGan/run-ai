@@ -68,8 +68,8 @@ func HandleClusterDeleteRequest(ctx context.Context, req *events.ClusterDelete) 
 	if err := dao.DbDeleteWorkloadEventsOfClusterId(ctx, tenantIdStr, req.ClusterId); err != nil {
 		resultErr = multierror.Append(resultErr, err)
 	}
-	if err := dao.DbDeleteWorkloadActionHistoryOfClusterId(ctx, tenantIdStr, req.ClusterId); err != nil {
-		resultErr = multierror.Append(resultErr, err)
+	if apiErr := dao.DbDeleteWorkloadActionHistoryOfClusterId(ctx, tenantIdStr, req.ClusterId); apiErr != nil {
+		resultErr = multierror.Append(resultErr, apiErr)
 	}
 	if err := dao.DeletePrioritiesOfClusterId(ctx, tenantIdStr, req.ClusterId); err != nil {
 		resultErr = multierror.Append(resultErr, err)
@@ -94,8 +94,8 @@ func HandleTenantDeleteRequest(ctx context.Context, req *events.TenantDelete) er
 	if err := dao.DbDeleteWorkloadEventsOfTenantId(ctx, req.TenantId); err != nil {
 		resultErr = multierror.Append(resultErr, err)
 	}
-	if err := dao.DbDeleteWorkloadActionHistoryOfTenantId(ctx, req.TenantId); err != nil {
-		resultErr = multierror.Append(resultErr, err)
+	if apiErr := dao.DbDeleteWorkloadActionHistoryOfTenantId(ctx, req.TenantId); apiErr != nil {
+		resultErr = multierror.Append(resultErr, apiErr)
 	}
 
 	if err := dao.DeleteExternalWorkloadTypeResourceInterfacesOfTenantId(ctx, req.TenantId); err != nil {

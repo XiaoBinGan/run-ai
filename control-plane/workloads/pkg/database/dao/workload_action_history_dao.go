@@ -7,7 +7,6 @@ package dao
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
@@ -22,7 +21,7 @@ const (
 	maxWorkloadActionsLimit     = 500
 )
 
-func DbInsertWorkloadActions(ctx context.Context, records []models.WorkloadActionHistory) error {
+func DbInsertWorkloadActions(ctx context.Context, records []models.WorkloadActionHistory) *api.Error {
 	if len(records) == 0 {
 		return nil
 	}
@@ -30,7 +29,7 @@ func DbInsertWorkloadActions(ctx context.Context, records []models.WorkloadActio
 		Clauses(clause.OnConflict{DoNothing: true}).
 		Create(&records)
 	if err != nil {
-		return fmt.Errorf("insert workload action history: %w", err)
+		return api.NewError(http.StatusInternalServerError, "Failed to insert workload action history", err)
 	}
 	return nil
 }
@@ -92,22 +91,22 @@ func DbGetWorkloadActionScope(ctx context.Context, tenantID uint, workloadID uui
 	return &scopes[0], nil
 }
 
-func DbDeleteWorkloadActionHistoryOfTenantId(ctx context.Context, tenantID string) error {
+func DbDeleteWorkloadActionHistoryOfTenantId(ctx context.Context, tenantID string) *api.Error {
 	_, err := runaidb.DB().WithContext(ctx).
 		Where("tenant_id = ?", tenantID).
 		Delete(&models.WorkloadActionHistory{})
 	if err != nil {
-		return fmt.Errorf("delete tenant workload actions: %w", err)
+		return api.NewError(http.StatusInternalServerError, "Failed to delete tenant workload action history", err)
 	}
 	return nil
 }
 
-func DbDeleteWorkloadActionHistoryOfClusterId(ctx context.Context, tenantID, clusterID string) error {
+func DbDeleteWorkloadActionHistoryOfClusterId(ctx context.Context, tenantID, clusterID string) *api.Error {
 	_, err := runaidb.DB().WithContext(ctx).
 		Where("tenant_id = ? AND cluster_id = ?", tenantID, clusterID).
 		Delete(&models.WorkloadActionHistory{})
 	if err != nil {
-		return fmt.Errorf("delete cluster workload actions: %w", err)
+		return api.NewError(http.StatusInternalServerError, "Failed to delete cluster workload action history", err)
 	}
 	return nil
 }
