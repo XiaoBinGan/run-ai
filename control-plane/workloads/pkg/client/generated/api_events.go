@@ -59,7 +59,7 @@ type EventsAPI interface {
 	/*
 		GetWorkloadActions Get workload action history.
 
-		Returns accepted workload actions. History remains available after workload deletion until it expires or the tenant or cluster is deleted.
+		Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.
 
 		@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 		@param workloadId The  Universally Unique Identifier (UUID) of the workload.
@@ -520,7 +520,7 @@ func (r ApiGetWorkloadActionsRequest) Execute() (*GetWorkloadActionsResponse, *h
 /*
 GetWorkloadActions Get workload action history.
 
-Returns accepted workload actions. History remains available after workload deletion until it expires or the tenant or cluster is deleted.
+Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param workloadId The  Universally Unique Identifier (UUID) of the workload.

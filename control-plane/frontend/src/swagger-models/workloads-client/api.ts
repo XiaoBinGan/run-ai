@@ -28502,7 +28502,7 @@ export const EventsApiAxiosParamCreator = function (configuration?: Configuratio
             };
         },
         /**
-         * Returns accepted workload actions. History remains available after workload deletion until it expires or the tenant or cluster is deleted.
+         * Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.
          * @summary Get workload action history.
          * @param {string} workloadId The  Universally Unique Identifier (UUID) of the workload.
          * @param {number} [offset] The offset of the first item returned in the collection.
@@ -28726,7 +28726,7 @@ export const EventsApiFp = function(configuration?: Configuration) {
             return createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration);
         },
         /**
-         * Returns accepted workload actions. History remains available after workload deletion until it expires or the tenant or cluster is deleted.
+         * Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.
          * @summary Get workload action history.
          * @param {string} workloadId The  Universally Unique Identifier (UUID) of the workload.
          * @param {number} [offset] The offset of the first item returned in the collection.
@@ -28812,7 +28812,7 @@ export const EventsApiFactory = function (configuration?: Configuration, basePat
             return localVarFp.getRevisionHistory(revisionId, offset, limit, options).then((request) => request(axios, basePath));
         },
         /**
-         * Returns accepted workload actions. History remains available after workload deletion until it expires or the tenant or cluster is deleted.
+         * Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.
          * @summary Get workload action history.
          * @param {string} workloadId The  Universally Unique Identifier (UUID) of the workload.
          * @param {number} [offset] The offset of the first item returned in the collection.
@@ -28898,7 +28898,7 @@ export class EventsApi extends BaseAPI {
     }
 
     /**
-     * Returns accepted workload actions. History remains available after workload deletion until it expires or the tenant or cluster is deleted.
+     * Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.
      * @summary Get workload action history.
      * @param {string} workloadId The  Universally Unique Identifier (UUID) of the workload.
      * @param {number} [offset] The offset of the first item returned in the collection.

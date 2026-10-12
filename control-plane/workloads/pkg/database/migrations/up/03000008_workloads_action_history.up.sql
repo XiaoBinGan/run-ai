@@ -18,5 +18,3 @@ CREATE INDEX IF NOT EXISTS idx_workloads_action_history_tenant_workload_accepted
     ON workloads_action_history (tenant_id, workload_id, accepted_at DESC, id DESC);
 CREATE INDEX IF NOT EXISTS idx_workloads_action_history_tenant_cluster
     ON workloads_action_history (tenant_id, cluster_id);
-CREATE INDEX IF NOT EXISTS idx_workloads_action_history_accepted_at
-    ON workloads_action_history (accepted_at);

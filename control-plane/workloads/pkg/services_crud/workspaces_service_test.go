@@ -10,7 +10,6 @@ import (
 	"context"
 	"encoding/json"
 	workloadsMgrClient "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/clients/workloads_mgr"
-	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/services"
 	workloads_mgr_api "github.com/dsx-ai-factory/run-ai/runai-clients/workloads-manager-client/generated"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/runaictx"
@@ -176,9 +175,6 @@ var _ = Describe("workspaces service validations", func() {
 			api.WorkloadActionType("resume"),
 			api.WorkloadActionType("delete"),
 		))
-		_, err = runaidb.DB().Unscoped().Where("id = ?", id).Delete(&models.Workload{})
-		Expect(err).NotTo(HaveOccurred())
-		Expect(readHistory().Actions).To(HaveLen(4))
 	})
 
 	It("records a manager-backed workspace create with the manager-assigned ID", func() {

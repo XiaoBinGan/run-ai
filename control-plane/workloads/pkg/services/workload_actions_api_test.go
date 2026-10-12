@@ -146,7 +146,7 @@ var _ = Describe("Workload action history", func() {
 		Expect(err).NotTo(HaveOccurred())
 
 		tx := runaidb.DB().Begin()
-		DeferCleanup(func() { Expect(tx.Rollback()).To(Succeed()) })
+		defer func() { _ = tx.Rollback() }()
 		for range 2 {
 			_, err = tx.Exec(string(down))
 			Expect(err).NotTo(HaveOccurred())
@@ -158,12 +158,12 @@ var _ = Describe("Workload action history", func() {
 
 		var count int64
 		Expect(tx.Table("pg_indexes").Where("schemaname = ? AND tablename = ?", "workloads", "workloads_action_history").Count(&count)).To(Succeed())
-		Expect(count).To(Equal(int64(4))) // Primary key plus three explicit indexes.
+		Expect(count).To(Equal(int64(3))) // Primary key plus two explicit indexes.
 		Expect(tx.Raw("SELECT count(*) FROM pg_constraint WHERE conrelid = 'workloads.workloads_action_history'::regclass AND contype = 'f'").Row().Scan(&count)).To(Succeed())
 		Expect(count).To(BeZero())
 	})
 
-	It("purges history by age only", func() {
+	It("aligns history cleanup with workload row deletion", func() {
 		_, err := runaidb.DB().Exec("CREATE EXTENSION IF NOT EXISTS pg_cron")
 		Expect(err).NotTo(HaveOccurred())
 
@@ -172,7 +172,6 @@ var _ = Describe("Workload action history", func() {
 		originalConfig := *runai_config.Get[*config.DBCleanerConfig]()
 		cleanerConfig := originalConfig
 		cleanerConfig.CleanerIntervalHours = 1
-		cleanerConfig.WorkloadActionsDaysToLive = 90
 		Expect(runai_config.Set(&cleanerConfig)).To(Succeed())
 		DeferCleanup(func() { Expect(runai_config.Set(&originalConfig)).To(Succeed()) })
 
@@ -181,46 +180,50 @@ var _ = Describe("Workload action history", func() {
 		Expect(runaidb.DB().Table("cron.job").Where("jobname = ?", "workloads_cleaner").Pluck("command", &command)).To(Succeed())
 		actionQuery := findQuery(command, "DELETE FROM workloads_action_history")
 		Expect(actionQuery).NotTo(BeEmpty())
-		Expect(actionQuery).NotTo(ContainSubstring("NOT EXISTS"))
+		Expect(actionQuery).To(ContainSubstring("NOT EXISTS"))
+		Expect(actionQuery).NotTo(ContainSubstring("accepted_at"))
 
-		tx := runaidb.DB().Begin()
-		DeferCleanup(func() { Expect(tx.Rollback()).To(Succeed()) })
-		boundaryID, expiredID := uuid.New(), uuid.New()
-		for _, recordID := range []uuid.UUID{boundaryID, expiredID} {
-			record := records[0]
-			record.ID = recordID
-			_, err = tx.Create(&record)
-			Expect(err).NotTo(HaveOccurred())
-		}
-		_, err = tx.Exec("UPDATE workloads_action_history SET accepted_at = NOW() - INTERVAL '90 days' WHERE id = ?", boundaryID)
-		Expect(err).NotTo(HaveOccurred())
-		_, err = tx.Exec("UPDATE workloads_action_history SET accepted_at = NOW() - INTERVAL '90 days' - INTERVAL '1 microsecond' WHERE id = ?", expiredID)
-		Expect(err).NotTo(HaveOccurred())
-		_, err = tx.Exec(actionQuery)
-		Expect(err).NotTo(HaveOccurred())
-
-		var remainingIDs []uuid.UUID
-		Expect(tx.Model(&models.WorkloadActionHistory{}).
-			Where("tenant_id = ? AND workload_id = ?", testing.TestTenantId, workloadID).
-			Pluck("id", &remainingIDs)).To(Succeed())
-		Expect(remainingIDs).To(ContainElement(boundaryID))
-		Expect(remainingIDs).NotTo(ContainElement(expiredID))
-	})
-
-	It("retains history across soft and hard workload deletion", func() {
 		workload := testActionWorkload(workloadID, records[0].WorkloadActionScope)
-		_, err := runaidb.DB().Create(&workload)
+		_, err = runaidb.DB().Create(&workload)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(dao.DbInsertWorkloadActions(ctx, records)).To(Succeed())
+		_, err = runaidb.DB().Model(&models.WorkloadActionHistory{}).
+			Where("workload_id = ?", workloadID).
+			Update("accepted_at", time.Now().AddDate(-1, 0, 0))
 		Expect(err).NotTo(HaveOccurred())
 
-		expectWorkloadScopeProject(ctx, workloadID, "current-project")
-		_, err = runaidb.DB().Where("id = ?", workloadID).Delete(&models.Workload{})
+		orphan := records[0]
+		orphan.ID = uuid.New()
+		orphan.WorkloadID = uuid.New()
+		Expect(dao.DbInsertWorkloadActions(ctx, []models.WorkloadActionHistory{orphan})).To(Succeed())
+
+		var linkedCount int64
+		Expect(runaidb.DB().Table("workloads_action_history AS wah").
+			Joins("JOIN workloads AS w ON w.tenant_id = wah.tenant_id AND w.id = wah.workload_id").
+			Where("wah.workload_id = ?", workloadID).
+			Count(&linkedCount)).To(Succeed())
+		Expect(linkedCount).To(Equal(int64(3)))
+
+		_, err = runaidb.DB().Exec(actionQuery)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(storedWorkloadActions(ctx, testing.TestTenantId, orphan.WorkloadID, 0)).To(BeEmpty())
+		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
+
+		_, err = runaidb.DB().Model(&models.Workload{}).Where("id = ?", workloadID).Update("deleted_at", time.Now())
+		Expect(err).NotTo(HaveOccurred())
+		_, err = runaidb.DB().Exec(actionQuery)
 		Expect(err).NotTo(HaveOccurred())
 		expectWorkloadScopeProject(ctx, workloadID, "current-project")
+		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
 
 		_, err = runaidb.DB().Unscoped().Where("id = ?", workloadID).Delete(&models.Workload{})
 		Expect(err).NotTo(HaveOccurred())
-		expectWorkloadScopeProject(ctx, workloadID, testActionProject)
-		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
+		_, err = runaidb.DB().Exec(actionQuery)
+		Expect(err).NotTo(HaveOccurred())
+		Expect(storedWorkloadActions(ctx, testing.TestTenantId, workloadID, 0)).To(BeEmpty())
+		_, apiErr := dao.DbGetWorkloadActionScope(ctx, testing.TestTenantId, workloadID)
+		Expect(apiErr).NotTo(BeNil())
+		Expect(apiErr.Code).To(Equal(int32(http.StatusNotFound)))
 	})
 })
 

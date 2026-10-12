@@ -42,7 +42,7 @@
     "/api/v1/workloads/{workloadId}/actions": {
       "get": {
         "summary": "Get workload action history.",
-        "description": "Returns accepted workload actions. History remains available after workload deletion until it expires or the tenant or cluster is deleted.",
+        "description": "Returns accepted workload actions. History remains available after a workload is deleted and is removed when the workload is permanently removed from the system.",
         "operationId": "get_workload_actions",
         "x-service": "workloads",
         "x-test-coverage": [
