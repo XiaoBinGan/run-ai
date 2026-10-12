@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS workloads_action_history (
     department_id varchar NOT NULL,
     subject varchar NOT NULL,
     subject_type varchar NOT NULL,
-    action varchar NOT NULL,
+    action varchar NOT NULL CONSTRAINT workloads_action_history_action_check
+        CHECK (action IN ('create', 'update', 'delete', 'suspend', 'resume')),
     accepted_at timestamp with time zone NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_workloads_action_history_tenant_workload_accepted_at

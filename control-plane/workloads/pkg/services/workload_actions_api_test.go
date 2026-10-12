@@ -161,6 +161,12 @@ var _ = Describe("Workload action history", func() {
 		Expect(count).To(Equal(int64(3))) // Primary key plus two explicit indexes.
 		Expect(tx.Raw("SELECT count(*) FROM pg_constraint WHERE conrelid = 'workloads.workloads_action_history'::regclass AND contype = 'f'").Row().Scan(&count)).To(Succeed())
 		Expect(count).To(BeZero())
+
+		invalidAction := records[0]
+		invalidAction.ID = uuid.New()
+		invalidAction.Action = "restart"
+		_, err = tx.Create(&invalidAction)
+		Expect(err).To(HaveOccurred())
 	})
 
 	It("aligns history cleanup with workload row deletion", func() {

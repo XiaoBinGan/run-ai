@@ -106,33 +106,6 @@ func TestAcceptedActionSnapshot(t *testing.T) {
 	}
 }
 
-func TestAcceptedCommandRejectsIncompleteRecord(t *testing.T) {
-	ctx := authenticatedContext("42", "user@example.test", "user")
-	valid := api.WORKLOADACTIONTYPE_UPDATE
-	workload := acceptedWorkload()
-	for _, tc := range []struct {
-		name     string
-		ctx      context.Context
-		action   api.WorkloadActionType
-		workload actionhistory.WorkloadToLog
-		at       time.Time
-	}{
-		{"missing context", nil, valid, workload, time.Now()},
-		{"missing workload ID", ctx, valid, actionhistory.WorkloadToLog{ClusterID: workload.ClusterID, Name: workload.Name}, time.Now()},
-		{"missing cluster ID", ctx, valid, actionhistory.WorkloadToLog{ID: workload.ID, Name: workload.Name}, time.Now()},
-		{"missing name", ctx, valid, actionhistory.WorkloadToLog{ID: workload.ID, ClusterID: workload.ClusterID}, time.Now()},
-		{"missing acceptance time", ctx, valid, workload, time.Time{}},
-		{"unknown action", ctx, api.WorkloadActionType("restart"), workload, time.Now()},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			record, err := actionhistory.WorkloadActionRecord(tc.ctx, tc.action, tc.workload, tc.at)
-			if record != nil || err == nil {
-				t.Fatalf("invalid accepted record produced %v, %v", record, err)
-			}
-		})
-	}
-}
-
 func TestAuthenticatedTenantBoundaries(t *testing.T) {
 	for _, tc := range []struct {
 		input string

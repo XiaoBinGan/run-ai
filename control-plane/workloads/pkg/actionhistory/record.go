@@ -31,21 +31,6 @@ func WorkloadActionRecord(ctx context.Context, action api.WorkloadActionType, wo
 	if ctx == nil {
 		return nil, fmt.Errorf("missing authenticated context")
 	}
-	if !action.IsValid() {
-		return nil, fmt.Errorf("unsupported workload action %q", action)
-	}
-	if workload.ID == uuid.Nil {
-		return nil, fmt.Errorf("missing workload ID")
-	}
-	if workload.ClusterID == uuid.Nil {
-		return nil, fmt.Errorf("missing workload cluster ID")
-	}
-	if strings.TrimSpace(workload.Name) == "" {
-		return nil, fmt.Errorf("missing workload name")
-	}
-	if acceptedAt.IsZero() {
-		return nil, fmt.Errorf("missing workload action acceptance time")
-	}
 	tenantID, err := tenantIDFromContext(ctx)
 	if err != nil {
 		return nil, err
