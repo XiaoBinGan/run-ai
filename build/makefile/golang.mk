@@ -241,16 +241,23 @@ validate-mockery: git-config-command
 		git diff HEAD; \
 		git ls-files --others --exclude-standard | while IFS= read -r f; do git hash-object -- "$$f"; done; \
 	}; \
+	elapsed() { echo "$$(( $$(date +%s) - $$1 ))"; }; \
+	started=$$(date +%s); \
 	before=$$(mocks_state); \
+	step=$$(date +%s); \
 	$(MAKE) generate-mocks; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} generate-mocks took $$(elapsed $$step)s" ${BASE_CONSOLE}; \
+	step=$$(date +%s); \
 	$(MAKE) generate-mocks-client; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} generate-mocks-client took $$(elapsed $$step)s" ${BASE_CONSOLE}; \
 	after=$$(mocks_state); \
 	if [ "$$before" != "$$after" ]; then \
 		${ECHO_COMMAND} ${RED_CONSOLE} "${CONSOLE_PREFIX} mockery produced uncommitted changes in ${SERVICE_NAME}. Run 'make generate-mocks generate-mocks-client' and commit them." ${BASE_CONSOLE}; \
 		git --no-pager status --porcelain --untracked-files=all; \
 		git --no-pager diff; \
 		${FAILURE_MESSAGE_HANDLER}; \
-	fi
+	fi; \
+	${ECHO_COMMAND} ${GREEN_CONSOLE} "${CONSOLE_PREFIX} validate-mockery took $$(elapsed $$started)s for ${SERVICE_NAME}" ${BASE_CONSOLE}
 	${SUCCESS_MESSAGE_HANDLER}
 .PHONY: validate-mockery
 
