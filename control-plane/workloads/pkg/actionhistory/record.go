@@ -7,13 +7,14 @@ package actionhistory
 
 import (
 	"context"
+	"math"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/services_utils"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/runaictx"
 	"github.com/google/uuid"
 )
@@ -31,9 +32,13 @@ func NewWorkloadActionRecord(ctx context.Context, action api.WorkloadActionType,
 	if ctx == nil {
 		return nil, api.NewValidationError("missing authenticated context")
 	}
-	tenantID, apiErr := tenantIDFromContext(ctx)
+	tenantID, apiErr := services_utils.ParseTenantId(ctx)
 	if apiErr != nil {
 		return nil, apiErr
+	}
+	// PostgreSQL bigint is signed, while ParseTenantId returns uint.
+	if uint64(tenantID) > math.MaxInt64 {
+		return nil, api.NewValidationError("invalid action tenant")
 	}
 	subjectID, subjectType, apiErr := subjectFromContext(ctx)
 	if apiErr != nil {
@@ -60,19 +65,6 @@ func NewWorkloadActionRecord(ctx context.Context, action api.WorkloadActionType,
 		Action:      string(action),
 		AcceptedAt:  acceptedAt.UTC().Truncate(time.Microsecond),
 	}, nil
-}
-
-func tenantIDFromContext(ctx context.Context) (uint, *api.Error) {
-	tenant, err := runaictx.ParseTenantId(ctx)
-	if err != nil {
-		return 0, api.NewError(http.StatusBadRequest, "failed to read action tenant", err)
-	}
-	// PostgreSQL bigint is signed.
-	tenantID, err := strconv.ParseUint(tenant, 10, 63)
-	if err != nil {
-		return 0, api.NewError(http.StatusBadRequest, "invalid action tenant", err)
-	}
-	return uint(tenantID), nil
 }
 
 func subjectFromContext(ctx context.Context) (string, string, *api.Error) {
