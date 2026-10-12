@@ -51022,7 +51022,7 @@ components:
         workloadId:
           $ref: '#/components/schemas/WorkloadId'
         workloadName:
-          type: string
+          $ref: '#/components/schemas/WorkloadName'
         subject:
           type: string
         subjectType:

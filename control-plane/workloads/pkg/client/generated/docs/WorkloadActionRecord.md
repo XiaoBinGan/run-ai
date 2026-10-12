@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Id** | **string** |  | 
 **WorkloadId** | **string** | A unique ID of the workload. |
-**WorkloadName** | **string** |  | 
+**WorkloadName** | **string** | The name of the workload. |
 **Subject** | **string** |  | 
 **SubjectType** | **string** |  | 
 **Action** | [**WorkloadActionType**](WorkloadActionType.md) |  | 

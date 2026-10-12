@@ -6234,6 +6234,12 @@ components:
       description: A unique ID of the workload.
       type: string
       format: uuid
+    WorkloadName:
+      description: The name of the workload.
+      type: string
+      minLength: 1
+      example: my-workload-name
+      pattern: .*
     WorkloadActionType:
       type: string
       enum:
@@ -6259,7 +6265,7 @@ components:
         workloadId:
           $ref: '#/components/schemas/WorkloadId'
         workloadName:
-          type: string
+          $ref: '#/components/schemas/WorkloadName'
         subject:
           type: string
         subjectType:
@@ -8591,12 +8597,6 @@ components:
         - VLLM_REQUEST_DECODE_TIME_SECONDS_PERCENTILES
         - VLLM_INTER_TOKEN_LATENCY_SECONDS_PERCENTILES
         - NVLINK_BANDWIDTH_TOTAL
-    WorkloadName:
-      description: The name of the workload.
-      type: string
-      minLength: 1
-      example: my-workload-name
-      pattern: .*
     ProjectId:
       description: The id of the project.
       type: string

@@ -14468,6 +14468,12 @@ components:
       description: A unique ID of the workload.
       format: uuid
       type: string
+    WorkloadName:
+      description: The name of the workload.
+      example: my-workload-name
+      minLength: 1
+      pattern: .*
+      type: string
     WorkloadActionType:
       enum:
       - create
@@ -14480,7 +14486,7 @@ components:
       example:
         subject: subject
         workloadId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-        workloadName: workloadName
+        workloadName: my-workload-name
         action: create
         id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         subjectType: subjectType
@@ -14494,6 +14500,10 @@ components:
           format: uuid
           type: string
         workloadName:
+          description: The name of the workload.
+          example: my-workload-name
+          minLength: 1
+          pattern: .*
           type: string
         subject:
           type: string
@@ -14519,14 +14529,14 @@ components:
         actions:
         - subject: subject
           workloadId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-          workloadName: workloadName
+          workloadName: my-workload-name
           action: create
           id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           subjectType: subjectType
           acceptedAt: 2000-01-23T04:56:07.000+00:00
         - subject: subject
           workloadId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-          workloadName: workloadName
+          workloadName: my-workload-name
           action: create
           id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           subjectType: subjectType
@@ -24363,12 +24373,6 @@ components:
       - VLLM_REQUEST_DECODE_TIME_SECONDS_PERCENTILES
       - VLLM_INTER_TOKEN_LATENCY_SECONDS_PERCENTILES
       - NVLINK_BANDWIDTH_TOTAL
-      type: string
-    WorkloadName:
-      description: The name of the workload.
-      example: my-workload-name
-      minLength: 1
-      pattern: .*
       type: string
     ProjectId:
       description: The id of the project.

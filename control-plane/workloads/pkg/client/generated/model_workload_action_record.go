@@ -27,8 +27,9 @@ var _ MappedNullable = &WorkloadActionRecord{}
 type WorkloadActionRecord struct {
 	Id string `json:"id"`
 	// A unique ID of the workload.
-	WorkloadId   string             `json:"workloadId"`
-	WorkloadName string             `json:"workloadName"`
+	WorkloadId string `json:"workloadId"`
+	// The name of the workload.
+	WorkloadName string             `json:"workloadName" validate:"regexp=.*"`
 	Subject      string             `json:"subject"`
 	SubjectType  string             `json:"subjectType"`
 	Action       WorkloadActionType `json:"action"`

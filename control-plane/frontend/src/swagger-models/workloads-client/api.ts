@@ -22475,7 +22475,7 @@ export interface WorkloadActionRecord {
      */
     'workloadId': string;
     /**
-     * 
+     * The name of the workload.
      * @type {string}
      * @memberof WorkloadActionRecord
      */

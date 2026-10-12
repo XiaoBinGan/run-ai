@@ -37,9 +37,10 @@ type WorkloadActionRecord struct {
 	WorkloadId string `json:"workloadId" gorm:"not null;"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
+	// The name of the workload.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
-	//WorkloadName string `json:"workloadName"`
-	WorkloadName string `json:"workloadName" gorm:"not null;"`
+	//WorkloadName string `json:"workloadName" validate:"regexp=.*"`
+	WorkloadName string `json:"workloadName" gorm:"not null;" validate:"regexp=.*"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
@@ -96,6 +97,12 @@ func AssertWorkloadActionRecordConstraints(obj WorkloadActionRecord) error {
 
 	//////////////////////// RUNAI END //////////////////////////
 	//////////////////////// RUNAI START (18.2) //////////////////////////
+	if patternErr := runaihttp.AssertPattern(obj.WorkloadName, "WorkloadName", "/.*/"); patternErr != nil {
+		return &ParsingError{Param: "WorkloadName", Err: patternErr}
+	}
+	if minLengthErr := runaihttp.AssertMinLength(obj.WorkloadName, "WorkloadName", 1); minLengthErr != nil {
+		return &ParsingError{Param: "WorkloadName", Err: minLengthErr}
+	}
 	//////////////////////// RUNAI END //////////////////////////
 	//////////////////////// RUNAI START (2.1) //////////////////////////
 

@@ -7,7 +7,7 @@ properties:
   workloadId:
     $ref: '../../../../../infra/openapi/docs/schemas/workloads/WorkloadId.yaml'
   workloadName:
-    type: string
+    $ref: '../../../../../infra/openapi/docs/schemas/workloads/WorkloadName.yaml'
   subject:
     type: string
   subjectType:
