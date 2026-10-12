@@ -26,6 +26,7 @@ var dummyWorkloadActionRecord = runaihttp.AssertPattern
 
 type WorkloadActionRecord struct {
 
+	// A unique ID of the workload action-history record.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Id string `json:"id"`
 	Id string `json:"id" gorm:"not null;"`
@@ -43,11 +44,13 @@ type WorkloadActionRecord struct {
 	WorkloadName string `json:"workloadName" gorm:"not null;" validate:"regexp=.*"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
+	// The authenticated subject that performed the workload action.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//Subject string `json:"subject"`
 	Subject string `json:"subject" gorm:"not null;"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
+	// The authenticated subject type, preserved as provided by the identity context. Examples include user, service-account, and app, with casing determined by the identity provider.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//SubjectType string `json:"subjectType"`
 	SubjectType string `json:"subjectType" gorm:"not null;"`
@@ -58,6 +61,7 @@ type WorkloadActionRecord struct {
 	Action WorkloadActionType `json:"action" gorm:"not null;"`
 	//////////////////////////////////// RUNAI END ///////////////////////////////////////////
 
+	// The time when the workload action was accepted.
 	//////////////////////////////////// RUNAI START (19) ///////////////////////////////////////////
 	//AcceptedAt time.Time `json:"acceptedAt"`
 	AcceptedAt time.Time `json:"acceptedAt" gorm:"not null;"`

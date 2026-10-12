@@ -22463,7 +22463,7 @@ export interface Workload {
  */
 export interface WorkloadActionRecord {
     /**
-     * 
+     * A unique ID of the workload action-history record.
      * @type {string}
      * @memberof WorkloadActionRecord
      */
@@ -22481,13 +22481,13 @@ export interface WorkloadActionRecord {
      */
     'workloadName': string;
     /**
-     * 
+     * The authenticated subject that performed the workload action.
      * @type {string}
      * @memberof WorkloadActionRecord
      */
     'subject': string;
     /**
-     * 
+     * The authenticated subject type, preserved as provided by the identity context. Examples include user, service-account, and app, with casing determined by the identity provider.
      * @type {string}
      * @memberof WorkloadActionRecord
      */
@@ -22499,7 +22499,7 @@ export interface WorkloadActionRecord {
      */
     'action': WorkloadActionType;
     /**
-     * 
+     * The time when the workload action was accepted.
      * @type {string}
      * @memberof WorkloadActionRecord
      */

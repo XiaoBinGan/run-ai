@@ -2,18 +2,16 @@ type: object
 required: [id, workloadId, workloadName, subject, subjectType, action, acceptedAt]
 properties:
   id:
-    type: string
-    format: uuid
+    $ref: './WorkloadActionId.yaml'
   workloadId:
     $ref: '../../../../../infra/openapi/docs/schemas/workloads/WorkloadId.yaml'
   workloadName:
     $ref: '../../../../../infra/openapi/docs/schemas/workloads/WorkloadName.yaml'
   subject:
-    type: string
+    $ref: './WorkloadActionSubject.yaml'
   subjectType:
-    type: string
+    $ref: './WorkloadActionSubjectType.yaml'
   action:
     $ref: './WorkloadActionType.yaml'
   acceptedAt:
-    type: string
-    format: date-time
+    $ref: './WorkloadActionAcceptedAt.yaml'

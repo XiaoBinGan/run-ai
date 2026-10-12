@@ -14464,6 +14464,11 @@ components:
             $ref: '#/components/schemas/Error'
       description: unexpected error
   schemas:
+    WorkloadActionId:
+      description: A unique ID of the workload action-history record.
+      example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+      format: uuid
+      type: string
     WorkloadId:
       description: A unique ID of the workload.
       format: uuid
@@ -14474,6 +14479,16 @@ components:
       minLength: 1
       pattern: .*
       type: string
+    WorkloadActionSubject:
+      description: The authenticated subject that performed the workload action.
+      example: user@run.ai
+      type: string
+    WorkloadActionSubjectType:
+      description: "The authenticated subject type, preserved as provided by the identity\
+        \ context. Examples include user, service-account, and app, with casing determined\
+        \ by the identity provider."
+      example: user
+      type: string
     WorkloadActionType:
       enum:
       - create
@@ -14482,17 +14497,24 @@ components:
       - suspend
       - resume
       type: string
+    WorkloadActionAcceptedAt:
+      description: The time when the workload action was accepted.
+      example: 2026-01-01T03:49:52.531Z
+      format: date-time
+      type: string
     WorkloadActionRecord:
       example:
-        subject: subject
+        subject: user@run.ai
         workloadId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
         workloadName: my-workload-name
         action: create
-        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-        subjectType: subjectType
-        acceptedAt: 2000-01-23T04:56:07.000+00:00
+        id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+        subjectType: user
+        acceptedAt: 2026-01-01T03:49:52.531Z
       properties:
         id:
+          description: A unique ID of the workload action-history record.
+          example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
           format: uuid
           type: string
         workloadId:
@@ -14506,12 +14528,20 @@ components:
           pattern: .*
           type: string
         subject:
+          description: The authenticated subject that performed the workload action.
+          example: user@run.ai
           type: string
         subjectType:
+          description: "The authenticated subject type, preserved as provided by the\
+            \ identity context. Examples include user, service-account, and app, with\
+            \ casing determined by the identity provider."
+          example: user
           type: string
         action:
           $ref: '#/components/schemas/WorkloadActionType'
         acceptedAt:
+          description: The time when the workload action was accepted.
+          example: 2026-01-01T03:49:52.531Z
           format: date-time
           type: string
       required:
@@ -14527,20 +14557,20 @@ components:
       example:
         next: 50
         actions:
-        - subject: subject
+        - subject: user@run.ai
           workloadId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           workloadName: my-workload-name
           action: create
-          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-          subjectType: subjectType
-          acceptedAt: 2000-01-23T04:56:07.000+00:00
-        - subject: subject
+          id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          subjectType: user
+          acceptedAt: 2026-01-01T03:49:52.531Z
+        - subject: user@run.ai
           workloadId: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
           workloadName: my-workload-name
           action: create
-          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
-          subjectType: subjectType
-          acceptedAt: 2000-01-23T04:56:07.000+00:00
+          id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          subjectType: user
+          acceptedAt: 2026-01-01T03:49:52.531Z
       properties:
         actions:
           items:

@@ -50997,6 +50997,22 @@ components:
       $ref: '#/components/schemas/IdpResources'
     UserGroups:
       $ref: '#/components/schemas/Groups'
+    WorkloadActionId:
+      description: A unique ID of the workload action-history record.
+      type: string
+      format: uuid
+      example: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+    WorkloadActionSubject:
+      description: The authenticated subject that performed the workload action.
+      type: string
+      example: user@run.ai
+    WorkloadActionSubjectType:
+      description: >-
+        The authenticated subject type, preserved as provided by the identity
+        context. Examples include user, service-account, and app, with casing
+        determined by the identity provider.
+      type: string
+      example: user
     WorkloadActionType:
       type: string
       enum:
@@ -51005,6 +51021,11 @@ components:
         - delete
         - suspend
         - resume
+    WorkloadActionAcceptedAt:
+      description: The time when the workload action was accepted.
+      type: string
+      format: date-time
+      example: '2026-01-01T03:49:52.531Z'
     WorkloadActionRecord:
       type: object
       required:
@@ -51017,21 +51038,19 @@ components:
         - acceptedAt
       properties:
         id:
-          type: string
-          format: uuid
+          $ref: '#/components/schemas/WorkloadActionId'
         workloadId:
           $ref: '#/components/schemas/WorkloadId'
         workloadName:
           $ref: '#/components/schemas/WorkloadName'
         subject:
-          type: string
+          $ref: '#/components/schemas/WorkloadActionSubject'
         subjectType:
-          type: string
+          $ref: '#/components/schemas/WorkloadActionSubjectType'
         action:
           $ref: '#/components/schemas/WorkloadActionType'
         acceptedAt:
-          type: string
-          format: date-time
+          $ref: '#/components/schemas/WorkloadActionAcceptedAt'
     GetWorkloadActionsResponse:
       type: object
       required:

@@ -25,15 +25,19 @@ var _ MappedNullable = &WorkloadActionRecord{}
 
 // WorkloadActionRecord struct for WorkloadActionRecord
 type WorkloadActionRecord struct {
+	// A unique ID of the workload action-history record.
 	Id string `json:"id"`
 	// A unique ID of the workload.
 	WorkloadId string `json:"workloadId"`
 	// The name of the workload.
-	WorkloadName string             `json:"workloadName" validate:"regexp=.*"`
-	Subject      string             `json:"subject"`
-	SubjectType  string             `json:"subjectType"`
-	Action       WorkloadActionType `json:"action"`
-	AcceptedAt   time.Time          `json:"acceptedAt"`
+	WorkloadName string `json:"workloadName" validate:"regexp=.*"`
+	// The authenticated subject that performed the workload action.
+	Subject string `json:"subject"`
+	// The authenticated subject type, preserved as provided by the identity context. Examples include user, service-account, and app, with casing determined by the identity provider.
+	SubjectType string             `json:"subjectType"`
+	Action      WorkloadActionType `json:"action"`
+	// The time when the workload action was accepted.
+	AcceptedAt time.Time `json:"acceptedAt"`
 }
 
 type _WorkloadActionRecord WorkloadActionRecord
