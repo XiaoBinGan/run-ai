@@ -8,6 +8,7 @@ package configmaps
 import (
 	"context"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"net/http"
 	"testing"
 
@@ -548,5 +549,47 @@ var _ = Describe("getGpuStackStatus", func() {
 		status := getGpuStackStatus(ctx, kbClient)
 		Expect(*status.Available).To(BeFalse())
 		Expect(status.Reason).To(ContainSubstring("dcgm-exporter service not found"))
+	})
+})
+
+var _ = Describe("GPU compute modes in runai-public", func() {
+	It("serializes mode-specific availability without making it a required dependency", func() {
+		config := newGpuFractioningConfigWithReadyCondition("True", "healthy")
+		config.SetGeneration(1)
+		config.SetUID("fractioning-config")
+		conditions := []interface{}{}
+		for _, conditionType := range []string{"Ready", "FractiondReady", "MpsdReady"} {
+			conditions = append(conditions, map[string]interface{}{
+				"type": conditionType, "status": "True", "observedGeneration": int64(1),
+			})
+		}
+		Expect(unstructured.SetNestedSlice(config.Object, conditions, "status", "conditions")).To(Succeed())
+		objects := []client.Object{config}
+		for _, component := range []string{"fractiond", "mpsd"} {
+			objects = append(objects, &appsv1.DaemonSet{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "gpu-fractioning-" + component, Namespace: "runtime", Generation: 1,
+					Labels:          map[string]string{"app.kubernetes.io/managed-by": "gpu-fractioning", "app.kubernetes.io/component": component},
+					OwnerReferences: []metav1.OwnerReference{*metav1.NewControllerRef(config, gpuFractioningConfigGVK)},
+				},
+				Spec: appsv1.DaemonSetSpec{Template: corev1.PodTemplateSpec{Spec: corev1.PodSpec{
+					Containers: []corev1.Container{{Name: component, Args: []string{"--support-sm-sharing=false"}, Env: []corev1.EnvVar{{Name: "MPS_SUPPORT_SM_SHARING", Value: "false"}}}},
+				}}},
+				Status: appsv1.DaemonSetStatus{ObservedGeneration: 1, DesiredNumberScheduled: 1, UpdatedNumberScheduled: 1, NumberReady: 1, NumberAvailable: 1},
+			})
+		}
+		kbClient := createKubeClientMock(objects...)
+		kbClient.Scheme().AddKnownTypeWithName(gpuFractioningConfigGVK, &unstructured.Unstructured{})
+		hybrid := kcfake.New(kbClient, kbClient, createDynamicClient())
+		object, err := NewRunaiPublic("test", hybrid, getRunaiConfig()).Object(context.Background())
+		Expect(err).NotTo(HaveOccurred())
+		public := runv1.RunaiPublic{}
+		Expect(yaml.Unmarshal([]byte(object.(*corev1.ConfigMap).Data["runai-public"]), &public)).To(Succeed())
+		Expect(public.Dependencies.Required).NotTo(HaveKey("gpu-compute-modes"))
+		modes := public.Dependencies.Optional["gpu-compute-modes"]
+		Expect(*modes.Available).To(BeTrue())
+		Expect(*modes.Components["time-slicing"].Available).To(BeTrue())
+		Expect(*modes.Components["sm-sharing"].Available).To(BeFalse())
+		Expect(modes.Components["sm-sharing"].Reason).NotTo(BeEmpty())
 	})
 })

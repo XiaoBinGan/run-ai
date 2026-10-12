@@ -7850,7 +7850,6 @@ components:
       minLength: 1
       nullable: true
       type: string
-      x-gorm-ignore: true
     GpuRequestType:
       description: "Sets the unit type for GPU resources requests. Stated in terms\
         \ of portion or memory. Sets the unit type for other GPU request fields. If\

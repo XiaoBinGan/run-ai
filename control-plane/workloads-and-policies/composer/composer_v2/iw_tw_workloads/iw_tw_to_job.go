@@ -7,6 +7,7 @@ package iw_tw_workloads
 
 import (
 	"context"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 
 	clusterApi "github.com/dsx-ai-factory/run-ai/control-plane/cluster-service/pkg/client/generated"
@@ -268,6 +269,12 @@ func (itc *InterTrainToJobComposer) processComputeFields(ctx context.Context, sr
 			return nil
 		}
 
+		canonical, aliasErr := gpucompat.NormalizeLegacyWorkloadCompute(src)
+		if aliasErr != nil {
+			return workloadsApi.NewError(http.StatusBadRequest, aliasErr.Error())
+		}
+		src = canonical
+
 		podMeta := &target.Job.Spec.Template.ObjectMeta
 		podSpec := &target.Job.Spec.Template.Spec
 		container := &podSpec.Containers[0]
@@ -283,7 +290,7 @@ func (itc *InterTrainToJobComposer) processComputeFields(ctx context.Context, sr
 			itc.fc.ComposeCpuMemoryLimit(src.CpuMemoryLimit.Get(), src.CpuMemoryRequest.Get(), &container.Resources.Limits, composer.StringToK8sResourceList, composer.ResourceMemory),
 
 			itc.fc.ComposeGpuRequestsAndLimits(ctx, src.GpuDevicesRequest.Get(), src.GpuRequestType.Get(),
-				src.GpuPortionRequest.Get(), src.GpuPortionLimit.Get(),
+				src.GpuMemoryPortionRequest.Get(), src.GpuMemoryPortionLimit.Get(),
 				src.GpuMemoryRequest.Get(), src.GpuMemoryLimit.Get(), composer.WholeGpusToK8sResources,
 				&container.Resources, nil, &sizingInfo),
 
@@ -299,6 +306,7 @@ func (itc *InterTrainToJobComposer) processComputeFields(ctx context.Context, sr
 			// GPU memory/portion limit is written either as the legacy env var (< 3.0
 			// clusters) or as the per-container CUDA/KAI annotations (>= 3.0). The
 			// two pairs are mutually exclusive at the compose helper level.
+			itc.fc.ComposeGpuComputeMode(ctx, composer.EnumToString(src.GpuComputeMode.Get()), &sizingInfo, container.Name, &podMeta.Annotations, composer.StringToMapString),
 			itc.fc.ComposeMemoryLimitEnv(&sizingInfo, &container.Env, composer.StringToEnvVar, composer.GpuMemoryLimitEnvVar),
 			itc.fc.ComposePortionLimitEnv(&sizingInfo, &container.Env, composer.StringToEnvVar, composer.GpuPortionLimitEnvVar),
 			itc.fc.ComposeMemoryLimitAnnotation(&sizingInfo, container.Name, &podMeta.Annotations, composer.StringToMapString),

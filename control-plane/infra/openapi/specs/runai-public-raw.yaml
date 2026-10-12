@@ -35127,7 +35127,6 @@ components:
         - time-slicing
         - sm-sharing
       nullable: true
-      x-gorm-ignore: true
     GpuDevicesRequest:
       description: >-
         Requested number of GPU devices. Currently if more than one device is

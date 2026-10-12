@@ -10,6 +10,3 @@ enum:
   - time-slicing
   - sm-sharing
 nullable: true
-
-# Keep schema preparation independent of the asset-column migration.
-x-gorm-ignore: true

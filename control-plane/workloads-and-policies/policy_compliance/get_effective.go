@@ -8,6 +8,7 @@ package policy_compliance
 import (
 	"context"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strconv"
 	"time"
@@ -171,6 +172,24 @@ func GetEffectivePolicyOfProject(ctx context.Context, policyClient policies.Clie
 		RulesV2:    convutils.MapMe(effectivePolicyAsJson[rulesSection]),
 
 		DefaultFromOrder: *defaultFromOrder,
+	}
+
+	var aliasErr error
+	effectivePolicy.DefaultsV2, aliasErr = gpucompat.NormalizeLegacyGPUFields(effectivePolicy.DefaultsV2)
+	if aliasErr != nil {
+		return nil, policyApi.NewError(http.StatusBadRequest, aliasErr.Error())
+	}
+	effectivePolicy.RulesV2, aliasErr = gpucompat.NormalizeLegacyGPUPolicy(effectivePolicy.RulesV2)
+	if aliasErr != nil {
+		return nil, policyApi.NewError(http.StatusBadRequest, aliasErr.Error())
+	}
+	if defaultFromOrder.Worker != nil {
+		order := gpucompat.CanonicalGPUDefaultFromOrder(*defaultFromOrder.Worker)
+		effectivePolicy.DefaultFromOrder.Worker = &order
+	}
+	if defaultFromOrder.Master != nil {
+		order := gpucompat.CanonicalGPUDefaultFromOrder(*defaultFromOrder.Master)
+		effectivePolicy.DefaultFromOrder.Master = &order
 	}
 
 	if policyUpdateTime != nil {

@@ -4,6 +4,7 @@
  */
 
 // services
+import { legacyComputeForEditor } from "@/utils/gpu-memory-compat.util/gpu-memory-compat.util";
 import { pick } from "@/utils/common.util";
 
 // models
@@ -53,7 +54,7 @@ async function list(filterBy: IAssetsFilter = {}, filterByName?: string): Promis
         filters.complyToWorkloadType,
         filters.complyToReplicaType,
       )
-      .then((res) => res.data.entries);
+      .then((res) => res.data.entries.map(legacyAssetForEditor));
   } catch (err: unknown) {
     throw httpService.handleHttpError(err);
   }
@@ -62,7 +63,7 @@ async function list(filterBy: IAssetsFilter = {}, filterByName?: string): Promis
 async function getById(computeResourceId: string): Promise<ComputeAsset> {
   try {
     const response = await assetsServiceApi.computeApi.getComputeAssetById(computeResourceId);
-    return response.data;
+    return legacyAssetForEditor(response.data);
   } catch (err: unknown) {
     throw httpService.handleHttpError(err);
   }
@@ -71,7 +72,7 @@ async function getById(computeResourceId: string): Promise<ComputeAsset> {
 async function create(computeResource: ComputeCreationRequest): Promise<ComputeAsset> {
   try {
     const response = await assetsServiceApi.computeApi.createComputeAsset(computeResource);
-    return response.data;
+    return legacyAssetForEditor(response.data);
   } catch (err: unknown) {
     throw httpService.handleHttpError(err);
   }
@@ -89,7 +90,7 @@ async function remove(computeResourceId: string): Promise<HttpResponse> {
 async function update(computeId: string, computeResource: ComputeUpdateRequest): Promise<ComputeAsset> {
   try {
     const response = await assetsServiceApi.computeApi.updateComputeAssetById(computeId, computeResource);
-    return response.data;
+    return legacyAssetForEditor(response.data);
   } catch (err: unknown) {
     throw httpService.handleHttpError(err);
   }
@@ -108,4 +109,8 @@ function getEmptyComputeResourceModel(): IUIComputeResourceCreation {
       largeShmRequest: false,
     },
   };
+}
+
+function legacyAssetForEditor(asset: ComputeAsset): ComputeAsset {
+  return { ...asset, spec: legacyComputeForEditor(asset.spec) };
 }

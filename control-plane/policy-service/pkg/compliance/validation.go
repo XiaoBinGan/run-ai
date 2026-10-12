@@ -9,6 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer/composer_v1/runai_workloads"
@@ -178,7 +179,11 @@ func validateRulesConsistency(policyRules map[string]interface{}, complianceErro
 func ValidateEffectivePolicy(ctx context.Context, workloadType string, _ map[string]interface{}, policyDefaults map[string]interface{}) *workloadsApi.Error {
 	options := composer.OptionsForPolicy()
 
-	rearrangedPolicy := utils.MapMe(FlattenInstances(policyDefaults))
+	storedDefaults, err := gpucompat.ProjectGPUFieldsForStorage(policyDefaults)
+	if err != nil {
+		return workloadsApi.NewError(http.StatusBadRequest, err.Error())
+	}
+	rearrangedPolicy := utils.MapMe(FlattenInstances(storedDefaults))
 
 	switch workloadType {
 	case workloadTypeDistributedInference:

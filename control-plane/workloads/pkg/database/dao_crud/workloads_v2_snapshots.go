@@ -9,6 +9,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 
 	authorization "github.com/dsx-ai-factory/run-ai/control-plane/authorization/pkg/client/generated"
@@ -23,11 +24,18 @@ import (
 func DbUpsertWorkloadV2Snapshot(ctx context.Context, snapshot *models_crud.WorkloadV2Snapshot) *api.Error {
 	dbErr := api.NewError(http.StatusServiceUnavailable, fmt.Sprintf("Failed to upsert V2 workload snapshot %s", snapshot.ID), nil)
 
-	_, err := runaidb.DB().WithContext(ctx).Table(models_crud.WorkloadV2SnapshotsTableName).Save(snapshot)
+	stored := *snapshot
+	stored.Spec = gpucompat.StoredWorkloadSpec(snapshot.Spec)
+	stored.MasterSpec = gpucompat.StoredMasterSpec(snapshot.MasterSpec)
+
+	_, err := runaidb.DB().WithContext(ctx).Table(models_crud.WorkloadV2SnapshotsTableName).Save(&stored)
 	if err != nil {
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to upsert V2 workload snapshot %s, err %v", snapshot.ID, err)
 		return dbErr.WithDetails(err)
 	}
+
+	stored.Spec, stored.MasterSpec = snapshot.Spec, snapshot.MasterSpec
+	*snapshot = stored
 
 	return nil
 }

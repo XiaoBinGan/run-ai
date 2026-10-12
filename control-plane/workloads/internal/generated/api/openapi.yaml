@@ -24435,7 +24435,6 @@ components:
       minLength: 1
       nullable: true
       type: string
-      x-gorm-ignore: true
     GpuDevicesRequest:
       description: "Requested number of GPU devices. Currently if more than one device\
         \ is requested, it is not possible to provide values for gpuMemory or gpuPortion."

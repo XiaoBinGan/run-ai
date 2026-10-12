@@ -8,6 +8,7 @@ package flat_workloads
 import (
 	"context"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strconv"
 	"strings"
@@ -508,6 +509,13 @@ func validateComplianceOfAsset(ctx context.Context, assetInfo assetChanInfo) {
 		//   will move under "security"
 		//
 		RearrangePayload(payloadMap)
+		canonicalPayload, aliasErr := gpucompat.NormalizeLegacyGPUFields(payloadMap)
+		if aliasErr != nil {
+			logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("failed to normalize asset GPU memory: %v", aliasErr)
+			return
+		}
+
+		payloadMap = canonicalPayload
 
 		fieldsWithCantEditRule := make([]string, 0)
 		complianceResults := policy_compliance.ComplianceErrors{}

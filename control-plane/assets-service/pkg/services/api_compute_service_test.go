@@ -730,14 +730,14 @@ var _ = Describe("compute asset specific tests", func() {
 					Name: origAsset.Meta.Name,
 				},
 				Spec: &api.ComputeAssetSpec{
-					GpuDevicesRequest: convutils.Ref(int32(1)),
-					GpuRequestType:    convutils.Ref(api.GPUREQUESTTYPE_PORTION),
-					GpuPortionRequest: convutils.Ref(0.2),
-					GpuPortionLimit:   convutils.Ref(0.4),
-					CpuCoreRequest:    convutils.Ref(5.0),
-					CpuCoreLimit:      convutils.Ref(7.5),
-					CpuMemoryRequest:  convutils.Ref("20G"),
-					CpuMemoryLimit:    convutils.Ref("40G"),
+					GpuDevicesRequest:       convutils.Ref(int32(1)),
+					GpuRequestType:          convutils.Ref(api.GPUREQUESTTYPE_PORTION),
+					GpuMemoryPortionRequest: convutils.Ref(0.2),
+					GpuMemoryPortionLimit:   convutils.Ref(0.4),
+					CpuCoreRequest:          convutils.Ref(5.0),
+					CpuCoreLimit:            convutils.Ref(7.5),
+					CpuMemoryRequest:        convutils.Ref("20G"),
+					CpuMemoryLimit:          convutils.Ref("40G"),
 					ExtendedResources: &[]api.ExtendedResource{
 						{
 							Resource: convutils.Ref("updated/res"),
@@ -752,7 +752,10 @@ var _ = Describe("compute asset specific tests", func() {
 			//
 			//  validate that the update changed the fields correctly
 			//
-			validateAssetSpec(randoms, router, url, createdAsset.Meta.Id, &updateRequest.Spec)
+			expectedSpec := *updateRequest.Spec
+			expectedSpec.GpuPortionRequest = convutils.Ref(0.2)
+			expectedSpec.GpuPortionLimit = convutils.Ref(0.4)
+			validateAssetSpec(randoms, router, url, createdAsset.Meta.Id, &expectedSpec)
 		})
 	})
 

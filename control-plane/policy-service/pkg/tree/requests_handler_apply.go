@@ -7,6 +7,7 @@ package tree
 
 import (
 	"context"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strconv"
 	"strings"
@@ -69,6 +70,13 @@ type ApplyPolicyOptions struct {
 
 func (ht *HierarchyTree) HandleApplyRequest(ctx context.Context, request *ApplyPolicyRequest, options ApplyPolicyOptions) (*dbmodel.PolicyWithOptionalEffective, *api.Error) {
 	logging.WithCtx(runaictx.LoggerHook(ctx)).Infof("[%s] apply %s policy started validate only? [%v] overwrite? [%v]", ht.treeId.ToString(), request.WorkloadType, options.ValidateOnly, options.Overwrite)
+
+	if err := gpucompat.ValidateMemoryRequestInput(request.Defaults); err != nil {
+		return nil, api.NewValidationError(err.Error())
+	}
+	if aliasErr := normalizeGPUPolicyRequest(request); aliasErr != nil {
+		return nil, aliasErr
+	}
 
 	request.Defaults = database.CleanMap(request.Defaults)
 	request.Rules = database.CleanMap(request.Rules)
@@ -291,6 +299,12 @@ func (ht *HierarchyTree) HandleApplyRequest(ctx context.Context, request *ApplyP
 // defaults and rules to add/update, and also list of fields to remove from the policy. the function updates the existing
 // policy with those changes
 func applyRequestedChangesOnGivenPolicy(existingPolicy *dbmodel.PolicyWithOptionalEffective, request *ApplyPolicyRequest) *api.Error {
+	if err := existingPolicy.NormalizeGPUMemory(); err != nil {
+		return api.NewError(http.StatusBadRequest, err.Error(), err)
+	}
+	if err := normalizeGPUPolicyRequest(request); err != nil {
+		return err
+	}
 	existingPolicy.UpdatedBy = request.Requester
 
 	// Before merging - clean all the fields that we intend to apply. this is needed only for itemized fields
@@ -407,4 +421,22 @@ func IsPolicyChangedDuringCalculation(ctx context.Context, appliedPolicyId strin
 	}
 
 	return false
+}
+
+func normalizeGPUPolicyRequest(request *ApplyPolicyRequest) *api.Error {
+	var err error
+	request.Defaults, err = gpucompat.NormalizeLegacyGPUFields(request.Defaults)
+	if err != nil {
+		return api.NewValidationError(err.Error())
+	}
+	request.Rules, err = gpucompat.NormalizeLegacyGPUPolicy(request.Rules)
+	if err != nil {
+		return api.NewValidationError(err.Error())
+	}
+	fields := make([]string, len(request.FieldsToReset))
+	for i, field := range request.FieldsToReset {
+		fields[i] = gpucompat.CanonicalGPUFieldPath(field)
+	}
+	request.FieldsToReset = fields
+	return nil
 }

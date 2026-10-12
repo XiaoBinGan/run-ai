@@ -6,6 +6,7 @@
 package services_crud
 
 import (
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"time"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
@@ -36,8 +37,8 @@ func NewWorkloadFromWorkloadParams(params *createWorkloadParams, assetsMapping [
 
 		Name: params.Response.Name,
 
-		Spec:       params.Response.Spec,
-		MasterSpec: params.Response.MasterSpec.Get(),
+		Spec:       gpucompat.StoredWorkloadSpec(params.Response.Spec),
+		MasterSpec: gpucompat.StoredMasterSpec(params.Response.MasterSpec.Get()),
 
 		MasterSameAsWorker: params.Response.MasterSpecSameAsWorker.Get(),
 
@@ -70,8 +71,8 @@ func NewWorkloadV2SnapshotFromWorkloadParams(params *createWorkloadParams, asset
 		Name:      params.Response.Name,
 		Namespace: namespace,
 
-		Spec:       params.Response.Spec,
-		MasterSpec: params.Response.MasterSpec.Get(),
+		Spec:       gpucompat.StoredWorkloadSpec(params.Response.Spec),
+		MasterSpec: gpucompat.StoredMasterSpec(params.Response.MasterSpec.Get()),
 
 		MasterSameAsWorker: params.Response.MasterSpecSameAsWorker.Get(),
 
@@ -102,11 +103,11 @@ func WorkloadFromDbRecord(record *models_crud.Workload, phase workloadsApi.Phase
 	}
 
 	if record.Spec != nil {
-		response.Spec = record.Spec
+		response.Spec = gpucompat.LegacyCompatibleWorkloadSpec(record.Spec)
 	}
 
 	if record.MasterSpec != nil {
-		response.MasterSpec.Set(record.MasterSpec)
+		response.MasterSpec.Set(gpucompat.LegacyCompatibleMasterSpec(record.MasterSpec))
 	}
 
 	if convutils.BoolIsTrue(record.MasterSameAsWorker) {

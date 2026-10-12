@@ -56,6 +56,9 @@ const (
 
 type FieldsComposerOptions struct {
 	// composer behavior
+	// Resolved lazily only for explicit GPU modes, so omitted modes need no new cluster report.
+	GpuComputeModeStatus func(context.Context, string) (available bool, reason string, err error)
+
 	IgnoreMissingValues          bool
 	NormalizeServingPortAuthType bool
 

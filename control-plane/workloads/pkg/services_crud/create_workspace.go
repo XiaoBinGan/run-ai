@@ -7,6 +7,7 @@ package services_crud
 
 import (
 	"context"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 
 	clients "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/clients/backend"
@@ -45,5 +46,6 @@ func CreateWorkspace(ctx context.Context, tenantSettingsClient clients.TenantSet
 		return api.Response(int(createErr.Code), createErr), nil
 	}
 
+	createWorkloadParams.Response.Spec = gpucompat.LegacyCompatibleWorkloadSpec(createWorkloadParams.Response.Spec)
 	return api.Response(http.StatusAccepted, createWorkloadParams.Response), nil
 }

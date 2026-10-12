@@ -8,6 +8,7 @@ package tree
 import (
 	"context"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strings"
 
@@ -129,6 +130,31 @@ func (ht *HierarchyTree) calculateEffectivePolicy(ctx context.Context, tx orm.DB
 ) {
 	effectiveContext := ctx.Value(EffectiveContextKey).(*EffectiveContext)
 
+	if !effectiveContext.GvkWorkload {
+		for _, policy := range effectiveContext.PolicyById {
+			if err := policy.NormalizeGPUMemory(); err != nil {
+				return nil, api.NewValidationError(err.Error())
+			}
+		}
+		for _, source := range []*map[string]interface{}{&imposedAssets, &masterImposedAssets} {
+			normalized, err := gpucompat.NormalizeLegacyGPUFields(*source)
+			if err != nil {
+				return nil, api.NewValidationError(err.Error())
+			}
+			*source = normalized
+		}
+	}
+
+	if !effectiveContext.GvkWorkload {
+		for _, source := range []*map[string]interface{}{&imposedAssetsRules, &masterImposedAssetsRules} {
+			normalized, err := gpucompat.NormalizeLegacyGPUPolicy(*source)
+			if err != nil {
+				return nil, api.NewValidationError(err.Error())
+			}
+			*source = normalized
+		}
+	}
+
 	currentPolicyId := effectiveContext.Hierarchy[idxToCalculate].Policy.ID.String()
 	currentGivenPolicy := effectiveContext.Hierarchy[idxToCalculate].Policy.Policy
 	currentOrgUnit := effectiveContext.OrgUnits[idxToCalculate]
@@ -189,7 +215,9 @@ func (ht *HierarchyTree) calculateEffectivePolicy(ctx context.Context, tx orm.DB
 
 	// if the effective policy of the parent scope is missing, calculate it.
 	if effectiveContext.Hierarchy[inheritFrom].Policy.EffectivePolicy.IsDeleted() {
-		ht.calculateEffectivePolicy(ctx, tx, appliedPolicyId, inheritFrom, nil, nil, nil, nil)
+		if _, err := ht.calculateEffectivePolicy(ctx, tx, appliedPolicyId, inheritFrom, nil, nil, nil, nil); err != nil {
+			return nil, err
+		}
 	}
 
 	logging.WithCtx(runaictx.LoggerHook(ctx)).Infof("[%s] effective policy of %s based on %s", ht.treeId.ToString(),

@@ -8,6 +8,7 @@ package nim_workloads
 import (
 	"context"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strconv"
 
@@ -72,6 +73,10 @@ func NewNimServiceComposer(
 	projectName string,
 	options composer.FieldsComposerOptions,
 ) *NimServiceComposer {
+	options.GpuComputeModeStatus = func(_ context.Context, mode string) (bool, string, error) {
+		status := checker.GpuComputeModes(clusterInfo)[mode]
+		return status.Available, status.Reason, nil
+	}
 	result := NimServiceComposer{
 		fc: &composer.FieldsComposer{
 			WorkloadType:      composer.WorkloadType_NIM,
@@ -318,6 +323,15 @@ func (nsc *NimServiceComposer) processComputeFields(ctx context.Context, src *wo
 			return nil
 		}
 
+		portion, err := gpucompat.ResolveLegacyGPUMemory("Request", src.GpuPortionRequest.Get(), src.GpuMemoryPortionRequest.Get())
+		if err != nil {
+			return workloadsApi.NewError(http.StatusBadRequest, err.Error())
+		}
+		limit, err := gpucompat.ResolveLegacyGPUMemory("Limit", src.GpuPortionLimit.Get(), src.GpuMemoryPortionLimit.Get())
+		if err != nil {
+			return workloadsApi.NewError(http.StatusBadRequest, err.Error())
+		}
+
 		runner := &composer.StepRunner{}
 
 		if target.Resources == nil {
@@ -332,7 +346,7 @@ func (nsc *NimServiceComposer) processComputeFields(ctx context.Context, src *wo
 
 			nsc.fc.ComposeGpuRequestsAndLimits(ctx, src.GpuDevicesRequest.Get(),
 				composer.CastStruct[workloadsManagerApi.GpuRequestType, workloadsApi.GpuRequestType](src.GpuRequestType.Get()),
-				src.GpuPortionRequest.Get(), src.GpuPortionLimit.Get(),
+				portion, limit,
 				src.GpuMemoryRequest.Get(), src.GpuMemoryLimit.Get(), gpuSizingInfoSetter,
 				target.Resources, nil, gpuSizingInfo),
 		)
@@ -348,7 +362,10 @@ func (nsc *NimServiceComposer) processComputeFields(ctx context.Context, src *wo
 			}
 		}
 
+		nimService := nimv1alpha1.NIMService{}
+		nimService.Name = nsc.fc.WorkloadName
 		runner.Batch(
+			nsc.fc.ComposeGpuComputeMode(ctx, composer.EnumToString(src.GpuComputeMode.Get()), gpuSizingInfo, nimService.GetContainerName(), &target.Annotations, composer.StringToMapString),
 			nsc.composeMemoryLimitEnv(gpuSizingInfo, &target.Env, composer.StringToEnvVar, composer.GpuMemoryLimitEnvVar),
 			nsc.composePortionLimitEnv(gpuSizingInfo, &target.Env, composer.StringToEnvVar, composer.GpuMemoryLimitEnvVar),
 			nsc.composeMemoryReqAnnotation(gpuSizingInfo, &target.Annotations, composer.StringToMapString, composer.GpuMemoryAnnotation),

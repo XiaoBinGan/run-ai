@@ -1065,6 +1065,7 @@ function getComputeField(
   return {
     gpuDevicesRequest: compute.gpuDevicesRequest,
     gpuRequestType: compute.gpuRequestType,
+    gpuComputeMode: compute.gpuComputeMode,
     gpuPortionRequest: compute.gpuPortionRequest,
     gpuPortionLimit: compute.gpuPortionLimit,
     gpuMemoryRequest: compute.gpuMemoryRequest,

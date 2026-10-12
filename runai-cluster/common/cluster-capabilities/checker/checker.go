@@ -439,6 +439,9 @@ func (c *ClusterCapabilitiesChecker) ClusterConfiguration(ctx context.Context) (
 	// force fetch cluster info
 	if clusterInfo.Configuration == nil {
 		clusterInfo, err = c.fetchClusterInfo(ctx)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return clusterInfo.Configuration, nil
 }

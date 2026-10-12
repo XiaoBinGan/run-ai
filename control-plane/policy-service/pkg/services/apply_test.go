@@ -1587,6 +1587,7 @@ var _ = Describe("ApplyTest", Ordered, func() {
 				Defaults: bodyTenantA.Policy.Defaults,
 			}
 			expectedTenantA.Rules.Compute.GpuPortionRequest.SourceOfRule = &api.SourceOfRule{Scope: api.SCOPETYPE_TENANT}
+			expectedTenantA.Rules.Compute.GpuMemoryPortionRequest = expectedTenantA.Rules.Compute.GpuPortionRequest
 			dao.InjectSystemPolicyForTesting[api.WorkspacePolicyDefaultsAndRulesV2](&expectedTenantA)
 
 			testutils.Expect(*actualRespTenantA.Effective).ToEqual(expectedTenantA)
@@ -1682,6 +1683,7 @@ var _ = Describe("ApplyTest", Ordered, func() {
 				},
 			}
 			expectedDeptA.Rules.Compute.GpuPortionRequest.SourceOfRule = &api.SourceOfRule{Scope: api.SCOPETYPE_TENANT}
+			expectedDeptA.Rules.Compute.GpuMemoryPortionRequest = expectedDeptA.Rules.Compute.GpuPortionRequest
 			expectedDeptA.Rules.Compute.CpuMemoryLimit.SourceOfRule = &api.SourceOfRule{Scope: api.SCOPETYPE_DEPARTMENT, DepartmentId: convutils.Ref("111")}
 			dao.InjectSystemPolicyForTesting[api.WorkspacePolicyDefaultsAndRulesV2](&expectedDeptA)
 

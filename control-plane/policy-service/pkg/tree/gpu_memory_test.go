@@ -1,0 +1,133 @@
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package tree
+
+import (
+	"encoding/json"
+	"github.com/dsx-ai-factory/run-ai/control-plane/policy-service/generated/pkg/api"
+	"github.com/dsx-ai-factory/run-ai/control-plane/policy-service/pkg/database/dbmodel"
+	"github.com/dsx-ai-factory/run-ai/control-plane/policy-service/pkg/scopes"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
+	"github.com/dsx-ai-factory/run-ai/runai-application-packages/dbmodels"
+	"reflect"
+	"testing"
+)
+
+func TestGPUMemoryPolicyPatchAndReset(t *testing.T) {
+	for _, reverse := range []bool{false, true} {
+		old, current := "gpuPortionRequest", "gpuMemoryPortionRequest"
+		if reverse {
+			old, current = current, old
+		}
+		t.Run(old, func(t *testing.T) {
+			existing := &dbmodel.PolicyWithOptionalEffective{Policy: dbmodel.Policy{
+				DefaultsV2: dbmodels.JsonBMap{"compute": map[string]any{old: json.Number("0.25")}},
+				RulesV2:    dbmodels.JsonBMap{"compute": map[string]any{old: map[string]any{"canEdit": false}}},
+			}}
+			request := &ApplyPolicyRequest{Defaults: map[string]any{"compute": map[string]any{current: json.Number("0.5")}}}
+			if err := applyRequestedChangesOnGivenPolicy(existing, request); err != nil {
+				t.Fatal(err)
+			}
+			if got := existing.Policy.DefaultsV2["compute"].(map[string]any); len(got) != 1 || got["gpuMemoryPortionRequest"] != json.Number("0.5") {
+				t.Fatalf("stale alias after patch: %#v", got)
+			}
+			stored, err := existing.Policy.ForStorage()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if stored.DefaultsV2["compute"].(map[string]any)["gpuPortionRequest"] != json.Number("0.5") {
+				t.Fatal("storage key changed")
+			}
+			if err := applyRequestedChangesOnGivenPolicy(existing, &ApplyPolicyRequest{FieldsToReset: []string{"compute." + old}}); err != nil {
+				t.Fatal(err)
+			}
+			if len(existing.Policy.DefaultsV2) != 0 || len(existing.Policy.RulesV2) != 0 {
+				t.Fatalf("reset left aliases: %#v", existing.Policy)
+			}
+		})
+	}
+}
+
+func TestGPUMemoryPolicyInheritance(t *testing.T) {
+	for _, parentKey := range []string{"gpuPortionRequest", "gpuMemoryPortionRequest"} {
+		t.Run(parentKey, func(t *testing.T) {
+			childKey := "gpuMemoryPortionRequest"
+			if parentKey == childKey {
+				childKey = "gpuPortionRequest"
+			}
+			parent := &dbmodel.PolicyWithOptionalEffective{Policy: dbmodel.Policy{RulesV2: dbmodels.JsonBMap{"compute": map[string]any{parentKey: map[string]any{"canEdit": false}}}}}
+			child := &dbmodel.PolicyWithOptionalEffective{Policy: dbmodel.Policy{RulesV2: dbmodels.JsonBMap{"compute": map[string]any{childKey: map[string]any{"canEdit": true}}}}}
+			for _, p := range []*dbmodel.PolicyWithOptionalEffective{parent, child} {
+				if err := p.NormalizeGPUMemory(); err != nil {
+					t.Fatal(err)
+				}
+			}
+			ht := &HierarchyTree{}
+			parentSource, err := (scopes.OrgUnit{Scope: api.SCOPETYPE_TENANT, Id: "1"}).AsSourceOfRule("Workspace")
+			if err != nil {
+				t.Fatal(err)
+			}
+			childSource, err := (scopes.OrgUnit{Scope: api.SCOPETYPE_PROJECT, Id: "2"}).AsSourceOfRule("Workspace")
+			if err != nil {
+				t.Fatal(err)
+			}
+			ht.InitSourceOfRules(parent.Policy.RulesV2, parentSource, false)
+			inherited := ht.DetermineSourceOfRules(child.Policy.RulesV2, parent.Policy.RulesV2)
+			rules, mergeErr := ht.MergeRules(parent.Policy.RulesV2, child.Policy.RulesV2, inherited, childSource)
+			if mergeErr != nil {
+				t.Fatal(mergeErr)
+			}
+			rule := rules["compute"].(map[string]any)["gpuMemoryPortionRequest"].(map[string]any)
+			if rule["canEdit"] != false {
+				t.Fatal("child alias bypassed parent lock")
+			}
+			if !reflect.DeepEqual(rule["sourceOfRule"], parentSource) {
+				t.Fatal("lost source of inherited rule")
+			}
+		})
+	}
+}
+
+func TestGPUMemoryDefaultFromAliasCycle(t *testing.T) {
+	rules := map[string]any{"compute": map[string]any{
+		"gpuMemoryPortionRequest": map[string]any{"defaultFrom": map[string]any{"field": "compute.gpuPortionRequest"}},
+	}}
+	canonical, err := gpucompat.NormalizeLegacyGPUPolicy(rules)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, validationErr := calculateDefaultFromOrder(canonical)
+	if validationErr == nil {
+		t.Fatal("alias disguised a self dependency")
+	}
+}
+
+func TestLegacyWholePolicyCanBeNormalizedAndPatched(t *testing.T) {
+	request := &ApplyPolicyRequest{
+		Defaults: map[string]any{"compute": map[string]any{"gpuPortionRequest": json.Number("4")}},
+		Rules:    map[string]any{"compute": map[string]any{"gpuPortionRequest": map[string]any{"canEdit": false, "required": true}}},
+	}
+	if err := gpucompat.ValidateMemoryRequestInput(request.Defaults); err != nil {
+		t.Fatal(err)
+	}
+	if err := normalizeGPUPolicyRequest(request); err != nil {
+		t.Fatal(err)
+	}
+	existing := &dbmodel.PolicyWithOptionalEffective{}
+	if err := applyRequestedChangesOnGivenPolicy(existing, request); err != nil {
+		t.Fatal("legacy request rejected after normalization", err)
+	}
+	stored, err := existing.Policy.ForStorage()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if stored.DefaultsV2["compute"].(map[string]any)["gpuPortionRequest"] != json.Number("4") {
+		t.Fatal("lost whole GPU default")
+	}
+	if stored.RulesV2["compute"].(map[string]any)["gpuPortionRequest"].(map[string]any)["canEdit"] != false {
+		t.Fatal("lost lock")
+	}
+}

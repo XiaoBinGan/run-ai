@@ -8,6 +8,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/policy-service/pkg/database/dao"
@@ -139,6 +140,7 @@ func toWorkspaceResponseV2(record *dbmodel.PolicyWithOptionalEffective) api.Impl
 }
 
 func toResponse(src *api.DefaultFromOrder) *api.DefaultFromOrder {
+	src = dbmodel.StoredDefaultFromOrder(src)
 	if src == nil {
 		return nil
 	}
@@ -741,7 +743,8 @@ func jsonBMapToResponse[T any](dest **T, src dbmodels.JsonBMap) {
 		if (*dest) == nil {
 			(*dest) = new(T)
 		}
-		src.Unmarshal(*dest)
+		projected := dbmodels.JsonBMap(gpucompat.LegacyCompatibleGPUPolicy(src))
+		projected.Unmarshal(*dest)
 	}
 }
 
@@ -753,10 +756,17 @@ func loadFromJson(src any) map[string]interface{} {
 }
 
 func validateResetFields(resetFields []string, defaults map[string]interface{}, rules map[string]interface{}) *api.Error {
-	defaultsFields := datastructs.NewSet(policy_compliance.FieldsOfDefaults(defaults)...)
-	rulesFields := datastructs.NewSet(policy_compliance.FieldsWithRules(rules)...)
+	defaultsFields := datastructs.NewSet[string]()
+	for _, field := range policy_compliance.FieldsOfDefaults(defaults) {
+		defaultsFields.Add(gpucompat.CanonicalGPUFieldPath(field))
+	}
+	rulesFields := datastructs.NewSet[string]()
+	for _, field := range policy_compliance.FieldsWithRules(rules) {
+		rulesFields.Add(gpucompat.CanonicalGPUFieldPath(field))
+	}
 
 	for _, resetField := range resetFields {
+		resetField = gpucompat.CanonicalGPUFieldPath(resetField)
 		if defaultsFields.Has(resetField) {
 			return api.NewValidationError(fmt.Sprintf("%s: reset and defaults are mutually excluded", resetField))
 		}

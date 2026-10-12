@@ -8,6 +8,7 @@ package notifications
 import (
 	"context"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"time"
 
@@ -235,6 +236,12 @@ func (nsw *NotificationsComposer) ComposeCompute(ctx context.Context,
 			return nil
 		}
 
+		canonical, err := gpucompat.NormalizeLegacyWorkloadCompute(src)
+		if err != nil {
+			return workloadsApi.NewError(400, err.Error())
+		}
+		src = canonical
+
 		if !nsw.Output.RequestedResources.IsSet() {
 			return nil
 		}
@@ -247,7 +254,7 @@ func (nsw *NotificationsComposer) ComposeCompute(ctx context.Context,
 			nsw.fc.ComposeCpuCoreRequest(src.CpuCoreRequest.Get(), &nsw.Output.RequestedResources.Get().Cpu, nonZeroFloatToResourcesCore, nil),
 			nsw.fc.ComposeCpuMemoryRequest(src.CpuMemoryRequest.Get(), &nsw.Output.RequestedResources.Get().CpuMemory, nonEmptyStringToResourcesQuantity, nil),
 			nsw.fc.ComposeGpuRequestsAndLimits(ctx, src.GpuDevicesRequest.Get(), src.GpuRequestType.Get(),
-				src.GpuPortionRequest.Get(), src.GpuPortionLimit.Get(),
+				src.GpuMemoryPortionRequest.Get(), src.GpuMemoryPortionLimit.Get(),
 				src.GpuMemoryRequest.Get(), src.GpuMemoryLimit.Get(), gpuRequestedResourcesSetter, &nsw.Output.RequestedResources, nil, &sizingInfo),
 		)
 

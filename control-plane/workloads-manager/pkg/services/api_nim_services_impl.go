@@ -9,6 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strings"
 
@@ -52,7 +53,7 @@ func (nsi *NimServicesImpl) CreateNimService(ctx context.Context, request api.Ni
 		return nil, ToSubmissionError(err)
 	}
 
-	policyRules, policyDefaults, defaultFromOrder, policyErr := GetPolicyOfProject(ctx, WorkloadTypeNimService, request.Metadata.ProjectId)
+	policyRules, policyDefaults, _, policyErr := GetPolicyOfProject(ctx, WorkloadTypeNimService, request.Metadata.ProjectId)
 	if policyErr != nil {
 		return nil, ToSubmissionError(policyErr)
 	}
@@ -71,11 +72,16 @@ func (nsi *NimServicesImpl) CreateNimService(ctx context.Context, request api.Ni
 	policy_compliance.PrepareDefaultsForMutation(policyDefaults)
 
 	// Validate policy compliance on the mutated workload
-	_, complianceErr := validateMutatedSpecVsPolicy(policyRules, policyDefaults, defaultFromOrder, mutatedSpec)
+	_, complianceErr := validateMutatedSpecVsPolicy(policyRules, policyDefaults, mutatedSpec)
 	if complianceErr != nil {
 		return nil, complianceErr
 	}
 
+	if request.Spec.Compute != nil {
+		compute := *request.Spec.Compute
+		compute.GpuPortionRequest, compute.GpuPortionLimit = nil, nil
+		request.Spec.Compute = &compute
+	}
 	copyErr := convutils.CopySpecs(&request.Spec, mutatedSpec)
 	if copyErr != nil {
 		return nil, NewSubmissionError(http.StatusInternalServerError, "failed to prepare the workload spec for submission", copyErr)
@@ -119,6 +125,10 @@ func (nsi *NimServicesImpl) CreateNimService(ctx context.Context, request api.Ni
 		}
 	}
 
+	ctx, ctxErr := nsi.updateContextWithMergedSpec(ctx, &request.Metadata, request.Spec)
+	if ctxErr != nil {
+		return nil, NewSubmissionError(http.StatusInternalServerError, "failed to save resolved NIM spec", ctxErr)
+	}
 	workloadV2Response, submissionErrors := nsi.workloadsImpl.CreateWorkloadV2(ctx, workloadRequest, false)
 	if len(submissionErrors) > 0 {
 		return nil, &submissionErrors[0]
@@ -127,7 +137,7 @@ func (nsi *NimServicesImpl) CreateNimService(ctx context.Context, request api.Ni
 	response := &api.NimServiceResponse{
 		Metadata:     workloadV2Response.Metadata,
 		DesiredPhase: workloadV2Response.DesiredPhase,
-		Spec:         request.Spec,
+		Spec:         legacyCompatibleNimSpec(request.Spec),
 	}
 	redactNimServiceResponseSensitiveValues(response)
 
@@ -257,7 +267,7 @@ func (nsi *NimServicesImpl) composeNimService(
 
 	err := nimComposer.Compose(ctx, &generalizedSpec, &nimService.Spec)()
 	if err != nil {
-		return nil, nimServiceNetworkingInfo{}, api.NewError(http.StatusBadRequest, "failed to compose NIMService spec", err)
+		return nil, nimServiceNetworkingInfo{}, api.NewError(int(err.Code), "failed to compose NIMService spec", err)
 	}
 
 	// Read back the networking decision made by the composer during composition.
@@ -340,7 +350,7 @@ func (nsi *NimServicesImpl) getNimServiceInternal(ctx context.Context, id string
 	nimService := &api.NimServiceResponse{
 		Metadata:     workloadV2Response.Workload.Metadata,
 		DesiredPhase: workloadV2Response.Workload.DesiredPhase,
-		Spec:         originalRequest.Spec,
+		Spec:         legacyCompatibleNimSpec(originalRequest.Spec),
 	}
 
 	return qRecord, nimService, nil
@@ -419,6 +429,12 @@ func (nsi *NimServicesImpl) UpdateNimServiceSpec(ctx context.Context, id string,
 		return nil, api.NewError(http.StatusBadRequest, "failed to merge NIMService spec for update", err)
 	}
 
+	if request.Spec.Compute != nil {
+		if err := nsi.resolveUpdatedNimGpuMode(ctx, existingNimService.Metadata.ProjectId, &mergedSpec); err != nil {
+			return nil, err
+		}
+	}
+
 	if err := validateNimServingPortUrlRequiresExposure(mergedSpec.ServingPort); err != nil {
 		return nil, err
 	}
@@ -473,7 +489,7 @@ func (nsi *NimServicesImpl) UpdateNimServiceSpec(ctx context.Context, id string,
 	nimServiceResponse := &api.NimServiceResponse{
 		Metadata:     workloadV2Response.Metadata,
 		DesiredPhase: workloadV2Response.DesiredPhase,
-		Spec:         mergedSpec,
+		Spec:         legacyCompatibleNimSpec(mergedSpec),
 	}
 	redactNimServiceResponseSensitiveValues(nimServiceResponse)
 
@@ -506,6 +522,18 @@ func (nsi *NimServicesImpl) mergeUpdateSpecIntoFullSpec(ctx context.Context, upd
 	var partialSpecMap map[string]interface{}
 	if err := convutils.CopySpecs(&partialSpecMap, updateSpec); err != nil {
 		return api.NimServiceSpec{}, err
+	}
+
+	if err := gpucompat.ValidateMemoryRequestInput(partialSpecMap); err != nil {
+		return api.NimServiceSpec{}, err
+	}
+
+	for _, source := range []*map[string]interface{}{&fullSpecMap, &partialSpecMap} {
+		canonical, err := gpucompat.NormalizeLegacyGPUFields(*source)
+		if err != nil {
+			return api.NimServiceSpec{}, err
+		}
+		*source = canonical
 	}
 
 	// Merge at root level: overwrite full spec fields with partial spec fields
@@ -556,7 +584,7 @@ func removableFieldsToStrings(fields []api.NimServiceRemovableFields) []string {
 func (nsi *NimServicesImpl) updateContextWithMergedSpec(ctx context.Context, metadata *api.NimServiceMetadataCreateParams, mergedSpec api.NimServiceSpec) (context.Context, error) {
 	createRequest := api.NimServiceCreateRequest{
 		Metadata: *metadata,
-		Spec:     mergedSpec,
+		Spec:     storedNimSpec(mergedSpec),
 	}
 	body, err := json.Marshal(createRequest)
 	if err != nil {

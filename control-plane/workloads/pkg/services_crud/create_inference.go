@@ -7,6 +7,7 @@ package services_crud
 
 import (
 	"context"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/services_utils"
 	"net/http"
 
@@ -57,6 +58,10 @@ func CreateInference(ctx context.Context, tenantSettingsClient clients.TenantSet
 
 	sanitizeWorkloadResponse(ctx, &createWorkloadParams.Response)
 
+	createWorkloadParams.Response.Spec = gpucompat.LegacyCompatibleWorkloadSpec(createWorkloadParams.Response.Spec)
+	if createWorkloadParams.Response.MasterSpec.Get() != nil {
+		createWorkloadParams.Response.MasterSpec.Set(gpucompat.LegacyCompatibleMasterSpec(createWorkloadParams.Response.MasterSpec.Get()))
+	}
 	return api.Response(http.StatusAccepted, createWorkloadParams.Response), nil
 }
 

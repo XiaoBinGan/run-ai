@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"maps"
 	"net/http"
 	"slices"
@@ -280,6 +281,14 @@ func (w *WorkloadsV2Impl) CreateWorkloadV2WithDryRun(ctx context.Context, reques
 			requestBodyMap = bodyMap
 		}
 	}
+	if requestPath == NimServicesAPIPath {
+		stored, err := gpucompat.ProjectGPUFieldsForStorage(requestBodyMap)
+		if err != nil {
+			return nil, SingleError(NewSubmissionError(http.StatusBadRequest, err.Error(), err))
+		}
+		requestBodyMap = stored
+	}
+
 	qRecord := models.WorkloadsQueueRecord{
 		ID: workloadId,
 
