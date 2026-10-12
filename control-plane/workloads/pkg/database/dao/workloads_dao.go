@@ -614,6 +614,7 @@ func (w *WorkloadsDao) DbSyncWorkloads(
 
 	syncedWorkloads := []string{}
 	failedWorkloads := []string{}
+	notSuspendableWorkloads := []string{}
 	for _, workload := range workloads {
 		query := tx.Table(WorkloadsTableName)
 
@@ -627,9 +628,17 @@ func (w *WorkloadsDao) DbSyncWorkloads(
 		} else {
 			tx.SavePoint("sp")
 			syncedWorkloads = append(syncedWorkloads, workload.ID.String())
+			if !workload.SupportSuspend {
+				notSuspendableWorkloads = append(notSuspendableWorkloads, workload.ID.String())
+			}
 		}
 
 		excludingIds = append(excludingIds, workload.ID.String())
+	}
+
+	if err := resetSupportSuspendOfNonV2Workloads(tx, tenantId, notSuspendableWorkloads); err != nil {
+		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to reset support_suspend of synced workloads: %v", err)
+		return nil, nil, nil, dbErr.WithDetails(err)
 	}
 
 	if projectId == "" && clusterId == "" {
@@ -663,6 +672,26 @@ func (w *WorkloadsDao) DbSyncWorkloads(
 	committed = true
 
 	return syncedWorkloads, failedWorkloads, deletedWorkloadIds, nil
+}
+
+// resetSupportSuspendOfNonV2Workloads lets the cluster's "not suspendable" report win for workloads that
+// are not managed through the V2 API. omitWorkloadsEmptyStaticFields drops a false support_suspend from
+// the save so a control-plane-set true on V2 workloads survives the sync, but for V1 workloads the
+// cluster is the source of truth: a legacy InferenceWorkload is created with support_suspend=true and
+// must be corrected once the cluster reports it cannot be suspended (RUN-43040).
+func resetSupportSuspendOfNonV2Workloads(tx orm.DB, tenantId uint, workloadIds []string) error {
+	if len(workloadIds) == 0 {
+		return nil
+	}
+
+	_, err := tx.Table(WorkloadsTableName).
+		Where(fmt.Sprintf("%s = ?", WorkloadsColumnTenantId), tenantId).
+		Where(fmt.Sprintf("%s IN ?", WorkloadsColumnId), workloadIds).
+		Where(fmt.Sprintf("%s = ?", WorkloadsColumnSupportSuspend), true).
+		Where(fmt.Sprintf("%s IS NULL OR %s <> ?", WorkloadsColumnSourceApi, WorkloadsColumnSourceApi), string(api.SOURCEAPI_WORKLOADS_V2)).
+		Update(WorkloadsColumnSupportSuspend, false)
+
+	return err
 }
 
 func omitWorkloadsEmptyStaticFields(query orm.DB, workload models.Workload) orm.DB {
