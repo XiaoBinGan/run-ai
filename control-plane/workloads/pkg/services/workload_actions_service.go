@@ -36,7 +36,7 @@ func (s *EventsService) GetWorkloadActions(ctx context.Context, workloadId strin
 		return NewErrorResponse(apiErr), nil
 	}
 	limit = setDefaultLimit(limit)
-	records, dbErr := dao.DbGetWorkloadActions(ctx, tenantID, id, offset, limit)
+	records, dbErr := dao.DbGetWorkloadActions(ctx, id, offset, limit)
 	if dbErr != nil {
 		return NewErrorResponse(dbErr), nil
 	}
@@ -50,7 +50,7 @@ func authorizeWorkloadActionsRead(ctx context.Context, tenantID uint, workloadID
 		return api.NewError(http.StatusForbidden, "Workload read is not permitted", nil)
 	}
 	ancestors := &authorization_utils.Ancestors{TenantId: strconv.FormatUint(uint64(tenantID), 10)}
-	scope, scopeErr := dao.DbGetWorkloadActionScope(ctx, tenantID, workloadID)
+	scope, scopeErr := dao.DbGetWorkloadActionScope(ctx, workloadID)
 	if scopeErr != nil && scopeErr.Code != http.StatusNotFound {
 		return scopeErr
 	}

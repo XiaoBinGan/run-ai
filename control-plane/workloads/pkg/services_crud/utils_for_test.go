@@ -34,8 +34,8 @@ func CleanupCrudTable() {
 	gormDb.Unscoped().Delete(&models_crud.Workload{}, "1 = 1")
 }
 
-func expectWorkloadActions(ctx context.Context, tenantID uint, workloadID string, expected ...string) {
-	records, apiErr := dao.DbGetWorkloadActions(ctx, tenantID, uuid.MustParse(workloadID), 0, 0)
+func expectWorkloadActions(ctx context.Context, workloadID string, expected ...string) {
+	records, apiErr := dao.DbGetWorkloadActions(ctx, uuid.MustParse(workloadID), 0, 0)
 	Expect(apiErr).To(BeNil())
 	actions := make([]string, 0, len(records))
 	for _, record := range records {

@@ -160,7 +160,7 @@ var _ = Describe("inference service validations", Ordered, func() {
 
 			createPayload := createResponse.Body.(workloadsApi.SupersetWorkload)
 			Expect(createPayload.WorkloadId).NotTo(BeNil())
-			expectWorkloadActions(ctx, randoms.TenantId, createPayload.WorkloadId, "create")
+			expectWorkloadActions(ctx, createPayload.WorkloadId, "create")
 
 			getResponse, _ := inferencesService.GetInference(ctx, createPayload.WorkloadId)
 			Expect(getResponse.Code).To(Equal(http.StatusOK))
@@ -324,7 +324,7 @@ var _ = Describe("inference service validations", Ordered, func() {
 			var generatedClientResponse workloadsApi.Inference
 			Expect(json.Unmarshal(body, &generatedClientResponse)).To(Succeed())
 			Expect(generatedClientResponse.DesiredPhase).To(Equal(workloadsApi.WORKLOADDESIREDPHASE_RUNNING))
-			expectWorkloadActions(ctx, randoms.TenantId, workloadID.String(), "update")
+			expectWorkloadActions(ctx, workloadID.String(), "update")
 		})
 
 		It("should be reflected in get", func() {
@@ -353,7 +353,7 @@ var _ = Describe("inference service validations", Ordered, func() {
 			Expect(updatePayload.Spec.Image).NotTo(BeNil())
 			Expect(updatePayload.Spec.Image.IsSet()).To(BeTrue())
 			Expect(*updatePayload.Spec.Image.Get()).To(Equal(image2))
-			expectWorkloadActions(ctx, randoms.TenantId, workloadId, "update", "create")
+			expectWorkloadActions(ctx, workloadId, "update", "create")
 
 			getResponse, _ = inferencesService.GetInference(ctx, workloadId)
 			Expect(getResponse.Code).To(Equal(http.StatusOK))

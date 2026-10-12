@@ -11,6 +11,7 @@ import (
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/services_utils"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/runaidb"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/runaidb/orm/clause"
 	"github.com/google/uuid"
@@ -34,8 +35,12 @@ func DbInsertWorkloadActions(ctx context.Context, records []models.WorkloadActio
 	return nil
 }
 
-func DbGetWorkloadActions(ctx context.Context, tenantID uint, workloadID uuid.UUID, offset, limit int32) ([]models.WorkloadActionHistory, *api.Error) {
+func DbGetWorkloadActions(ctx context.Context, workloadID uuid.UUID, offset, limit int32) ([]models.WorkloadActionHistory, *api.Error) {
 	records := []models.WorkloadActionHistory{}
+	tenantID, apiErr := services_utils.ParseTenantId(ctx)
+	if apiErr != nil {
+		return records, apiErr
+	}
 	if offset < 0 || limit < 0 {
 		return records, api.NewValidationError("offset and limit must not be negative")
 	}
@@ -58,8 +63,12 @@ func DbGetWorkloadActions(ctx context.Context, tenantID uint, workloadID uuid.UU
 }
 
 // Use retained scope only when the workload row no longer exists.
-func DbGetWorkloadActionScope(ctx context.Context, tenantID uint, workloadID uuid.UUID) (*models.WorkloadActionScope, *api.Error) {
+func DbGetWorkloadActionScope(ctx context.Context, workloadID uuid.UUID) (*models.WorkloadActionScope, *api.Error) {
 	scopes := []models.WorkloadActionScope{}
+	tenantID, apiErr := services_utils.ParseTenantId(ctx)
+	if apiErr != nil {
+		return nil, apiErr
+	}
 	db := runaidb.DB().WithContext(ctx)
 
 	err := db.Unscoped().

@@ -102,7 +102,7 @@ var _ = Describe("training service validations", func() {
 
 			createPayload := createResponse.Body.(workloadsApi.SupersetWorkload)
 			Expect(createPayload.WorkloadId).NotTo(BeNil())
-			expectWorkloadActions(ctx, randoms.TenantId, createPayload.WorkloadId, "create")
+			expectWorkloadActions(ctx, createPayload.WorkloadId, "create")
 
 			//  expecting the actual phase to be Creating...
 			createPayload.ActualPhase = convutils.Ref(workloadsApi.PHASE_CREATING)

@@ -81,6 +81,16 @@ var _ = Describe("Workload action history", func() {
 		}
 	})
 
+	It("requires tenant context for DAO reads", func() {
+		_, apiErr := dao.DbGetWorkloadActions(context.Background(), workloadID, 0, 0)
+		Expect(apiErr).NotTo(BeNil())
+		Expect(apiErr.Code).To(Equal(int32(http.StatusBadRequest)))
+
+		_, apiErr = dao.DbGetWorkloadActionScope(context.Background(), workloadID)
+		Expect(apiErr).NotTo(BeNil())
+		Expect(apiErr.Code).To(Equal(int32(http.StatusBadRequest)))
+	})
+
 	It("authorizes retained project scope without changing shared ancestor lookup", func() {
 		allowed := testing.SetProjectContext(testing.TestTenant, testing.TestUser, nil, testActionProject)
 		denied := testing.SetProjectContext(testing.TestTenant, testing.TestUser, nil, "project-2")
@@ -123,7 +133,7 @@ var _ = Describe("Workload action history", func() {
 		}
 		Expect(dao.DbInsertWorkloadActions(ctx, batch)).To(Succeed())
 		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(50))
-		Expect(storedWorkloadActions(ctx, testing.TestTenantId, workloadID, 999)).To(HaveLen(500))
+		Expect(storedWorkloadActions(ctx, workloadID, 999)).To(HaveLen(500))
 	})
 
 	It("cleans tenant and cluster history without crossing tenant boundaries", func() {
@@ -131,12 +141,13 @@ var _ = Describe("Workload action history", func() {
 		otherTenant.ID = uuid.New()
 		otherTenant.TenantID = 2
 		Expect(dao.DbInsertWorkloadActions(ctx, []models.WorkloadActionHistory{otherTenant})).To(Succeed())
+		otherTenantCtx := testing.SetContext(testing.TestTenant2, testing.TestUser, nil)
 
 		Expect(common.HandleClusterDeleteRequest(ctx, events.NewClusterDelete(testing.ClusterUuid1))).To(Succeed())
-		Expect(storedWorkloadActions(ctx, otherTenant.TenantID, workloadID, 0)).To(HaveLen(1))
+		Expect(storedWorkloadActions(otherTenantCtx, workloadID, 0)).To(HaveLen(1))
 
 		Expect(common.HandleTenantDeleteRequest(ctx, events.NewTenantDelete(testing.TestTenant2))).To(Succeed())
-		Expect(storedWorkloadActions(ctx, otherTenant.TenantID, workloadID, 0)).To(BeEmpty())
+		Expect(storedWorkloadActions(otherTenantCtx, workloadID, 0)).To(BeEmpty())
 	})
 
 	It("runs paired migrations repeatedly with all indexes and no workload foreign key", func() {
@@ -212,7 +223,7 @@ var _ = Describe("Workload action history", func() {
 
 		_, err = runaidb.DB().Exec(actionQuery)
 		Expect(err).NotTo(HaveOccurred())
-		Expect(storedWorkloadActions(ctx, testing.TestTenantId, orphan.WorkloadID, 0)).To(BeEmpty())
+		Expect(storedWorkloadActions(ctx, orphan.WorkloadID, 0)).To(BeEmpty())
 		Expect(getWorkloadActions(service, ctx, workloadID, 0, 0).Actions).To(HaveLen(3))
 
 		_, err = runaidb.DB().Model(&models.Workload{}).Where("id = ?", workloadID).Update("deleted_at", time.Now())
@@ -226,8 +237,8 @@ var _ = Describe("Workload action history", func() {
 		Expect(err).NotTo(HaveOccurred())
 		_, err = runaidb.DB().Exec(actionQuery)
 		Expect(err).NotTo(HaveOccurred())
-		Expect(storedWorkloadActions(ctx, testing.TestTenantId, workloadID, 0)).To(BeEmpty())
-		_, apiErr := dao.DbGetWorkloadActionScope(ctx, testing.TestTenantId, workloadID)
+		Expect(storedWorkloadActions(ctx, workloadID, 0)).To(BeEmpty())
+		_, apiErr := dao.DbGetWorkloadActionScope(ctx, workloadID)
 		Expect(apiErr).NotTo(BeNil())
 		Expect(apiErr.Code).To(Equal(int32(http.StatusNotFound)))
 	})
@@ -264,9 +275,9 @@ func getWorkloadActions(service api.EventsAPIServicer, ctx context.Context, work
 	return response.Body.(api.GetWorkloadActionsResponse)
 }
 
-func storedWorkloadActions(ctx context.Context, tenantID uint, workloadID uuid.UUID, limit int32) []models.WorkloadActionHistory {
+func storedWorkloadActions(ctx context.Context, workloadID uuid.UUID, limit int32) []models.WorkloadActionHistory {
 	GinkgoHelper()
-	records, apiErr := dao.DbGetWorkloadActions(ctx, tenantID, workloadID, 0, limit)
+	records, apiErr := dao.DbGetWorkloadActions(ctx, workloadID, 0, limit)
 	Expect(apiErr).To(BeNil())
 	return records
 }
@@ -291,7 +302,7 @@ func testActionWorkload(id uuid.UUID, scope models.WorkloadActionScope) models.W
 
 func expectWorkloadScopeProject(ctx context.Context, workloadID uuid.UUID, projectID string) {
 	GinkgoHelper()
-	scope, apiErr := dao.DbGetWorkloadActionScope(ctx, testing.TestTenantId, workloadID)
+	scope, apiErr := dao.DbGetWorkloadActionScope(ctx, workloadID)
 	Expect(apiErr).To(BeNil())
 	Expect(scope.ProjectID).To(Equal(projectID))
 }
