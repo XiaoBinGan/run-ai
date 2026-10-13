@@ -7,6 +7,7 @@ package installconfig
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/dsx-ai-factory/run-ai/runai-installer/installer/internal/artifacts"
@@ -311,12 +312,23 @@ func toStringMap(m map[string]any) map[string]string {
 // flattenHelmValues walks a customHelmValues map, writing one entry per leaf
 // value. A leaf is anything that is not a nested map or list.
 func flattenHelmValues(out map[string]string, prefix string, m map[string]any) {
-	for k, v := range m {
+	// A key can be written in dotted form (`global.foo`) or as a nested map
+	// (`global: {foo: ...}`), and the two can name the same path. Sorting makes
+	// the result independent of Go's map iteration order, and since a prefix
+	// sorts before the longer key it produces, the key the user spelled out in
+	// full is the one that survives.
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
 		key := k
 		if prefix != "" {
 			key = prefix + "." + k
 		}
-		flattenHelmValue(out, key, v)
+		flattenHelmValue(out, key, m[k])
 	}
 }
 
@@ -337,20 +349,28 @@ func flattenHelmValue(out map[string]string, key string, v any) {
 			flattenHelmValues(out, key, nested)
 		}
 	case []any:
-		out[key] = helmListValue(t)
-	case []string:
-		items := make([]any, 0, len(t))
-		for _, s := range t {
-			items = append(items, s)
+		// Helm's --set has no empty-list form: `key={}` sets a list holding one
+		// empty string, which is not what an empty list means. Emitting nothing
+		// leaves the chart default in place, as for an empty map.
+		if len(t) > 0 {
+			out[key] = helmListValue(t)
 		}
-		out[key] = helmListValue(items)
+	case []string:
+		if len(t) > 0 {
+			items := make([]any, 0, len(t))
+			for _, s := range t {
+				items = append(items, s)
+			}
+			out[key] = helmListValue(items)
+		}
 	default:
 		out[key] = escapeHelmValue(fmt.Sprintf("%v", v))
 	}
 }
 
 // helmListValue renders a list in the brace form Helm's --set parser expects.
-// Elements are escaped so a comma inside one is not read as a separator.
+// Elements are escaped so a comma or a closing brace inside one is not read as
+// the end of the list.
 func helmListValue(items []any) string {
 	parts := make([]string, 0, len(items))
 	for _, item := range items {
@@ -364,7 +384,14 @@ func helmListValue(items []any) string {
 }
 
 // escapeHelmValue backslash-escapes the characters Helm's --set parser treats
-// as separators, so a value containing them survives the round trip.
+// as separators, so a value containing them survives the round trip: a comma
+// separates list elements (and is an error on its own, "a,b" does not parse)
+// and a closing brace ends a list.
 func escapeHelmValue(s string) string {
-	return strings.NewReplacer(`\`, `\\`, `,`, `\,`).Replace(s)
+	return strings.NewReplacer(
+		`\`, `\\`,
+		`,`, `\,`,
+		`{`, `\{`,
+		`}`, `\}`,
+	).Replace(s)
 }
