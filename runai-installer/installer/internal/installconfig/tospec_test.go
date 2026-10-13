@@ -310,6 +310,30 @@ func TestToSpec_CustomHelmValuesShapes(t *testing.T) {
 			in:   map[string]any{"global": map[string]any{}},
 			want: nil,
 		},
+		{
+			name: "braces inside list elements are escaped",
+			in:   map[string]any{"args": []any{"a}b", "{c}"}},
+			want: map[string]string{"args": `{a\}b,\{c\}}`},
+		},
+		{
+			name: "braces inside scalar values are escaped",
+			in:   map[string]any{"note": "a}b{c"},
+			want: map[string]string{"note": `a\}b\{c`},
+		},
+		{
+			// Helm's --set has no empty-list form: `key={}` sets a list holding
+			// one empty string, so an empty list has to emit nothing.
+			name: "empty lists do not become a one element list",
+			in:   map[string]any{"dns": []any{}, "args": []string{}},
+			want: nil,
+		},
+		{
+			// Both spellings name global.foo. Sorted iteration makes the result
+			// independent of map order, and the key spelled out in full wins.
+			name: "a dotted key wins over the same path from a nested map",
+			in:   map[string]any{"global": map[string]any{"foo": "from-nested"}, "global.foo": "from-dotted"},
+			want: map[string]string{"global.foo": "from-dotted"},
+		},
 	}
 
 	for _, tc := range cases {
