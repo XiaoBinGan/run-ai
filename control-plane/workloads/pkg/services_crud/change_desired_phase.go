@@ -208,7 +208,7 @@ func (wbp *WorkloadBatchProcessor) processSingleWorkload(ctx context.Context, wo
 
 	if wbp.desiredPhase != api.WORKLOADDESIREDPHASE_DELETED {
 		// Applies to legacy workloads as well: a legacy InferenceWorkload has no suspend path on the
-		// cluster, so recording a stopped desired phase for it would only leave it in Stopping (RUN-43040).
+		// cluster, so recording a stopped desired phase for it would only leave it in Stopping.
 		if !workload.SupportSuspend {
 			return isGeneric, api.NewValidationError("suspend/resume is not supported for this workload type")
 		}

@@ -109,7 +109,7 @@ func (w *WorkloadsDao) DbUpsertWorkload(ctx context.Context, workload models.Wor
 		return dbErr.WithDetails(err)
 	}
 
-	if err := resetSupportSuspendOfNonV2Workloads(tx, workload.TenantID, notSuspendableIds(workload)); err != nil {
+	if err := resetSupportSuspendOfV1Workloads(tx, workload.TenantID, notSuspendableIds(workload)); err != nil {
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to reset support_suspend of workload %s: %v", workload.Name, err)
 		return dbErr.WithDetails(err)
 	}
@@ -134,7 +134,7 @@ func (w *WorkloadsDao) DbUpsertWorkloadFull(ctx context.Context, tenantID uint, 
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to save workload %s, err %v", workload.Name, saveErr)
 		return dbErr.WithDetails(saveErr)
 	}
-	if resetErr := resetSupportSuspendOfNonV2Workloads(tx, tenantID, notSuspendableIds(workload)); resetErr != nil {
+	if resetErr := resetSupportSuspendOfV1Workloads(tx, tenantID, notSuspendableIds(workload)); resetErr != nil {
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to reset support_suspend of workload %s: %v", workload.Name, resetErr)
 		return dbErr.WithDetails(resetErr)
 	}
@@ -645,7 +645,7 @@ func (w *WorkloadsDao) DbSyncWorkloads(
 		excludingIds = append(excludingIds, workload.ID.String())
 	}
 
-	if err := resetSupportSuspendOfNonV2Workloads(tx, tenantId, notSuspendableWorkloads); err != nil {
+	if err := resetSupportSuspendOfV1Workloads(tx, tenantId, notSuspendableWorkloads); err != nil {
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to reset support_suspend of synced workloads: %v", err)
 		return nil, nil, nil, dbErr.WithDetails(err)
 	}
@@ -684,7 +684,7 @@ func (w *WorkloadsDao) DbSyncWorkloads(
 }
 
 // notSuspendableIds returns the workload's id when the cluster reports it as not suspendable, so single-row
-// upserts can share resetSupportSuspendOfNonV2Workloads with the batch sync.
+// upserts can share resetSupportSuspendOfV1Workloads with the batch sync.
 func notSuspendableIds(workload models.Workload) []string {
 	if workload.SupportSuspend {
 		return nil
@@ -692,12 +692,12 @@ func notSuspendableIds(workload models.Workload) []string {
 	return []string{workload.ID.String()}
 }
 
-// resetSupportSuspendOfNonV2Workloads lets the cluster's "not suspendable" report win for workloads that
+// resetSupportSuspendOfV1Workloads lets the cluster's "not suspendable" report win for workloads that
 // are not managed through the V2 API. omitWorkloadsEmptyStaticFields drops a false support_suspend from
 // the save so a control-plane-set true on V2 workloads survives the sync, but for V1 workloads the
 // cluster is the source of truth: a legacy InferenceWorkload is created with support_suspend=true and
-// must be corrected once the cluster reports it cannot be suspended (RUN-43040).
-func resetSupportSuspendOfNonV2Workloads(tx orm.DB, tenantId uint, workloadIds []string) error {
+// must be corrected once the cluster reports it cannot be suspended.
+func resetSupportSuspendOfV1Workloads(tx orm.DB, tenantId uint, workloadIds []string) error {
 	if len(workloadIds) == 0 {
 		return nil
 	}
