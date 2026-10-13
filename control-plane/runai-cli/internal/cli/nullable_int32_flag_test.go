@@ -34,6 +34,29 @@ var _ = Describe("NullableInt32", func() {
 			Expect(err).To(HaveOccurred())
 			Expect(ni.IsSet()).To(BeFalse())
 		})
+
+		It("should fail on a value that does not fit in an int32", func() {
+			for _, value := range []string{"2147483648", "4294967295", "-2147483649"} {
+				ni = cli.NewNullableInt32Flag(&openapi.NullableInt32{})
+				err := ni.Set(value)
+				Expect(err).To(HaveOccurred(), "value %q must be rejected", value)
+				Expect(ni.IsSet()).To(BeFalse(), "value %q must leave the flag unset", value)
+			}
+		})
+
+		It("should set the int32 boundary values", func() {
+			for _, tc := range []struct {
+				value string
+				want  int32
+			}{
+				{value: "2147483647", want: 2147483647},
+				{value: "-2147483648", want: -2147483648},
+			} {
+				ni = cli.NewNullableInt32Flag(&openapi.NullableInt32{})
+				Expect(ni.Set(tc.value)).To(Succeed())
+				Expect(*ni.Value()).To(Equal(tc.want))
+			}
+		})
 	})
 
 	Describe("String", func() {
