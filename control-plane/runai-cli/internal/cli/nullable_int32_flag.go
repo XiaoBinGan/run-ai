@@ -43,7 +43,7 @@ func (ni *NullableInt32Flag) Value() *int32 {
 }
 
 func (ni *NullableInt32Flag) Set(value string) error {
-	i, err := strconv.ParseUint(value, 10, 32)
+	i, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
 		return err
 	}
