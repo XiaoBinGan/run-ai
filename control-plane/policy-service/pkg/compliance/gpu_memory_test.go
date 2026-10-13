@@ -8,8 +8,9 @@ package compliance
 import (
 	"context"
 	"fmt"
-	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"testing"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 )
 
 func TestEffectiveMemoryDefaultsPreserveLegacyValidation(t *testing.T) {

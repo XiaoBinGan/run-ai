@@ -8,11 +8,12 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"testing"
+
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-manager/internal/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-manager/pkg/middleware"
 	"github.com/dsx-ai-factory/run-ai/runai-application-packages/convutils"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestNimModeDefaultAndPersistence(t *testing.T) {

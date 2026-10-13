@@ -6,10 +6,11 @@
 package dbmodel
 
 import (
-	"github.com/dsx-ai-factory/run-ai/control-plane/assets-service/generated/pkg/api"
-	"gorm.io/gorm/schema"
 	"sync"
 	"testing"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/assets-service/generated/pkg/api"
+	"gorm.io/gorm/schema"
 )
 
 func TestGPUMemoryAliasesHaveNoDatabaseColumns(t *testing.T) {

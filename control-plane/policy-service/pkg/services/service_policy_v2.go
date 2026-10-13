@@ -8,8 +8,9 @@ package services
 import (
 	"context"
 	"fmt"
-	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/policy-service/pkg/database/dao"
 

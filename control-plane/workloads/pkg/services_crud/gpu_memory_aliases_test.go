@@ -356,3 +356,49 @@ func TestLegacyWholeRequestPolicyRulesAndFractions(t *testing.T) {
 		require.NotNil(t, err, "fractional whole GPU request accepted")
 	}
 }
+
+func TestUnifiedMemoryAliasPolicyResponse(t *testing.T) {
+	for _, workloadType := range []api.WorkloadType{api.WORKLOADTYPE_WORKSPACE, api.WORKLOADTYPE_DISTRIBUTED, api.WORKLOADTYPE_DISTRIBUTED_INFERENCE} {
+		for _, prefix := range []string{"gpuPortion", "gpuMemoryPortion"} {
+			t.Run(string(workloadType)+"/"+prefix, func(t *testing.T) {
+				defaults := map[string]any{"compute": map[string]any{prefix + "Request": .25, prefix + "Limit": .5}}
+				rules := map[string]any{"compute": map[string]any{prefix + "Request": map[string]any{"canEdit": false}, prefix + "Limit": map[string]any{"max": .5}}}
+				paths := []string{"worker"}
+				switch workloadType {
+				case api.WORKLOADTYPE_DISTRIBUTED:
+					defaults = map[string]any{"worker": defaults, "master": defaults}
+					rules = map[string]any{"worker": rules, "master": rules}
+					paths = []string{"worker", "master"}
+				case api.WORKLOADTYPE_DISTRIBUTED_INFERENCE:
+					defaults = map[string]any{"leader": defaults, "worker": defaults}
+					rules = map[string]any{"leader": rules, "worker": rules}
+					paths = []string{"worker.leader", "worker.worker"}
+				}
+				before, err := json.Marshal([]any{defaults, rules})
+				require.NoError(t, err)
+				info, apiErr := (UnifiedWorkloadRequest{WorkloadType: workloadType}).composePolicyInfo(defaults, rules)
+				require.Nil(t, apiErr)
+				response, err := gojsonq.LoadJson(info)
+				require.NoError(t, err)
+				for _, path := range paths {
+					parts := strings.Split(path, ".")
+					for _, section := range []string{"defaults", "rules"} {
+						fields := response[parts[0]].(map[string]any)[section].(map[string]any)
+						if len(parts) > 1 {
+							fields = fields[parts[1]].(map[string]any)
+						}
+						compute := fields["compute"].(map[string]any)
+						for _, suffix := range []string{"Request", "Limit"} {
+							require.Contains(t, compute, "gpuPortion"+suffix)
+							require.Contains(t, compute, "gpuMemoryPortion"+suffix)
+							require.Equal(t, compute["gpuPortion"+suffix], compute["gpuMemoryPortion"+suffix])
+						}
+					}
+				}
+				after, err := json.Marshal([]any{defaults, rules})
+				require.NoError(t, err)
+				require.JSONEq(t, string(before), string(after))
+			})
+		}
+	}
+}

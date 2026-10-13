@@ -8,10 +8,13 @@ package composer
 import (
 	"context"
 	"errors"
+	"net/http"
+	"strings"
+
+	workloadsApi "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/client/generated"
 	"github.com/dsx-ai-factory/run-ai/runai-application-packages/convutils"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"strings"
 )
 
 var _ = Describe("GPU compute mode", func() {
@@ -47,6 +50,35 @@ var _ = Describe("GPU compute mode", func() {
 		Entry("unavailable runtime", convutils.Ref("sm-sharing"), int32(1), false, int32(503), false),
 		Entry("unknown enum", convutils.Ref("unsupported"), int32(1), true, int32(400), false),
 	)
+	DescribeTable("validates sizing before evaluating the compute mode",
+		func(memory *string, devices int32, code int32, expectedLookups int, emitted bool) {
+			lookups := 0
+			fc := FieldsComposer{Options: FieldsComposerOptions{GpuComputeModeStatus: func(context.Context, string) (bool, string, error) {
+				lookups++
+				return true, "", nil
+			}}}
+			var sizing GpuSizingInfo
+			annotations := map[string]string{}
+			runner := &StepRunner{}
+			runner.Batch(
+				fc.ComposeGpuRequestsAndLimits(context.Background(), &devices, nil, nil, nil, memory, nil,
+					func(*GpuSizingInfo, any, any) *workloadsApi.Error { return nil }, nil, nil, &sizing),
+				fc.ComposeGpuComputeMode(context.Background(), convutils.Ref("time-slicing"), &sizing, "main", &annotations, StringToMapString),
+			)
+			if code == 0 {
+				Expect(runner.Error()).To(BeNil())
+			} else {
+				Expect(runner.Error()).NotTo(BeNil())
+				Expect(runner.Error().Code).To(Equal(code))
+			}
+			Expect(lookups).To(Equal(expectedLookups))
+			Expect(len(annotations) > 0).To(Equal(emitted))
+		},
+		Entry("zero memory is rejected before the mode lookup", convutils.Ref("0"), int32(0), int32(http.StatusBadRequest), 0, false),
+		Entry("zero devices stays CPU-only", nil, int32(0), int32(0), 0, false),
+		Entry("positive memory emits the mode", convutils.Ref("1Gi"), int32(1), int32(0), 1, true),
+	)
+
 	It("validates partial policy defaults without requiring a running cluster", func() {
 		fc := FieldsComposer{Options: OptionsForPolicy()}
 		var annotations map[string]string

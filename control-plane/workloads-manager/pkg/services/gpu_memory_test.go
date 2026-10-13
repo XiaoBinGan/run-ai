@@ -8,9 +8,10 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"testing"
+
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-manager/internal/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/runai-application-packages/jsonutils/gojsonq"
-	"testing"
 )
 
 func TestGPUMemoryNimPolicyAndUpdate(t *testing.T) {

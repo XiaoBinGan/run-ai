@@ -8,9 +8,10 @@ package notifications
 import (
 	"context"
 	"fmt"
-	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"time"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer"
 	legacyconnections "github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer/composer_v1/connections"

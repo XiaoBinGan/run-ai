@@ -7,13 +7,14 @@ package tree
 
 import (
 	"encoding/json"
+	"reflect"
+	"testing"
+
 	"github.com/dsx-ai-factory/run-ai/control-plane/policy-service/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/control-plane/policy-service/pkg/database/dbmodel"
 	"github.com/dsx-ai-factory/run-ai/control-plane/policy-service/pkg/scopes"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"github.com/dsx-ai-factory/run-ai/runai-application-packages/dbmodels"
-	"reflect"
-	"testing"
 )
 
 func TestGPUMemoryPolicyPatchAndReset(t *testing.T) {

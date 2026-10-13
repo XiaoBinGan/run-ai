@@ -21,8 +21,12 @@ const (
 	AnnotationFormat = "nvidia.com/container.%s.gpu-compute.mode"
 )
 
+// These helpers receive resolved specs with replica sections, not API envelopes.
+var replicaSections = []string{workerSection, masterSection, leaderSection}
+
 // VisitCompute visits only workload compute sections, never arbitrary annotation,
-// environment-variable or application configuration maps.
+// environment-variable or application configuration maps. Policy defaults and rules
+// are excluded: those are inputs to resolution, not workload GPU allocations.
 func VisitCompute(spec map[string]interface{}, visit func(map[string]interface{})) {
 	if compute, ok := spec["compute"].(map[string]interface{}); ok {
 		visit(compute)
@@ -78,7 +82,7 @@ func ApplyModeDefaults(values, defaults map[string]interface{}) {
 	if ok && compute["gpuComputeMode"] == nil && defaultCompute["gpuComputeMode"] != nil {
 		compute["gpuComputeMode"] = defaultCompute["gpuComputeMode"]
 	}
-	for _, key := range []string{workerSection, masterSection, leaderSection} {
+	for _, key := range replicaSections {
 		child, _ := values[key].(map[string]interface{})
 		childDefaults, _ := defaults[key].(map[string]interface{})
 		if child != nil {
@@ -97,7 +101,7 @@ func ProjectResolvedModes(resolved, submitted map[string]interface{}) {
 			target["gpuComputeMode"] = mode
 		}
 	}
-	for _, key := range []string{workerSection, masterSection, leaderSection} {
+	for _, key := range replicaSections {
 		child, _ := submitted[key].(map[string]interface{})
 		sourceChild, _ := resolved[key].(map[string]interface{})
 		if child != nil {
@@ -106,10 +110,11 @@ func ProjectResolvedModes(resolved, submitted map[string]interface{}) {
 	}
 }
 
-// PreserveImplicitModeForUpdate exposes the implicit time-slicing fallback to policy
+// PreserveImplicitModeForInferenceUpdate handles the single top-level compute section
+// on inference updates. It exposes the implicit time-slicing fallback to policy
 // validation when compute is unchanged. Cleanup keeps the legacy request omitted
 // so an unrelated update does not introduce a mode annotation or runtime gate.
-func PreserveImplicitModeForUpdate(values map[string]interface{}) func() {
+func PreserveImplicitModeForInferenceUpdate(values map[string]interface{}) func() {
 	compute, _ := values["compute"].(map[string]interface{})
 	if !HasGPU(compute) || compute["gpuComputeMode"] != nil {
 		return func() {}

@@ -9,9 +9,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strings"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 
 	nimv1alpha1 "github.com/NVIDIA/k8s-nim-operator/api/apps/v1alpha1"
 	authClient "github.com/dsx-ai-factory/run-ai/control-plane/authorization/pkg/client"
@@ -77,6 +78,11 @@ func (nsi *NimServicesImpl) CreateNimService(ctx context.Context, request api.Ni
 		return nil, complianceErr
 	}
 
+	// Keep an independent copy before merging defaults into nested request fields.
+	var submittedSpec api.NimServiceSpec
+	if err := convutils.CopySpecs(&submittedSpec, request.Spec); err != nil {
+		return nil, NewSubmissionError(http.StatusInternalServerError, "failed to copy the submitted NIM spec", err)
+	}
 	if request.Spec.Compute != nil {
 		compute := *request.Spec.Compute
 		compute.GpuPortionRequest, compute.GpuPortionLimit = nil, nil
@@ -125,9 +131,18 @@ func (nsi *NimServicesImpl) CreateNimService(ctx context.Context, request api.Ni
 		}
 	}
 
-	ctx, ctxErr := nsi.updateContextWithMergedSpec(ctx, &request.Metadata, request.Spec)
+	// Persist the selected mode without changing NIM's original-request storage for other defaults.
+	if request.Spec.Compute != nil && request.Spec.Compute.GpuComputeMode != nil {
+		compute := api.NimServiceSpecAllOfCompute{}
+		if submittedSpec.Compute != nil {
+			compute = *submittedSpec.Compute
+		}
+		compute.GpuComputeMode = request.Spec.Compute.GpuComputeMode
+		submittedSpec.Compute = &compute
+	}
+	ctx, ctxErr := nsi.updateContextWithMergedSpec(ctx, &request.Metadata, submittedSpec)
 	if ctxErr != nil {
-		return nil, NewSubmissionError(http.StatusInternalServerError, "failed to save resolved NIM spec", ctxErr)
+		return nil, NewSubmissionError(http.StatusInternalServerError, "failed to save NIM request with resolved GPU mode", ctxErr)
 	}
 	workloadV2Response, submissionErrors := nsi.workloadsImpl.CreateWorkloadV2(ctx, workloadRequest, false)
 	if len(submissionErrors) > 0 {

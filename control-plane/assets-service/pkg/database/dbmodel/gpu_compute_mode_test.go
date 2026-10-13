@@ -6,12 +6,13 @@
 package dbmodel
 
 import (
+	"sync"
+	"testing"
+
 	"github.com/dsx-ai-factory/run-ai/control-plane/assets-service/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/runai-application-packages/convutils"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm/schema"
-	"sync"
-	"testing"
 )
 
 func TestComputeModeStorage(t *testing.T) {

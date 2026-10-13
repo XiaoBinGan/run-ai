@@ -15,6 +15,8 @@ import (
 
 const computeSection = "compute"
 
+var computeContainers = []string{computeSection, "spec", "masterSpec", "worker", "master", "leader", "defaults", "rules", "combinedSpec", "combinedMasterSpec"}
+
 var memoryAliases = [][2]string{
 	{"gpuPortionRequest", "gpuMemoryPortionRequest"},
 	{"gpuPortionLimit", "gpuMemoryPortionLimit"},
@@ -127,7 +129,7 @@ func normalizeCompute(compute map[string]any, path string) error {
 // Only traverse workload/policy containers. User annotation and environment keys
 // are opaque even when they happen to be named like a GPU field.
 func visitCompute(node map[string]any, path string, visit func(map[string]any, string) error) error {
-	for _, key := range []string{computeSection, "spec", "masterSpec", "worker", "master", "leader", "defaults", "rules", "combinedSpec", "combinedMasterSpec"} {
+	for _, key := range computeContainers {
 		child, ok := node[key].(map[string]any)
 		if !ok {
 			continue
@@ -280,7 +282,7 @@ func LegacyCompatibleGPUFields(source map[string]any) map[string]any {
 }
 
 func projectResponseFields(node map[string]any) {
-	for _, key := range []string{computeSection, "spec", "masterSpec", "worker", "master", "leader", "defaults", "rules", "combinedSpec", "combinedMasterSpec"} {
+	for _, key := range computeContainers {
 		child, ok := node[key].(map[string]any)
 		if !ok {
 			continue

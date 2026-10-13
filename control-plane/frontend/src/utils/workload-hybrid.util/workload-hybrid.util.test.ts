@@ -23,6 +23,7 @@ import {
   ScopeType,
   UidGidSource,
   WorkloadType,
+  type UnifiedWorkload,
   type WorkspaceSpecSpecAllOfCompute,
   type WorkspaceSpecSpecAllOfSecurity,
   AuthorizationType,
@@ -2003,4 +2004,41 @@ describe("workload-hybrid.util", () => {
       expect(result.spec.worker?.storage?.s3).toHaveLength(1);
     });
   });
+});
+
+describe("GPU memory aliases in workload copy and edit", () => {
+  const forms = [
+    {
+      name: "workspace",
+      model: workloadHybridUtil.getHybridWorkspaceModel,
+      prepare: workloadHybridUtil.prepareWorkloadFlatRequest,
+    },
+    {
+      name: "training",
+      model: workloadHybridUtil.getHybridTrainingModel,
+      prepare: workloadHybridUtil.prepareTrainingFlatRequest,
+    },
+    {
+      name: "distributed",
+      model: workloadHybridUtil.getHybridDistributedModel,
+      prepare: workloadHybridUtil.prepareDistributedFlatRequest,
+    },
+  ];
+  for (const form of forms) {
+    it.each(["legacy", "new", "both"])(`${form.name} keeps %s aliases editable without stale duplicates`, (spelling) => {
+      const compute: WorkspaceSpecSpecAllOfCompute = { gpuDevicesRequest: 1, gpuRequestType: GpuRequestType.Portion };
+      if (spelling !== "new") Object.assign(compute, { gpuPortionRequest: 0.5, gpuPortionLimit: 0.5 });
+      if (spelling !== "legacy") Object.assign(compute, { gpuMemoryPortionRequest: 0.5, gpuMemoryPortionLimit: 0.5 });
+      const unified: UnifiedWorkload = { spec: { worker: { image: "ubuntu", compute } } };
+      const original = JSON.stringify(unified);
+      const model = form.model(unified);
+      expect(model.spec.compute).toMatchObject({ gpuPortionRequest: 0.5, gpuPortionLimit: 0.5 });
+      model.spec.compute = { ...model.spec.compute, gpuPortionRequest: 0.25, gpuPortionLimit: 0.75 };
+      const request = form.prepare(model);
+      expect(request.spec.compute).toMatchObject({ gpuPortionRequest: 0.25, gpuPortionLimit: 0.75 });
+      expect(request.spec.compute).not.toHaveProperty("gpuMemoryPortionRequest");
+      expect(request.spec.compute).not.toHaveProperty("gpuMemoryPortionLimit");
+      expect(JSON.stringify(unified)).toBe(original);
+    });
+  }
 });

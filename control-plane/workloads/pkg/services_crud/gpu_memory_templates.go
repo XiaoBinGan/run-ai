@@ -6,11 +6,12 @@
 package services_crud
 
 import (
+	"net/http"
+
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
 	"github.com/dsx-ai-factory/run-ai/runai-application-packages/convutils"
 	"github.com/dsx-ai-factory/run-ai/runai-application-packages/jsonutils/gojsonq"
-	"net/http"
 )
 
 func normalizeTemplateGPUMemory(source *api.SupersetTemplate) (*api.SupersetTemplate, *api.Error) {

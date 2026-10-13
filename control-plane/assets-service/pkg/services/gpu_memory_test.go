@@ -7,8 +7,9 @@ package services
 
 import (
 	"encoding/json"
-	"github.com/dsx-ai-factory/run-ai/control-plane/assets-service/generated/pkg/api"
 	"testing"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/assets-service/generated/pkg/api"
 )
 
 func TestGPUMemoryAssetSelectorCompatibility(t *testing.T) {

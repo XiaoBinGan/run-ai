@@ -9,11 +9,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"testing"
+
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpumode"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/internal/generated/pkg/api"
 	workloadsApi "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/client/generated"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestGpuModePolicyPipeline(t *testing.T) {
@@ -118,7 +119,7 @@ func TestGpuModesForReplicas(t *testing.T) {
 func TestUnrelatedInferenceUpdateKeepsImplicitModeThroughPolicyNormalization(t *testing.T) {
 	values := map[string]interface{}{"compute": map[string]interface{}{"gpuDevicesRequest": 1}}
 	defaults := map[string]interface{}{"compute": map[string]interface{}{"gpuComputeMode": "sm-sharing"}}
-	cleanup := gpumode.PreserveImplicitModeForUpdate(values)
+	cleanup := gpumode.PreserveImplicitModeForInferenceUpdate(values)
 	require.Nil(t, validateSpecAgainstPolicy(Inference, nil, defaults, values))
 	cleanup()
 	require.NotContains(t, values["compute"], "gpuComputeMode")

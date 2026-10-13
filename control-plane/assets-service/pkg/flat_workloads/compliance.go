@@ -8,11 +8,12 @@ package flat_workloads
 import (
 	"context"
 	"fmt"
-	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer/composer_v2"
 	"github.com/google/uuid"
@@ -38,6 +39,7 @@ import (
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/auth"
 
 	authApi "github.com/dsx-ai-factory/run-ai/control-plane/authorization/pkg/client/generated"
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpumode"
 	workloadsApi "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/client/generated"
 	k8sTrackerApi "github.com/dsx-ai-factory/run-ai/runai-clients/k8s-objects-tracker-client/generated"
 	policyApi "github.com/dsx-ai-factory/run-ai/runai-clients/policy-service-client/generated"
@@ -455,8 +457,6 @@ func ValidateComplianceOfAssets(ctx context.Context, assetsChan chan assetChanIn
 }
 
 func validateComplianceOfAsset(ctx context.Context, assetInfo assetChanInfo) {
-	assetId := assetInfo.patchingPtrs.Meta.Id
-
 	complianceErrors := make([]api.ComplianceInfoReason, 0)
 
 	//
@@ -511,7 +511,7 @@ func validateComplianceOfAsset(ctx context.Context, assetInfo assetChanInfo) {
 		RearrangePayload(payloadMap)
 		canonicalPayload, aliasErr := gpucompat.NormalizeLegacyGPUFields(payloadMap)
 		if aliasErr != nil {
-			logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("failed to normalize asset GPU memory: %v", aliasErr)
+			storeAssetCompliance(ctx, assetInfo, []api.ComplianceInfoReason{{Details: aliasErr.Error()}})
 			return
 		}
 
@@ -537,8 +537,13 @@ func validateComplianceOfAsset(ctx context.Context, assetInfo assetChanInfo) {
 			}
 		}
 
+		// Resolve mode on the copied payload; compliance must not fill the saved asset.
+		gpumode.ApplyModeDefaults(payloadMap, defaults)
+		applyFallback, cleanupFallback := gpumode.PolicyFallback()
+		defer cleanupFallback()
+		options := &policy_compliance.ValidateComplianceOptions{ApplyBuiltInDefaults: applyFallback}
 		policy_compliance.ValidateCompliance("", rules, defaults, payloadMap,
-			*defaultFromOrder, &fieldsWithCantEditRule, nil, &complianceResults)
+			*defaultFromOrder, &fieldsWithCantEditRule, options, &complianceResults)
 
 		for _, complianceResult := range complianceResults {
 			belongsToAsset, shortName := fieldBelongsToTheAsset(complianceResult.PolicyField, assetKind)
@@ -566,6 +571,11 @@ func validateComplianceOfAsset(ctx context.Context, assetInfo assetChanInfo) {
 		}
 	}
 
+	storeAssetCompliance(ctx, assetInfo, complianceErrors)
+}
+
+func storeAssetCompliance(ctx context.Context, assetInfo assetChanInfo, complianceErrors []api.ComplianceInfoReason) {
+	assetId := assetInfo.patchingPtrs.Meta.Id
 	isCompliant := len(complianceErrors) == 0
 
 	complianceInfo := api.ComplianceInfo{

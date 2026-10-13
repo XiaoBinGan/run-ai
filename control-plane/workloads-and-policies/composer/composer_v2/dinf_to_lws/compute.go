@@ -7,6 +7,7 @@ package dinf_to_lws
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
@@ -26,7 +27,7 @@ func (dinfComposer *DistributedInferenceToLWSComposer) processComputeFields(
 		}
 		canonical, err := gpucompat.NormalizeLegacyWorkloadCompute(src)
 		if err != nil {
-			return workloadsApi.NewError(400, err.Error())
+			return workloadsApi.NewError(http.StatusBadRequest, err.Error())
 		}
 		src = canonical
 

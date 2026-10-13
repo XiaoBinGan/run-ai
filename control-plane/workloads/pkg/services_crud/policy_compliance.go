@@ -8,14 +8,15 @@ package services_crud
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"sync"
+
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/auth"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpumode"
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/dao_crud"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/logging"
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/runaictx"
-	"net/http"
-	"sync"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/database/models_crud"
 
@@ -34,9 +35,6 @@ import (
 const ComplianceTasksInParallel = 10
 
 var (
-	workloadJsonCracker = jsonutils.NewJsonCracker(api.DistributedWorkload{})
-	masterSpecField     = workloadJsonCracker.NameOf(&workloadJsonCracker.Struct().MasterSpec)
-
 	policyJsonCracker = jsonutils.NewJsonCracker(policyApi.DistributedPolicyDefaultsV2{})
 	masterSection     = policyJsonCracker.NameOf(&policyJsonCracker.Struct().Master)
 	workerSection     = policyJsonCracker.NameOf(&policyJsonCracker.Struct().Worker)
@@ -70,7 +68,7 @@ func validatePolicy(ctx context.Context, workload *models_crud.Workload, compute
 
 	cleanup := func() {}
 	if !computeUpdated {
-		cleanup = gpumode.PreserveImplicitModeForUpdate(values)
+		cleanup = gpumode.PreserveImplicitModeForInferenceUpdate(values)
 	}
 	defaults, policyErr := validatePolicyHelper(ctx, workload.WorkloadType, workload.ProjectId, values, computeUpdated)
 	cleanup()
@@ -115,77 +113,9 @@ func validateSpecAgainstPolicy(
 	defaults map[string]interface{},
 	mutatedSpec map[string]interface{},
 ) *workloadApi.SubmissionErrorV2 {
-	var aliasErr error
-	rules, aliasErr = gpucompat.NormalizeLegacyGPUPolicy(rules)
-	if aliasErr != nil {
-		return workloadApi.NewSubmissionErrorV2(http.StatusBadRequest, aliasErr.Error())
-	}
-	defaults, aliasErr = gpucompat.NormalizeLegacyGPUFields(defaults)
-	if aliasErr != nil {
-		return workloadApi.NewSubmissionErrorV2(http.StatusBadRequest, aliasErr.Error())
-	}
-	canonical, aliasErr := gpucompat.NormalizeLegacyGPUFields(mutatedSpec)
-	if aliasErr != nil {
-		return workloadApi.NewSubmissionErrorV2(http.StatusBadRequest, aliasErr.Error())
-	}
-	for key := range mutatedSpec {
-		delete(mutatedSpec, key)
-	}
-	for key, value := range canonical {
-		mutatedSpec[key] = value
-	}
-
-	// Alias normalization can reveal dependencies or cycles that used different spellings.
-	workerRules := rules
-	if workloadType == Distributed {
-		workerRules = convutils.MapMe(rules[workerSection])
-	}
-	workerOrder, orderErr := policyCompliance.NewDefaultsFromOrder(workerRules)
-	if orderErr != nil {
-		return workloadApi.NewSubmissionErrorV2(http.StatusBadRequest, orderErr.Error())
-	}
-	masterOrder, orderErr := policyCompliance.NewDefaultsFromOrder(convutils.MapMe(rules[masterSection]))
-	if orderErr != nil {
-		return workloadApi.NewSubmissionErrorV2(http.StatusBadRequest, orderErr.Error())
-	}
-
-	applyFallback, cleanupFallback := gpumode.PolicyFallback()
-	defer cleanupFallback()
-	options := &policyCompliance.ValidateComplianceOptions{ApplyBuiltInDefaults: applyFallback}
-
-	fieldsWithCantEditRule := make([]string, 0)
-	complianceErrors := make(policyCompliance.ComplianceErrors, 0)
-
-	if workloadType != Distributed {
-		policyCompliance.ValidateCompliance("", rules, defaults, mutatedSpec, workerOrder,
-			&fieldsWithCantEditRule, options, &complianceErrors)
-	} else {
-		// check the workers spec VS the workers policy
-		policyCompliance.ValidateCompliance("",
-			convutils.MapMe(rules[workerSection]),
-			convutils.MapMe(defaults[workerSection]),
-			convutils.MapMe(mutatedSpec[workerSection]),
-			workerOrder,
-			&fieldsWithCantEditRule, options, &complianceErrors)
-
-		// if there is a master policy, we need to validate the master spec VS the master policy
-		// no need to validate master if no master is provided
-		if rules[masterSection] != nil && mutatedSpec[masterSection] != nil {
-			masterComplianceErrors := make(policyCompliance.ComplianceErrors, 0)
-
-			policyCompliance.ValidateCompliance("",
-				convutils.MapMe(rules[masterSection]),
-				convutils.MapMe(defaults[masterSection]),
-				convutils.MapMe(mutatedSpec[masterSection]),
-				masterOrder,
-				&fieldsWithCantEditRule, options, &masterComplianceErrors)
-
-			for _, err := range masterComplianceErrors {
-				complianceErrors.Add(err.Rule, err.Details,
-					convutils.DotUs(masterSpecField, err.WorkloadField),
-					convutils.DotUs(masterSpecField, err.PolicyField))
-			}
-		}
+	_, complianceErrors, err := policyCompliance.ValidateWorkloadCompliance(rules, defaults, mutatedSpec, workloadType == Distributed)
+	if err != nil {
+		return workloadApi.NewSubmissionErrorV2(http.StatusBadRequest, err.Error())
 	}
 
 	if len(complianceErrors) != 0 {
@@ -335,6 +265,8 @@ func validateComplianceOfTemplate(ctx context.Context, task patchingTaskInfo) {
 	}
 	payloadAsMap = canonicalPayload
 
+	// Resolve mode on the copied payload; compliance must not fill the saved template.
+	gpumode.ApplyModeDefaults(payloadAsMap, defaults)
 	applyFallback, cleanupFallback := gpumode.PolicyFallback()
 	defer cleanupFallback()
 	options := &policyCompliance.ValidateComplianceOptions{ApplyBuiltInDefaults: applyFallback}

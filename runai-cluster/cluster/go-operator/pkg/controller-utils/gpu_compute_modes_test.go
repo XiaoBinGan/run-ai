@@ -24,29 +24,27 @@ import (
 
 var _ = Describe("GPU compute mode availability", func() {
 	var (
-		config          *unstructured.Unstructured
-		fractiond, mpsd *appsv1.DaemonSet
-		scheme          *runtime.Scheme
+		config   *unstructured.Unstructured
+		operator *appsv1.Deployment
+		scheme   *runtime.Scheme
 	)
 	BeforeEach(func() {
 		scheme = gpuFractioningTestScheme()
 		Expect(appsv1.AddToScheme(scheme)).To(Succeed())
 		config = newGpuFractioningConfig()
-		config.SetUID("runtime-config")
-		config.SetGeneration(2)
-		conditions := []interface{}{}
-		for _, conditionType := range []string{"Ready", "FractiondReady", "MpsdReady"} {
-			conditions = append(conditions, map[string]interface{}{
-				"type": conditionType, "status": "True", "observedGeneration": int64(2),
-			})
+		config.SetLabels(map[string]string{
+			"app.kubernetes.io/name": "gpu-fractioning", "app.kubernetes.io/instance": "runai",
+		})
+		operator = &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "runai-gpu-fractioning", Namespace: "runtime", Labels: config.GetLabels(),
+			},
+			Spec: appsv1.DeploymentSpec{Template: corev1.PodTemplateSpec{Spec: corev1.PodSpec{
+				Containers: []corev1.Container{{Name: "manager", Env: []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", Value: "true"}}}},
+			}}},
 		}
-		Expect(unstructured.SetNestedSlice(config.Object, conditions, "status", "conditions")).To(Succeed())
-		fractiond = gpuComputeTestDaemon(config, "fractiond")
-		fractiond.Spec.Template.Spec.Containers[0].Args = []string{"--support-sm-sharing=true"}
-		mpsd = gpuComputeTestDaemon(config, "mpsd")
-		mpsd.Spec.Template.Spec.Containers[0].Env = []corev1.EnvVar{{Name: "MPS_SUPPORT_SM_SHARING", Value: "true"}}
 	})
-	check := func(objects ...client.Object) {
+	checkUnavailable := func(objects ...client.Object) {
 		k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(objects...).Build()
 		status := CheckGpuComputeModes(context.Background(), k8s)
 		Expect(*status.Available).To(BeFalse())
@@ -56,119 +54,151 @@ var _ = Describe("GPU compute mode availability", func() {
 			Expect(status.Components[mode].Reason).NotTo(BeEmpty())
 		}
 	}
-
-	It("reports both modes for a current, ready runtime with SM-sharing enabled", func() {
-		k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(config, fractiond, mpsd).Build()
+	checkSupported := func(objects ...client.Object) {
+		k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(objects...).Build()
 		status := CheckGpuComputeModes(context.Background(), k8s)
 		Expect(*status.Available).To(BeTrue())
 		Expect(status.Reason).To(BeEmpty())
-		Expect(*status.Components["time-slicing"].Available).To(BeTrue())
-		Expect(*status.Components["sm-sharing"].Available).To(BeTrue())
-		Expect(status.Components["sm-sharing"].Reason).To(BeEmpty())
+		for _, mode := range []string{"time-slicing", "sm-sharing"} {
+			Expect(*status.Components[mode].Available).To(BeTrue())
+			Expect(status.Components[mode].Reason).To(BeEmpty())
+		}
+	}
+
+	It("reports both configured modes before any daemon or readiness status exists", func() {
+		checkSupported(config, operator)
 	})
 
-	DescribeTable("keeps time-slicing available when SM-sharing is not enabled",
-		func(change func(*appsv1.DaemonSet, *appsv1.DaemonSet)) {
-			change(fractiond, mpsd)
-			k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(config, fractiond, mpsd).Build()
+	DescribeTable("keeps time-slicing available when SM-sharing is disabled or unknown",
+		func(env []corev1.EnvVar, reason string) {
+			operator.Spec.Template.Spec.Containers[0].Env = env
+			k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(config, operator).Build()
 			status := CheckGpuComputeModes(context.Background(), k8s)
 			Expect(*status.Available).To(BeTrue())
 			Expect(*status.Components["time-slicing"].Available).To(BeTrue())
 			Expect(*status.Components["sm-sharing"].Available).To(BeFalse())
-			Expect(status.Components["sm-sharing"].Reason).To(ContainSubstring("not enabled"))
+			Expect(status.Components["sm-sharing"].Reason).To(ContainSubstring(reason))
 		},
-		Entry("fractiond disabled", func(f, m *appsv1.DaemonSet) {
-			f.Spec.Template.Spec.Containers[0].Args = []string{"--support-sm-sharing=false"}
-		}),
-		Entry("conflicting fractiond flags", func(f, m *appsv1.DaemonSet) {
-			f.Spec.Template.Spec.Containers[0].Args = []string{"--support-sm-sharing=true", "--support-sm-sharing=false"}
-		}),
-		Entry("conflicting mpsd settings", func(f, m *appsv1.DaemonSet) {
-			m.Spec.Template.Spec.Containers[0].Env = append(m.Spec.Template.Spec.Containers[0].Env, corev1.EnvVar{Name: "MPS_SUPPORT_SM_SHARING", Value: "false"})
-		}),
-		Entry("fractiond flag absent", func(f, m *appsv1.DaemonSet) { f.Spec.Template.Spec.Containers[0].Args = nil }),
-		Entry("mpsd disabled", func(f, m *appsv1.DaemonSet) { m.Spec.Template.Spec.Containers[0].Env[0].Value = "false" }),
-		Entry("mpsd setting absent", func(f, m *appsv1.DaemonSet) { m.Spec.Template.Spec.Containers[0].Env = nil }),
-		Entry("mpsd indirect setting", func(f, m *appsv1.DaemonSet) {
-			m.Spec.Template.Spec.Containers[0].Env[0].ValueFrom = &corev1.EnvVarSource{}
-		}),
+		Entry("disabled", []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", Value: "false"}}, "disabled"),
+		Entry("missing", nil, "cannot be determined"),
+		Entry("empty", []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING"}}, "invalid"),
+		Entry("invalid", []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", Value: "yes"}}, "invalid"),
+		Entry("conflicting settings", []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", Value: "true"}, {Name: "SUPPORT_SM_SHARING", Value: "false"}}, "ambiguous"),
+		Entry("duplicate settings", []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", Value: "true"}, {Name: "SUPPORT_SM_SHARING", Value: "true"}}, "ambiguous"),
+		Entry("indirect setting", []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", ValueFrom: &corev1.EnvVarSource{
+			ConfigMapKeyRef: &corev1.ConfigMapKeySelector{LocalObjectReference: corev1.LocalObjectReference{Name: "runtime-settings"}, Key: "enabled"},
+		}}}, "cannot be determined"),
+		Entry("literal with indirect setting", []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", Value: "true", ValueFrom: &corev1.EnvVarSource{}}}, "cannot be determined"),
 	)
 
-	DescribeTable("requires affirmative current conditions",
-		func(conditionType, status string, generation int64) {
-			conditions, _, err := unstructured.NestedSlice(config.Object, "status", "conditions")
-			Expect(err).NotTo(HaveOccurred())
-			for _, raw := range conditions {
-				condition := raw.(map[string]interface{})
-				if condition["type"] == conditionType {
-					condition["status"] = status
-					condition["observedGeneration"] = generation
+	DescribeTable("does not use runtime health as a capability gate",
+		func(conditionType, status string) {
+			Expect(unstructured.SetNestedSlice(config.Object, []interface{}{
+				map[string]interface{}{"type": conditionType, "status": status, "observedGeneration": int64(1)},
+			}, "status", "conditions")).To(Succeed())
+			config.SetGeneration(2)
+			checkSupported(config, operator)
+		},
+		Entry("Ready false", "Ready", "False"),
+		Entry("Ready unknown", "Ready", "Unknown"),
+		Entry("Ready stale", "Ready", "True"),
+		Entry("fractiond unready", "FractiondReady", "False"),
+		Entry("mpsd unready", "MpsdReady", "False"),
+	)
+	DescribeTable("does not use operator rollout health as a capability gate",
+		func(change func(*appsv1.Deployment)) {
+			change(operator)
+			checkSupported(config, operator)
+		},
+		Entry("scaled to zero", func(d *appsv1.Deployment) { d.Spec.Replicas = ptr.To(int32(0)) }),
+		Entry("unready replicas", func(d *appsv1.Deployment) {
+			d.Spec.Replicas = ptr.To(int32(1))
+			d.Status = appsv1.DeploymentStatus{Replicas: 1, UnavailableReplicas: 1}
+		}),
+		Entry("stale rollout", func(d *appsv1.Deployment) {
+			d.Generation = 3
+			d.Status = appsv1.DeploymentStatus{ObservedGeneration: 1, UpdatedReplicas: 0, ReadyReplicas: 1}
+		}),
+	)
+	It("does not read DaemonSets", func() {
+		k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(config, operator).WithInterceptorFuncs(interceptor.Funcs{
+			List: func(ctx context.Context, reader client.WithWatch, list client.ObjectList, opts ...client.ListOption) error {
+				if _, ok := list.(*appsv1.DaemonSetList); ok {
+					Fail("mode discovery must not inspect DaemonSets")
 				}
-			}
-			Expect(unstructured.SetNestedSlice(config.Object, conditions, "status", "conditions")).To(Succeed())
-			check(config, fractiond, mpsd)
-		},
-		Entry("Ready false", "Ready", "False", int64(2)),
-		Entry("Ready unknown", "Ready", "Unknown", int64(2)),
-		Entry("Ready invalid", "Ready", "invalid", int64(2)),
-		Entry("Ready stale", "Ready", "True", int64(1)),
-		Entry("Ready without observed generation", "Ready", "True", int64(0)),
-		Entry("fractiond unready", "FractiondReady", "False", int64(2)),
-		Entry("mpsd unready", "MpsdReady", "False", int64(2)),
-		Entry("mpsd stale", "MpsdReady", "True", int64(1)),
-	)
-
-	It("rejects missing readiness evidence while preserving legacy readiness", func() {
-		unstructured.RemoveNestedField(config.Object, "status")
-		k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(config, fractiond, mpsd).Build()
-		Expect(*CheckGpuFractioningReadiness(context.Background(), k8s).Available).To(BeTrue())
-		check(config, fractiond, mpsd)
+				return reader.List(ctx, list, opts...)
+			},
+		}).Build()
+		status := CheckGpuComputeModes(context.Background(), k8s)
+		Expect(*status.Components["sm-sharing"].Available).To(BeTrue())
 	})
 	It("rejects a missing runtime without changing legacy GPU-stack availability", func() {
 		k8s := fake.NewClientBuilder().WithScheme(scheme).Build()
 		Expect(*CheckGpuFractioningReadiness(context.Background(), k8s).Available).To(BeTrue())
-		check()
+		checkUnavailable()
 	})
 	It("rejects a runtime being deleted", func() {
 		config.SetFinalizers([]string{"cleanup"})
 		config.SetDeletionTimestamp(ptr.To(metav1.Now()))
-		check(config, fractiond, mpsd)
+		checkUnavailable(config, operator)
 	})
-	It("requires the standard annotation prefix", func() {
-		Expect(unstructured.SetNestedField(config.Object, "example.com/container.", "spec", "fractioningAgent", "annotationPrefix")).To(Succeed())
-		check(config, fractiond, mpsd)
-	})
+	DescribeTable("requires a compatible annotation prefix", func(prefix interface{}) {
+		Expect(unstructured.SetNestedField(config.Object, prefix, "spec", "fractioningAgent", "annotationPrefix")).To(Succeed())
+		checkUnavailable(config, operator)
+	}, Entry("custom", "example.com/container."), Entry("malformed", int64(7)))
 	It("accepts an explicit standard annotation prefix", func() {
 		Expect(unstructured.SetNestedField(config.Object, "nvidia.com/container.", "spec", "fractioningAgent", "annotationPrefix")).To(Succeed())
-		k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(config, fractiond, mpsd).Build()
-		Expect(*CheckGpuComputeModes(context.Background(), k8s).Available).To(BeTrue())
+		checkSupported(config, operator)
 	})
-
-	DescribeTable("requires an owned and fully rolled out daemon",
-		func(change func(*appsv1.DaemonSet)) {
-			change(fractiond)
-			check(config, fractiond, mpsd)
-		},
-		Entry("no target nodes despite Ready=True", func(d *appsv1.DaemonSet) { d.Status.DesiredNumberScheduled = 0 }),
-		Entry("stale observation", func(d *appsv1.DaemonSet) { d.Status.ObservedGeneration-- }),
-		Entry("old pods still running", func(d *appsv1.DaemonSet) { d.Status.UpdatedNumberScheduled-- }),
-		Entry("unready pods", func(d *appsv1.DaemonSet) { d.Status.NumberReady-- }),
-		Entry("pods not available yet", func(d *appsv1.DaemonSet) { d.Status.NumberAvailable-- }),
-		Entry("deletion", func(d *appsv1.DaemonSet) {
-			d.Finalizers = []string{"cleanup"}
-			d.DeletionTimestamp = ptr.To(metav1.Now())
-		}),
-		Entry("unmanaged lookalike", func(d *appsv1.DaemonSet) { delete(d.Labels, "app.kubernetes.io/managed-by") }),
-		Entry("no owner", func(d *appsv1.DaemonSet) { d.OwnerReferences = nil }),
-		Entry("old config owner", func(d *appsv1.DaemonSet) { d.OwnerReferences[0].UID = "old-config" }),
-		Entry("other namespace", func(d *appsv1.DaemonSet) { d.Namespace = "other-runtime" }),
-		Entry("missing container", func(d *appsv1.DaemonSet) { d.Spec.Template.Spec.Containers = nil }),
-	)
-	It("requires mpsd even for time-slicing", func() { check(config, fractiond) })
-	It("rejects ambiguous daemon installations", func() {
-		duplicate := fractiond.DeepCopy()
-		duplicate.Name = "duplicate"
-		check(config, fractiond, mpsd, duplicate)
+	for _, label := range []string{"app.kubernetes.io/name", "app.kubernetes.io/instance"} {
+		It("rejects configuration without "+label, func() {
+			labels := config.GetLabels()
+			delete(labels, label)
+			config.SetLabels(labels)
+			checkUnavailable(config, operator)
+		})
+		It("does not discover an operator from a different "+label, func() {
+			operator.Labels = map[string]string{
+				"app.kubernetes.io/name": "gpu-fractioning", "app.kubernetes.io/instance": "runai",
+			}
+			operator.Labels[label] = "other"
+			checkUnavailable(config, operator)
+		})
+	}
+	It("discovers chart name and release overrides without assuming deployment name or namespace", func() {
+		labels := map[string]string{"app.kubernetes.io/name": "custom-fractions", "app.kubernetes.io/instance": "custom-release"}
+		config.SetLabels(labels)
+		operator.Labels = labels
+		operator.Name = "custom-fullname"
+		operator.Namespace = "custom-namespace"
+		checkSupported(config, operator)
+	})
+	It("ignores deployments from unrelated releases", func() {
+		unrelated := operator.DeepCopy()
+		unrelated.Name = "other-release"
+		unrelated.Labels["app.kubernetes.io/instance"] = "other"
+		checkSupported(config, operator, unrelated)
+	})
+	It("reads the manager setting rather than a sidecar's setting", func() {
+		operator.Spec.Template.Spec.Containers = append([]corev1.Container{{
+			Name: "sidecar", Env: []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", Value: "false"}},
+		}}, operator.Spec.Template.Spec.Containers...)
+		checkSupported(config, operator)
+	})
+	It("requires the operator Deployment", func() { checkUnavailable(config) })
+	It("rejects an operator being deleted", func() {
+		operator.Finalizers = []string{"cleanup"}
+		operator.DeletionTimestamp = ptr.To(metav1.Now())
+		checkUnavailable(config, operator)
+	})
+	It("requires the operator manager container", func() {
+		operator.Spec.Template.Spec.Containers[0].Name = "other"
+		checkUnavailable(config, operator)
+	})
+	It("rejects ambiguous installations across namespaces", func() {
+		duplicate := operator.DeepCopy()
+		duplicate.Namespace = "other-runtime"
+		checkUnavailable(config, operator, duplicate)
 	})
 	DescribeTable("does not treat API read errors as support", func(operation string) {
 		funcs := interceptor.Funcs{}
@@ -181,21 +211,9 @@ var _ = Describe("GPU compute mode availability", func() {
 				return errors.New("forbidden")
 			}
 		}
-		k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(config, fractiond, mpsd).WithInterceptorFuncs(funcs).Build()
+		k8s := fake.NewClientBuilder().WithScheme(scheme).WithObjects(config, operator).WithInterceptorFuncs(funcs).Build()
 		status := CheckGpuComputeModes(context.Background(), k8s)
 		Expect(*status.Available).To(BeFalse())
 		Expect(status.Reason).To(ContainSubstring("forbidden"))
-	}, Entry("configuration", "get"), Entry("daemons", "list"))
+	}, Entry("configuration", "get"), Entry("operator", "list"))
 })
-
-func gpuComputeTestDaemon(config *unstructured.Unstructured, component string) *appsv1.DaemonSet {
-	return &appsv1.DaemonSet{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "gpu-fractioning-" + component, Namespace: "runtime", Generation: 3,
-			Labels:          map[string]string{"app.kubernetes.io/managed-by": "gpu-fractioning", "app.kubernetes.io/component": component},
-			OwnerReferences: []metav1.OwnerReference{*metav1.NewControllerRef(config, gpuFractioningConfigGVK)},
-		},
-		Spec:   appsv1.DaemonSetSpec{Template: corev1.PodTemplateSpec{Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: component}}}}},
-		Status: appsv1.DaemonSetStatus{ObservedGeneration: 3, DesiredNumberScheduled: 2, UpdatedNumberScheduled: 2, NumberReady: 2, NumberAvailable: 2},
-	}
-}

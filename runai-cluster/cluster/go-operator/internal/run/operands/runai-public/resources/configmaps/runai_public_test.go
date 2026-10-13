@@ -8,9 +8,10 @@ package configmaps
 import (
 	"context"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"net/http"
 	"testing"
+
+	"gopkg.in/yaml.v2"
 
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
@@ -553,33 +554,24 @@ var _ = Describe("getGpuStackStatus", func() {
 })
 
 var _ = Describe("GPU compute modes in runai-public", func() {
-	It("serializes mode-specific availability without making it a required dependency", func() {
+	var kbClient client.Client
+	BeforeEach(func() {
 		config := newGpuFractioningConfigWithReadyCondition("True", "healthy")
-		config.SetGeneration(1)
-		config.SetUID("fractioning-config")
-		conditions := []interface{}{}
-		for _, conditionType := range []string{"Ready", "FractiondReady", "MpsdReady"} {
-			conditions = append(conditions, map[string]interface{}{
-				"type": conditionType, "status": "True", "observedGeneration": int64(1),
-			})
+		config.SetLabels(map[string]string{
+			"app.kubernetes.io/name": "gpu-fractioning", "app.kubernetes.io/instance": "runai",
+		})
+		operator := &appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "runai-gpu-fractioning", Namespace: "runtime", Labels: config.GetLabels(),
+			},
+			Spec: appsv1.DeploymentSpec{Template: corev1.PodTemplateSpec{Spec: corev1.PodSpec{
+				Containers: []corev1.Container{{Name: "manager", Env: []corev1.EnvVar{{Name: "SUPPORT_SM_SHARING", Value: "false"}}}},
+			}}},
 		}
-		Expect(unstructured.SetNestedSlice(config.Object, conditions, "status", "conditions")).To(Succeed())
-		objects := []client.Object{config}
-		for _, component := range []string{"fractiond", "mpsd"} {
-			objects = append(objects, &appsv1.DaemonSet{
-				ObjectMeta: metav1.ObjectMeta{
-					Name: "gpu-fractioning-" + component, Namespace: "runtime", Generation: 1,
-					Labels:          map[string]string{"app.kubernetes.io/managed-by": "gpu-fractioning", "app.kubernetes.io/component": component},
-					OwnerReferences: []metav1.OwnerReference{*metav1.NewControllerRef(config, gpuFractioningConfigGVK)},
-				},
-				Spec: appsv1.DaemonSetSpec{Template: corev1.PodTemplateSpec{Spec: corev1.PodSpec{
-					Containers: []corev1.Container{{Name: component, Args: []string{"--support-sm-sharing=false"}, Env: []corev1.EnvVar{{Name: "MPS_SUPPORT_SM_SHARING", Value: "false"}}}},
-				}}},
-				Status: appsv1.DaemonSetStatus{ObservedGeneration: 1, DesiredNumberScheduled: 1, UpdatedNumberScheduled: 1, NumberReady: 1, NumberAvailable: 1},
-			})
-		}
-		kbClient := createKubeClientMock(objects...)
+		kbClient = createKubeClientMock(config, operator)
 		kbClient.Scheme().AddKnownTypeWithName(gpuFractioningConfigGVK, &unstructured.Unstructured{})
+	})
+	It("serializes mode-specific availability without making it a required dependency", func() {
 		hybrid := kcfake.New(kbClient, kbClient, createDynamicClient())
 		object, err := NewRunaiPublic("test", hybrid, getRunaiConfig()).Object(context.Background())
 		Expect(err).NotTo(HaveOccurred())
@@ -590,6 +582,40 @@ var _ = Describe("GPU compute modes in runai-public", func() {
 		Expect(*modes.Available).To(BeTrue())
 		Expect(*modes.Components["time-slicing"].Available).To(BeTrue())
 		Expect(*modes.Components["sm-sharing"].Available).To(BeFalse())
-		Expect(modes.Components["sm-sharing"].Reason).NotTo(BeEmpty())
+		Expect(modes.Components["sm-sharing"].Reason).To(ContainSubstring("disabled"))
+	})
+	It("uses the hybrid reader and refreshes capability changes on subsequent reconciles", func() {
+		ctx := context.Background()
+		uncachedDeploymentReads := 0
+		uncached := interceptor.NewClient(kbClient.(client.WithWatch), interceptor.Funcs{
+			List: func(ctx context.Context, reader client.WithWatch, list client.ObjectList, opts ...client.ListOption) error {
+				if _, ok := list.(*appsv1.DeploymentList); ok {
+					uncachedDeploymentReads++
+				}
+				return reader.List(ctx, list, opts...)
+			},
+		})
+		hybrid := kc.New(kbClient, uncached, nil)
+		runaiConfig := getRunaiConfig()
+		status := func() runv1.PublicStatus {
+			return getOptionalComponentsStatus(ctx, hybrid, &runaiConfig, createDynamicClient())["gpu-compute-modes"]
+		}
+		Expect(*status().Components["time-slicing"].Available).To(BeTrue())
+		Expect(*status().Components["sm-sharing"].Available).To(BeFalse())
+
+		operator := &appsv1.Deployment{}
+		Expect(kbClient.Get(ctx, client.ObjectKey{Namespace: "runtime", Name: "runai-gpu-fractioning"}, operator)).To(Succeed())
+		operator.Spec.Template.Spec.Containers[0].Env[0].Value = "true"
+		Expect(kbClient.Update(ctx, operator)).To(Succeed())
+		Expect(*status().Components["sm-sharing"].Available).To(BeTrue())
+
+		operator.Spec.Template.Spec.Containers[0].Env[0].Value = "false"
+		Expect(kbClient.Update(ctx, operator)).To(Succeed())
+		Expect(*status().Components["sm-sharing"].Available).To(BeFalse())
+		Expect(*status().Components["time-slicing"].Available).To(BeTrue())
+
+		Expect(kbClient.Delete(ctx, operator)).To(Succeed())
+		Expect(*status().Available).To(BeFalse())
+		Expect(uncachedDeploymentReads).To(BeZero())
 	})
 })

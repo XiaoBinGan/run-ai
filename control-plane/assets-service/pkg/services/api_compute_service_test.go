@@ -336,7 +336,7 @@ var _ = Describe("compute asset specific tests", func() {
 			createHttpResp := httptest.NewRecorder()
 			router.ServeHTTP(createHttpResp, createHttpReq)
 			Expect(createHttpResp.Code).To(Equal(http.StatusBadRequest))
-			Expect(createHttpResp.Body.String()).To(ContainSubstring("gpuPortionRequest/gpuPortionLimit should not be provided when GPU request type is 'memory'"))
+			Expect(createHttpResp.Body.String()).To(ContainSubstring("gpuMemoryPortionRequest/gpuMemoryPortionLimit (deprecated aliases: gpuPortionRequest/gpuPortionLimit) should not be provided when GPU request type is 'memory'"))
 		})
 
 		It("create compute with gpu portion range issue", func() {
@@ -373,7 +373,7 @@ var _ = Describe("compute asset specific tests", func() {
 
 			Expect(respJsonErr).To(BeNil())
 			Expect(createHttpResp.Code).To(Equal(http.StatusBadRequest))
-			Expect(createHttpResp.Body.String()).To(ContainSubstring("gpuPortionRequest is mandatory when GPU request of type 'portion'"))
+			Expect(createHttpResp.Body.String()).To(ContainSubstring("gpuMemoryPortionRequest (deprecated alias: gpuPortionRequest) is mandatory when GPU request of type 'portion'"))
 		})
 
 		It("create compute with gpu memory w/o the memory", func() {
@@ -588,7 +588,7 @@ var _ = Describe("compute asset specific tests", func() {
 			}, false)
 			Expect(err).NotTo(BeNil())
 			Expect(err.Code).To(Equal(int32(http.StatusBadRequest)))
-			Expect(err.Message).To(ContainSubstring("gpuPortionRequest/gpuPortionLimit can be provided only when gpuDevices is 1"))
+			Expect(err.Message).To(ContainSubstring("gpuMemoryPortionRequest/gpuMemoryPortionLimit (deprecated aliases: gpuPortionRequest/gpuPortionLimit) can be provided only when gpuDevices is 1"))
 		})
 	})
 

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { legacyComputeForEditor } from "@/utils/gpu-memory-compat.util/gpu-memory-compat.util";
 import { DATA_SOURCE_ICONS_NAMES, distFrameworkIconsMap, toolTypeIconsMap } from "@/common/icons.constant";
 import { getNvidiaImageBasedIcon } from "@/common/icon.util";
 import {
@@ -1055,6 +1056,7 @@ function getComputeField(
   compute: WorkspaceSpecSpecAllOfCompute | undefined | null,
 ): WorkspaceSpecSpecAllOfCompute | undefined {
   if (!compute) return {};
+  compute = legacyComputeForEditor(compute);
 
   if (compute.gpuPortionRequest === 1) {
     delete compute.gpuPortionRequest;

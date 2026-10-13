@@ -830,7 +830,7 @@ func (dkc *DistributedToKubeflowComposer) processComputeFields(ctx context.Conte
 		}
 		canonical, err := gpucompat.NormalizeLegacyWorkloadCompute(src)
 		if err != nil {
-			return workloadsApi.NewError(400, err.Error())
+			return workloadsApi.NewError(http.StatusBadRequest, err.Error())
 		}
 		src = canonical
 

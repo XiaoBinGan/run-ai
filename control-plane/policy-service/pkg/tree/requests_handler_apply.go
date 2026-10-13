@@ -7,11 +7,12 @@ package tree
 
 import (
 	"context"
-	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/gpucompat"
 
 	"gorm.io/gorm"
 

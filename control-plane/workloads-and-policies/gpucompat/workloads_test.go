@@ -7,8 +7,9 @@ package gpucompat
 
 import (
 	"encoding/json"
-	workloadsApi "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/client/generated"
 	"testing"
+
+	workloadsApi "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/client/generated"
 )
 
 func TestNullableResponseMemoryAliases(t *testing.T) {

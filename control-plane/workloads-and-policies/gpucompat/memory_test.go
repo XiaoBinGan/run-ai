@@ -85,7 +85,7 @@ func TestMemoryStorageAndResponseRoundTrip(t *testing.T) {
 }
 
 func TestKnownComputeSectionsAndOpaqueFields(t *testing.T) {
-	for _, container := range []string{"spec", "masterSpec", "worker", "master", "leader", "defaults", "rules"} {
+	for _, container := range []string{"spec", "masterSpec", "worker", "master", "leader", "defaults", "rules", "combinedSpec", "combinedMasterSpec"} {
 		t.Run(container, func(t *testing.T) {
 			source := map[string]any{container: map[string]any{"compute": map[string]any{"gpuPortionRequest": .25}}}
 			got, err := NormalizeLegacyGPUFields(source)
@@ -95,6 +95,11 @@ func TestKnownComputeSectionsAndOpaqueFields(t *testing.T) {
 			compute := got[container].(map[string]any)["compute"].(map[string]any)
 			if compute["gpuMemoryPortionRequest"] != .25 {
 				t.Fatal(got)
+			}
+			response := LegacyCompatibleGPUFields(got)
+			fields := response[container].(map[string]any)["compute"].(map[string]any)
+			if fields["gpuPortionRequest"] != .25 || fields["gpuMemoryPortionRequest"] != .25 {
+				t.Fatalf("response lost aliases in %s: %#v", container, fields)
 			}
 		})
 	}

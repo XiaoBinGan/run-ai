@@ -49,7 +49,7 @@ func TestPolicyFallbackPreservesModeOmission(t *testing.T) {
 func TestPolicyFallbackPreservesConfiguredMode(t *testing.T) {
 	compute := map[string]interface{}{"gpuDevicesRequest": 1, "gpuComputeMode": SMSharing}
 	arbitrary := map[string]interface{}{"compute": map[string]interface{}{"gpuDevicesRequest": 1}}
-	values := map[string]interface{}{"compute": compute, "annotations": arbitrary}
+	values := map[string]interface{}{"compute": compute, "annotations": arbitrary, "defaults": arbitrary, "rules": arbitrary}
 	apply, cleanup := PolicyFallback()
 	apply(values)
 	cleanup()
@@ -70,7 +70,7 @@ func TestUpdateProjectsOnlyMode(t *testing.T) {
 func TestUnchangedComputePreservesImplicitMode(t *testing.T) {
 	compute := map[string]interface{}{"gpuDevicesRequest": 1}
 	values := map[string]interface{}{"compute": compute}
-	cleanup := PreserveImplicitModeForUpdate(values)
+	cleanup := PreserveImplicitModeForInferenceUpdate(values)
 	ApplyModeDefaults(values, map[string]interface{}{"compute": map[string]interface{}{"gpuComputeMode": SMSharing}})
 	require.Equal(t, TimeSlicing, compute["gpuComputeMode"])
 	cleanup()
