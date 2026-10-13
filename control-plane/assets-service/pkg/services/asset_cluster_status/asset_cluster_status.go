@@ -9,6 +9,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/workloads-and-policies/composer"
@@ -625,8 +626,19 @@ func getCredentialResourceName(credential dbmodel.CredentialsAssetSpecs) string 
 		return *credential.AssetsGenericSecret.ExistingSecretName
 	}
 
-	resourceName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[credential.Kind], credential.Name)
+	resourceName := secretResourceName(credential.Kind, credential.Name)
 	return resourceName
+}
+
+// secretResourceName builds the name of the secret the cluster creates for a
+// credential asset. It has to match what the cluster builds exactly: the agent
+// lowercases the name (getSecretResourceName in
+// runai-cluster/cluster/agent/pkg/handlers/assets_builders.go), as does
+// dbmodel.GetSecretName, because Kubernetes object names are lower case. A name
+// that differs only in case never matches the created object, so a healthy
+// asset is reported as not created.
+func secretResourceName(kind api.AssetKind, name string) string {
+	return strings.ToLower(fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[kind], name))
 }
 
 func getClusterResourceMap(clusterResources []openapi.ClusterObjectStatus) map[UniqueKey]openapi.ClusterObjectStatus {
@@ -844,7 +856,7 @@ func getAccessKeyResourceName(patchingInfo response_patching.ResponsePatchingPtr
 		if assetSpec.ExistingSecretName != nil {
 			return assetSpec.ExistingSecretName
 		} else {
-			secretName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_ACCESS_KEY], patchingInfo.Meta.Name)
+			secretName := secretResourceName(api.ASSETKIND_ACCESS_KEY, patchingInfo.Meta.Name)
 			return &secretName
 		}
 	case *api.CredentialsListResponseAssetSpec:
@@ -852,7 +864,7 @@ func getAccessKeyResourceName(patchingInfo response_patching.ResponsePatchingPtr
 			if assetSpec.AccessKey.ExistingSecretName != nil {
 				return assetSpec.AccessKey.ExistingSecretName
 			} else {
-				secretName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_ACCESS_KEY], patchingInfo.Meta.Name)
+				secretName := secretResourceName(api.ASSETKIND_ACCESS_KEY, patchingInfo.Meta.Name)
 				return &secretName
 			}
 		}
@@ -866,7 +878,7 @@ func getPasswordResourceName(patchingInfo response_patching.ResponsePatchingPtrs
 		if assetSpec.ExistingSecretName != nil {
 			return assetSpec.ExistingSecretName
 		} else {
-			secretName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_PASSWORD], patchingInfo.Meta.Name)
+			secretName := secretResourceName(api.ASSETKIND_PASSWORD, patchingInfo.Meta.Name)
 			return &secretName
 		}
 	case *api.CredentialsListResponseAssetSpec:
@@ -874,7 +886,7 @@ func getPasswordResourceName(patchingInfo response_patching.ResponsePatchingPtrs
 			if assetSpec.Password.ExistingSecretName != nil {
 				return assetSpec.Password.ExistingSecretName
 			} else {
-				secretName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_PASSWORD], patchingInfo.Meta.Name)
+				secretName := secretResourceName(api.ASSETKIND_PASSWORD, patchingInfo.Meta.Name)
 				return &secretName
 			}
 		}
@@ -892,7 +904,7 @@ func getGenericSecretResourceName(patchingInfo response_patching.ResponsePatchin
 				secretName := fmt.Sprintf("%s-%s", patchingInfo.Meta.Name, patchingInfo.Meta.Id[:10])
 				return &secretName
 			}
-			secretName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_GENERIC_SECRET], patchingInfo.Meta.Name)
+			secretName := secretResourceName(api.ASSETKIND_GENERIC_SECRET, patchingInfo.Meta.Name)
 			return &secretName
 		}
 	case *api.CredentialsListResponseAssetSpec:
@@ -904,7 +916,7 @@ func getGenericSecretResourceName(patchingInfo response_patching.ResponsePatchin
 					secretName := fmt.Sprintf("%s-%s", patchingInfo.Meta.Name, patchingInfo.Meta.Id[:10])
 					return &secretName
 				}
-				secretName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_GENERIC_SECRET], patchingInfo.Meta.Name)
+				secretName := secretResourceName(api.ASSETKIND_GENERIC_SECRET, patchingInfo.Meta.Name)
 				return &secretName
 			}
 		}
@@ -922,7 +934,7 @@ func getDockerRegistryResourceName(patchingInfo response_patching.ResponsePatchi
 				secretName := fmt.Sprintf("%s-%s", patchingInfo.Meta.Name, patchingInfo.Meta.Id[:10])
 				return &secretName
 			}
-			secretName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_DOCKER_REGISTRY], patchingInfo.Meta.Name)
+			secretName := secretResourceName(api.ASSETKIND_DOCKER_REGISTRY, patchingInfo.Meta.Name)
 			return &secretName
 		}
 	case *api.CredentialsListResponseAssetSpec:
@@ -934,7 +946,7 @@ func getDockerRegistryResourceName(patchingInfo response_patching.ResponsePatchi
 					secretName := fmt.Sprintf("%s-%s", patchingInfo.Meta.Name, patchingInfo.Meta.Id[:10])
 					return &secretName
 				}
-				secretName := fmt.Sprintf("%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_DOCKER_REGISTRY], patchingInfo.Meta.Name)
+				secretName := secretResourceName(api.ASSETKIND_DOCKER_REGISTRY, patchingInfo.Meta.Name)
 				return &secretName
 			}
 		}
