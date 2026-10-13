@@ -22,8 +22,9 @@ Maintainers are responsible for:
 - Reviewing and merging pull requests, per the review rules in
   [Contributing](CONTRIBUTING.md#code-review)
 - Triaging incoming issues and applying labels
-- Running the full CI pipeline on external contributions (the `/test` step
-  described in [Contributing](CONTRIBUTING.md#ci-for-contributors--what-runs-and-when))
+- Running the full CI pipeline on external contributions (the `/ok-to-test` step
+  described in [Contributing](CONTRIBUTING.md#ci-for-contributors--what-runs-and-when),
+  and the `/retest` re-run)
 - Applying `backport/v2.X` labels so fixes reach supported releases
 - Making release decisions for the versions listed in [Support](SUPPORT.md)
 - Responding to reports received through [Security](SECURITY.md)
