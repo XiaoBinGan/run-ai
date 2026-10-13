@@ -132,9 +132,10 @@ func (c *AuthServiceClient) AccessRuleExists(ctx context.Context, userEmail stri
 	// the subject alone reports any other rule the user holds as this one and
 	// skips creating the missing rule.
 	filterString := []string{
-		fmt.Sprintf("subjectId=@%s", userEmail),
+		fmt.Sprintf("subjectId==%s", userEmail),
 		fmt.Sprintf("roleId==%d", roleID),
 		fmt.Sprintf("scopeId==%s", projectID),
+		fmt.Sprintf("scopeType==%s", authorization.SCOPETYPE_PROJECT),
 	}
 	accessRulesResp, resp, err := c.client.AccessRulesAPI().GetAccessRules(ctx).
 		FilterBy(filterString).
@@ -152,10 +153,19 @@ func (c *AuthServiceClient) AccessRuleExists(ctx context.Context, userEmail stri
 
 	exists := false
 	for _, rule := range accessRulesResp.GetAccessRules() {
+		// The filter operators are a request, not a guarantee: "=@" means
+		// contains, so the subject has to be matched again here, and a rule for
+		// another scope type or cluster is not this rule either.
+		if rule.GetSubjectId() != userEmail {
+			continue
+		}
 		if rule.GetRoleId() != roleID || rule.GetScopeId() != projectID {
 			continue
 		}
-		if clusterID := rule.GetClusterId(); clusterID != "" && clusterID != clusterUUID {
+		if rule.GetScopeType() != authorization.SCOPETYPE_PROJECT {
+			continue
+		}
+		if rule.GetClusterId() != clusterUUID {
 			continue
 		}
 		exists = true
