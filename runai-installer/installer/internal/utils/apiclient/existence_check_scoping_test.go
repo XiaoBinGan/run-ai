@@ -118,3 +118,54 @@ func TestAccessRuleExistsFindsTheMatchingRule(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, exists)
 }
+
+// "subjectId=@x" is a contains match, so otheruser@example.com answers a lookup
+// for user@example.com. The rule has to be matched on the subject itself.
+func TestAccessRuleExistsRejectsARuleForAnotherSubject(t *testing.T) {
+	var rawQuery string
+	client := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+		rawQuery = r.URL.RawQuery
+		jsonResponse(t, `{"accessRules":[{"subjectId":"otheruser@example.com","roleId":7,"scopeId":"target-project","scopeType":"project","clusterId":"cluster-a"}]}`)(w, r)
+	})
+
+	exists, err := NewAuthServiceClient(client, nil).
+		AccessRuleExists(context.Background(), "user@example.com", 7, "cluster-a", "target-project")
+
+	require.NoError(t, err)
+	assert.False(t, exists)
+	assert.Contains(t, rawQuery, "subjectId", "the lookup must be scoped to the subject")
+	assert.Contains(t, rawQuery, "scopeType", "the lookup must be scoped to the project scope type")
+}
+
+func TestAccessRuleExistsRejectsAnotherScopeTypeOnTheSameId(t *testing.T) {
+	client := newTestClient(t, jsonResponse(t,
+		`{"accessRules":[{"subjectId":"user@example.com","roleId":7,"scopeId":"target-project","scopeType":"department","clusterId":"cluster-a"}]}`))
+
+	exists, err := NewAuthServiceClient(client, nil).
+		AccessRuleExists(context.Background(), "user@example.com", 7, "cluster-a", "target-project")
+
+	require.NoError(t, err)
+	assert.False(t, exists)
+}
+
+func TestAccessRuleExistsRejectsARuleWithoutACluster(t *testing.T) {
+	client := newTestClient(t, jsonResponse(t,
+		`{"accessRules":[{"subjectId":"user@example.com","roleId":7,"scopeId":"target-project","scopeType":"project"}]}`))
+
+	exists, err := NewAuthServiceClient(client, nil).
+		AccessRuleExists(context.Background(), "user@example.com", 7, "cluster-a", "target-project")
+
+	require.NoError(t, err)
+	assert.False(t, exists)
+}
+
+func TestGetProjectByNameRejectsAProjectFromAnotherCluster(t *testing.T) {
+	client := newTestClient(t, jsonResponse(t,
+		`{"projects":[{"id":"other-id","name":"test-project","clusterId":"cluster-b"}]}`))
+
+	project, _, err := NewOrgUnitServiceClientFromRunAI(client).
+		GetProjectByName(context.Background(), "cluster-a", "test-project")
+
+	require.Error(t, err)
+	assert.Nil(t, project)
+}
