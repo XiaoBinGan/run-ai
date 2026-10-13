@@ -7,6 +7,7 @@ package installconfig
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/dsx-ai-factory/run-ai/runai-installer/installer/internal/artifacts"
 	"github.com/dsx-ai-factory/run-ai/runai-installer/installer/internal/orchestrator2/spec"
@@ -289,13 +290,81 @@ func toSpecTLS(t *TLS) *spec.TLS {
 	return &spec.TLS{CertPath: t.CertPath, KeyPath: t.KeyPath, CAChainPath: t.CAChainPath}
 }
 
+// toStringMap renders the config's customHelmValues into the Helm --set
+// arguments the installer eventually passes to the chart. Helm addresses nested
+// values with dotted paths, so nested maps are flattened
+// (`telemetryService: {enabled: true}` becomes `telemetryService.enabled=true`)
+// and lists are rendered in Helm's brace syntax (`{a,b}`). Keys that are
+// already dotted are passed through unchanged, so both spellings keep working.
 func toStringMap(m map[string]any) map[string]string {
 	if len(m) == 0 {
 		return nil
 	}
 	out := make(map[string]string, len(m))
-	for k, v := range m {
-		out[k] = fmt.Sprintf("%v", v)
+	flattenHelmValues(out, "", m)
+	if len(out) == 0 {
+		return nil
 	}
 	return out
+}
+
+// flattenHelmValues walks a customHelmValues map, writing one entry per leaf
+// value. A leaf is anything that is not a nested map or list.
+func flattenHelmValues(out map[string]string, prefix string, m map[string]any) {
+	for k, v := range m {
+		key := k
+		if prefix != "" {
+			key = prefix + "." + k
+		}
+		flattenHelmValue(out, key, v)
+	}
+}
+
+func flattenHelmValue(out map[string]string, key string, v any) {
+	switch t := v.(type) {
+	case map[string]any:
+		// An empty map has no leaves. Emitting `key=` would clear the chart
+		// default rather than leave it alone, so skip it.
+		if len(t) > 0 {
+			flattenHelmValues(out, key, t)
+		}
+	case map[string]string:
+		if len(t) > 0 {
+			nested := make(map[string]any, len(t))
+			for k, s := range t {
+				nested[k] = s
+			}
+			flattenHelmValues(out, key, nested)
+		}
+	case []any:
+		out[key] = helmListValue(t)
+	case []string:
+		items := make([]any, 0, len(t))
+		for _, s := range t {
+			items = append(items, s)
+		}
+		out[key] = helmListValue(items)
+	default:
+		out[key] = escapeHelmValue(fmt.Sprintf("%v", v))
+	}
+}
+
+// helmListValue renders a list in the brace form Helm's --set parser expects.
+// Elements are escaped so a comma inside one is not read as a separator.
+func helmListValue(items []any) string {
+	parts := make([]string, 0, len(items))
+	for _, item := range items {
+		if item == nil {
+			parts = append(parts, "")
+			continue
+		}
+		parts = append(parts, escapeHelmValue(fmt.Sprintf("%v", item)))
+	}
+	return "{" + strings.Join(parts, ",") + "}"
+}
+
+// escapeHelmValue backslash-escapes the characters Helm's --set parser treats
+// as separators, so a value containing them survives the round trip.
+func escapeHelmValue(s string) string {
+	return strings.NewReplacer(`\`, `\\`, `,`, `\,`).Replace(s)
 }
