@@ -7,6 +7,7 @@ package lock
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
 	"time"
@@ -16,6 +17,7 @@ import (
 	"github.com/dsx-ai-factory/run-ai/runai-common-packages/cache/v2/options"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func initLockerTest(t *testing.T, shared bool) (Locker, *mocks.CacheClienter) {
@@ -85,12 +87,12 @@ func TestLock_FailedAfterAcquiringReleasesTheKey(t *testing.T) {
 	locker, cacheClientMock := initLockerTest(t, false)
 	cacheClientMock.On("SetIfAbsent", context.WithoutCancel(ctx), "service-lock-store", "key", mock.Anything, &ttl).
 		Return(true, errors.New("failed to set expiration"))
-	cacheClientMock.On("Delete", context.WithoutCancel(ctx), "service-lock-store", "key").Return(nil)
+	cacheClientMock.On("DeleteIf", context.WithoutCancel(ctx), "service-lock-store", "key", mock.Anything).Return(nil)
 
 	err := locker.Lock(ctx, ttl)
 
 	assert.EqualError(t, err, "failed to lock key service-lock-store.key: failed to set expiration")
-	cacheClientMock.AssertCalled(t, "Delete", context.WithoutCancel(ctx), "service-lock-store", "key")
+	cacheClientMock.AssertCalled(t, "DeleteIf", context.WithoutCancel(ctx), "service-lock-store", "key", mock.Anything)
 }
 
 func TestLock_FailedAfterAcquiringReportsAnUnreleasedKey(t *testing.T) {
@@ -99,7 +101,7 @@ func TestLock_FailedAfterAcquiringReportsAnUnreleasedKey(t *testing.T) {
 	locker, cacheClientMock := initLockerTest(t, false)
 	cacheClientMock.On("SetIfAbsent", context.WithoutCancel(ctx), "service-lock-store", "key", mock.Anything, &ttl).
 		Return(true, errors.New("failed to set expiration"))
-	cacheClientMock.On("Delete", context.WithoutCancel(ctx), "service-lock-store", "key").Return(errors.New("delete failed"))
+	cacheClientMock.On("DeleteIf", context.WithoutCancel(ctx), "service-lock-store", "key", mock.Anything).Return(errors.New("delete failed"))
 
 	err := locker.Lock(ctx, ttl)
 
@@ -118,5 +120,38 @@ func TestLock_FailedWithoutAcquiringDoesNotRelease(t *testing.T) {
 	err := locker.Lock(ctx, ttl)
 
 	assert.EqualError(t, err, "failed to lock key service-lock-store.key: store is full")
-	cacheClientMock.AssertNotCalled(t, "Delete", mock.Anything, mock.Anything, mock.Anything)
+	cacheClientMock.AssertNotCalled(t, "DeleteIf", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+}
+
+// The key may have expired before the failed attempt released it, in which case
+// another caller can hold the lock by now. The release has to leave that lock
+// alone, so it carries the condition that identified this attempt's value.
+func TestLock_FailedAfterAcquiringReleasesOnlyItsOwnLock(t *testing.T) {
+	ctx := context.Background()
+	ttl := time.Second
+	l, cacheClientMock := initLockerTest(t, false)
+
+	var condition func(val []byte) bool
+	cacheClientMock.On("SetIfAbsent", context.WithoutCancel(ctx), "service-lock-store", "key", mock.Anything, &ttl).
+		Return(true, errors.New("failed to set expiration"))
+	cacheClientMock.On("DeleteIf", context.WithoutCancel(ctx), "service-lock-store", "key", mock.Anything).
+		Run(func(args mock.Arguments) {
+			condition = args.Get(3).(func(val []byte) bool)
+		}).
+		Return(nil)
+
+	err := l.Lock(ctx, ttl)
+
+	assert.EqualError(t, err, "failed to lock key service-lock-store.key: failed to set expiration")
+	mock.AssertExpectationsForObjects(t, cacheClientMock)
+	require.NotNil(t, condition, "the release must be conditional")
+
+	own, err := json.Marshal(Record{LockedAt: time.Now(), LockedBy: l.(*locker).lockUniqueId})
+	require.NoError(t, err)
+	other, err := json.Marshal(Record{LockedAt: time.Now(), LockedBy: "other-locker"})
+	require.NoError(t, err)
+
+	assert.True(t, condition(own), "this attempt may release the lock it stored")
+	assert.False(t, condition(other), "another caller's lock must be left alone")
+	assert.False(t, condition([]byte("not a record")), "an unreadable value is not this attempt's lock")
 }
