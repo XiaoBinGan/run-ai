@@ -106,6 +106,34 @@ func insertV2Workload(tenantId uint, clusterId, projectId string, supportSuspend
 	return id.String()
 }
 
+// insertLegacyWorkload inserts a minimal V1 (non-V2) workload row directly into the DB for testing.
+// It leaves source_api unset so ChangeDesiredStates takes the legacy (non-generic) path.
+func insertLegacyWorkload(tenantId uint, clusterId, projectId, workloadType string, supportSuspend bool) string {
+	id := uuid.New()
+	clusterUUID, parseErr := uuid.Parse(clusterId)
+	Expect(parseErr).To(BeNil(), "clusterId must be a valid UUID")
+	w := models.Workload{
+		ID:                 id,
+		TenantID:           tenantId,
+		ClusterID:          clusterUUID,
+		ProjectID:          projectId,
+		Name:               "legacy-test-" + id.String()[:8],
+		Type:               workloadType,
+		Phase:              api.PHASE_RUNNING,
+		PhaseUpdatedAt:     time.Now(),
+		SupportSuspend:     supportSuspend,
+		SupportDelete:      true,
+		SubmittedBy:        testing.TestUser,
+		Urls:               pq.StringArray{},
+		Images:             pq.StringArray{},
+		RequestedMigDevice: pq.StringArray{},
+		RequestedNodepools: pq.StringArray{},
+	}
+	_, err := runaidb.DB().Table("workloads").Create(&w)
+	Expect(err).To(BeNil(), "failed to insert test legacy workload")
+	return id.String()
+}
+
 var _ = Describe("ChangeDesiredStates — V2 proxy routing", func() {
 	var (
 		ctx     context.Context
@@ -210,6 +238,41 @@ var _ = Describe("ChangeDesiredStates — V2 proxy routing", func() {
 
 			Expect(mgr.lastAction).To(Equal(workloads_mgr_api.WORKLOADSV2BATCHACTION_DELETE))
 			Expect(mgr.lastIds).To(ConsistOf(id))
+		})
+	})
+
+	Context("legacy (non-V2) workloads", func() {
+		It("should reject a suspend request for a legacy workload that does not support suspend without changing its phase", func() {
+			id := insertLegacyWorkload(randoms.TenantId, randoms.ClusterId, randoms.ProjectIdStr, Inference, false)
+
+			resp, err := ChangeDesiredStates(ctx, []string{id}, api.WORKLOADDESIREDPHASE_STOPPED)
+			Expect(err).To(BeNil())
+			Expect(resp.Code).To(Equal(http.StatusBadRequest))
+
+			var count int64
+			Expect(runaidb.DB().Table(models_crud.WorkloadsTableName).Where("id = ?", id).Count(&count)).To(BeNil())
+			Expect(count).To(BeZero(), "no desired-phase record must be written for an unsupported suspend")
+
+			var phase string
+			Expect(runaidb.DB().Table("workloads").Where("id = ?", id).Pluck("phase", &phase)).To(BeNil())
+			Expect(phase).To(Equal(string(api.PHASE_RUNNING)))
+			Expect(mgr.lastIds).To(BeEmpty())
+		})
+
+		It("should record the stopped desired phase for a legacy workload that supports suspend", func() {
+			id := insertLegacyWorkload(randoms.TenantId, randoms.ClusterId, randoms.ProjectIdStr, Training, true)
+
+			_, err := ChangeDesiredStates(ctx, []string{id}, api.WORKLOADDESIREDPHASE_STOPPED)
+			Expect(err).To(BeNil())
+
+			var count int64
+			Expect(runaidb.DB().Table(models_crud.WorkloadsTableName).Where("id = ?", id).Count(&count)).To(BeNil())
+			Expect(count).To(Equal(int64(1)))
+
+			var phase string
+			Expect(runaidb.DB().Table("workloads").Where("id = ?", id).Pluck("phase", &phase)).To(BeNil())
+			Expect(phase).To(Equal(string(api.PHASE_STOPPING)))
+			Expect(mgr.lastIds).To(BeEmpty())
 		})
 	})
 

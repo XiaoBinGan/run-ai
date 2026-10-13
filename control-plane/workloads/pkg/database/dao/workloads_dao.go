@@ -690,8 +690,11 @@ func resetSupportSuspendOfNonV2Workloads(tx orm.DB, tenantId uint, workloadIds [
 		Where(fmt.Sprintf("%s = ?", WorkloadsColumnSupportSuspend), true).
 		Where(fmt.Sprintf("%s IS NULL OR %s <> ?", WorkloadsColumnSourceApi, WorkloadsColumnSourceApi), string(api.SOURCEAPI_WORKLOADS_V2)).
 		Update(WorkloadsColumnSupportSuspend, false)
+	if err != nil {
+		return fmt.Errorf("reset support_suspend for tenant %d: %w", tenantId, err)
+	}
 
-	return err
+	return nil
 }
 
 func omitWorkloadsEmptyStaticFields(query orm.DB, workload models.Workload) orm.DB {
