@@ -237,3 +237,87 @@ func TestToSpec_ControlPlaneCredentials(t *testing.T) {
 	cfg.Cluster.ControlPlaneCredentials = nil
 	assert.Nil(t, cfg.ToSpec(RunOptions{}).Cluster.ControlPlaneCredentials)
 }
+
+// Custom helm values are handed to Helm as --set arguments, which address
+// nested values with dotted paths. A nested map in the config must therefore be
+// flattened instead of being rendered as a Go map string.
+func TestToSpec_CustomHelmValuesNestedMaps(t *testing.T) {
+	cfg := &Config{
+		ControlPlane: &ControlPlane{
+			Enabled: true,
+			Domain:  "runai.example.com",
+			CustomHelmValues: map[string]any{
+				"supportEntitled": true,
+				"telemetryService": map[string]any{
+					"enabled": true,
+				},
+				"global": map[string]any{
+					"fipsMode": "only",
+					"ingress":  map[string]any{"enabled": false},
+				},
+			},
+		},
+	}
+
+	values := cfg.ToSpec(RunOptions{}).ControlPlane.CustomHelmValues
+
+	assert.Equal(t, map[string]string{
+		"supportEntitled":          "true",
+		"telemetryService.enabled": "true",
+		"global.fipsMode":          "only",
+		"global.ingress.enabled":   "false",
+	}, values)
+}
+
+func TestToSpec_CustomHelmValuesShapes(t *testing.T) {
+	cases := []struct {
+		name string
+		in   map[string]any
+		want map[string]string
+	}{
+		{
+			name: "empty block maps to no overrides",
+			in:   map[string]any{},
+			want: nil,
+		},
+		{
+			name: "already dotted keys are preserved",
+			in:   map[string]any{"clusterConfig.global.subdomainSupport": false},
+			want: map[string]string{"clusterConfig.global.subdomainSupport": "false"},
+		},
+		{
+			name: "scalars keep their config type",
+			in:   map[string]any{"replicas": 3, "ratio": 1.5, "name": "runai"},
+			want: map[string]string{"replicas": "3", "ratio": "1.5", "name": "runai"},
+		},
+		{
+			name: "lists use helm brace syntax",
+			in:   map[string]any{"dns": []any{"1.1.1.1", "8.8.8.8"}},
+			want: map[string]string{"dns": "{1.1.1.1,8.8.8.8}"},
+		},
+		{
+			name: "commas inside list elements are escaped",
+			in:   map[string]any{"args": []any{"a,b", `c\d`}},
+			want: map[string]string{"args": `{a\,b,c\\d}`},
+		},
+		{
+			name: "a map nested under a dotted key is still flattened",
+			in:   map[string]any{"global.foo": map[string]any{"bar": 1}},
+			want: map[string]string{"global.foo.bar": "1"},
+		},
+		{
+			name: "empty nested maps do not clear chart defaults",
+			in:   map[string]any{"global": map[string]any{}},
+			want: nil,
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			cfg := &Config{
+				ControlPlane: &ControlPlane{Enabled: true, Domain: "runai.example.com", CustomHelmValues: tc.in},
+			}
+			assert.Equal(t, tc.want, cfg.ToSpec(RunOptions{}).ControlPlane.CustomHelmValues)
+		})
+	}
+}
