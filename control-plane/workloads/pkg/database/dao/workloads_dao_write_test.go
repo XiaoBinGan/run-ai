@@ -130,10 +130,13 @@ var _ = Describe("DbDeleteWorkload", func() {
 })
 
 var _ = Describe("DbUpsertWorkload", func() {
-	It("saves the workload", func() {
+	It("saves the workload and resets a stale support_suspend when the cluster reports it as not suspendable", func() {
 		m := setupDaoMock(GinkgoT())
 		m.ExpectTransaction().Begin()
 		m.ExpectExec(wlWriteSave).Returns(1)
+		m.ExpectTransaction().Commit()
+		m.ExpectTransaction().Begin()
+		m.ExpectExec(wlWriteSyncResetSuspend, false, 1, wlWriteId, true, string(api.SOURCEAPI_WORKLOADS_V2)).Returns(1)
 		m.ExpectTransaction().Commit()
 
 		apiErr := (&WorkloadsDao{}).DbUpsertWorkload(testCtx(1), wlWriteWorkload())
@@ -158,6 +161,7 @@ var _ = Describe("DbUpsertWorkloadFull", func() {
 		m := setupDaoMock(GinkgoT())
 		m.ExpectTransaction().Begin()
 		m.ExpectExec(wlWriteSave).Returns(1)
+		m.ExpectExec(wlWriteSyncResetSuspend, false, 1, wlWriteId, true, string(api.SOURCEAPI_WORKLOADS_V2)).Returns(1)
 		m.ExpectExec(wlWriteSavepointChildren).Returns(0)
 		m.ExpectExec(wlWriteChildInsert).Returns(1)
 		m.ExpectExec(wlWriteSavepointElements).Returns(0)
@@ -194,6 +198,7 @@ var _ = Describe("DbUpsertWorkloadFull", func() {
 		m := setupDaoMock(GinkgoT())
 		m.ExpectTransaction().Begin()
 		m.ExpectExec(wlWriteSave).Returns(1)
+		m.ExpectExec(wlWriteSyncResetSuspend, false, 1, wlWriteId, true, string(api.SOURCEAPI_WORKLOADS_V2)).Returns(1)
 		m.ExpectExec(wlWriteSavepointChildren).Returns(0)
 		m.ExpectExec(wlWriteChildInsert).ReturnsError(errors.New("boom"))
 		m.ExpectExec(wlWriteRollbackChildren).Returns(0)
@@ -208,6 +213,7 @@ var _ = Describe("DbUpsertWorkloadFull", func() {
 		m := setupDaoMock(GinkgoT())
 		m.ExpectTransaction().Begin()
 		m.ExpectExec(wlWriteSave).Returns(1)
+		m.ExpectExec(wlWriteSyncResetSuspend, false, 1, wlWriteId, true, string(api.SOURCEAPI_WORKLOADS_V2)).Returns(1)
 		m.ExpectExec(wlWriteSavepointChildren).Returns(0)
 		m.ExpectExec(wlWriteSavepointElements).Returns(0)
 		m.ExpectExec(wlWriteElementsDeleteNoCluster).ReturnsError(errors.New("boom"))
@@ -223,6 +229,7 @@ var _ = Describe("DbUpsertWorkloadFull", func() {
 		m := setupDaoMock(GinkgoT())
 		m.ExpectTransaction().Begin()
 		m.ExpectExec(wlWriteSave).Returns(1)
+		m.ExpectExec(wlWriteSyncResetSuspend, false, 1, wlWriteId, true, string(api.SOURCEAPI_WORKLOADS_V2)).Returns(1)
 		m.ExpectExec(wlWriteSavepointChildren).Returns(0)
 		m.ExpectExec(wlWriteSavepointElements).Returns(0)
 		m.ExpectExec(wlWriteElementsDeleteAll).Returns(0)

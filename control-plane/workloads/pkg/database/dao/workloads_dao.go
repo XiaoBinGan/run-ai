@@ -109,6 +109,11 @@ func (w *WorkloadsDao) DbUpsertWorkload(ctx context.Context, workload models.Wor
 		return dbErr.WithDetails(err)
 	}
 
+	if err := resetSupportSuspendOfNonV2Workloads(tx, workload.TenantID, notSuspendableIds(workload)); err != nil {
+		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to reset support_suspend of workload %s: %v", workload.Name, err)
+		return dbErr.WithDetails(err)
+	}
+
 	return nil
 }
 
@@ -128,6 +133,10 @@ func (w *WorkloadsDao) DbUpsertWorkloadFull(ctx context.Context, tenantID uint, 
 	if _, saveErr := query.Save(&workload); saveErr != nil {
 		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to save workload %s, err %v", workload.Name, saveErr)
 		return dbErr.WithDetails(saveErr)
+	}
+	if resetErr := resetSupportSuspendOfNonV2Workloads(tx, tenantID, notSuspendableIds(workload)); resetErr != nil {
+		logging.WithCtx(runaictx.LoggerHook(ctx)).Errorf("Failed to reset support_suspend of workload %s: %v", workload.Name, resetErr)
+		return dbErr.WithDetails(resetErr)
 	}
 
 	// 2. Upsert children
@@ -672,6 +681,15 @@ func (w *WorkloadsDao) DbSyncWorkloads(
 	committed = true
 
 	return syncedWorkloads, failedWorkloads, deletedWorkloadIds, nil
+}
+
+// notSuspendableIds returns the workload's id when the cluster reports it as not suspendable, so single-row
+// upserts can share resetSupportSuspendOfNonV2Workloads with the batch sync.
+func notSuspendableIds(workload models.Workload) []string {
+	if workload.SupportSuspend {
+		return nil
+	}
+	return []string{workload.ID.String()}
 }
 
 // resetSupportSuspendOfNonV2Workloads lets the cluster's "not suspendable" report win for workloads that
