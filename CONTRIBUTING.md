@@ -141,7 +141,7 @@ We split CI into two layers:
 
 - **Layer 1: Fast, automatic, no secrets.**
   - Runs on every fork PR as soon as it is opened: DCO check, lint (Go, Helm, Python, JS, workflows), `govulncheck`, the Python and npm dependency audits, a base-image vulnerability scan, and the `build`, `test`, `lint` and `validate` targets of every service the PR touches.
-  - `CODEOWNERS` validation is not one of them: `make validate` is a local check only, as the table under [Running the Checks Locally](#running-the-checks-locally) already says.
+  - `CODEOWNERS` validation is not one of them: the root `make validate` target is the CODEOWNERS check, and it is local-only, as the table under [Running the Checks Locally](#running-the-checks-locally) already says. The per-service `validate` targets in the bullet above do run.
   - Neither is CodeQL: the static-analysis lane runs on pushes to the release branches rather than on pull requests, and code scanning is disabled for this repository.
   - These checks post results back to your PR within a few minutes.
   - They are informational: they help you fix obvious issues before a maintainer looks at the PR, but they do not block merge by themselves.
