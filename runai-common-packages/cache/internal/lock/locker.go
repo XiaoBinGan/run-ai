@@ -79,9 +79,12 @@ func (l *locker) lock(ctx context.Context, ttl time.Duration) error {
 				// A client can report the key as taken together with an error,
 				// for example when it stored the lock but failed to apply the
 				// TTL. Releasing it first keeps a lock without an expiry from
-				// outliving the caller that failed to take it.
+				// outliving the caller that failed to take it. The release is
+				// conditional because the key may have expired in the meantime
+				// and another caller may hold it by now: only the lock this
+				// attempt stored may be removed.
 				if acquired {
-					if delErr := l.cacheClient.Delete(context.WithoutCancel(ctx), l.store.Name, l.name); delErr != nil {
+					if delErr := l.cacheClient.DeleteIf(context.WithoutCancel(ctx), l.store.Name, l.name, l.lockIdComparator()); delErr != nil {
 						return fmt.Errorf("failed to lock key %s.%s: %w (and failed to release it: %w)", l.store.Name, l.name, err, delErr)
 					}
 				}
