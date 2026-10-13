@@ -44,7 +44,7 @@ GPU fractions remain supported in v3.0, now powered by NVIDIA CUDA instead of th
 
 * Running and pending workloads using GPU fractions must be suspended (native workload types) or deleted (supported workload types) before the NVIDIA Run:ai upgrade begins.
 * CUDA 13.4 or later, CUDA driver r615 or later, and GPU Operator 26.7.1 or later are required for fractions to work on v3.0.
-* GPU Operator 26.7.1 does not default to CUDA driver r615. Set the driver version explicitly - see [Migrate GPU Fractions](migrate-gpu-fractions.md).
+* GPU Operator 26.7.1 does not default to CUDA driver r615. Set the driver version explicitly.
 * The GPU Operator must be installed with `cdi.nriPluginEnabled` set to `false` (`--set cdi.nriPluginEnabled=false`). GPU memory fractions do not function while the NRI plugin is enabled.
 * For [supported workload types](../../workloads-in-nvidia-run-ai/workload-types/supported-workload-types.md), Kubernetes manifests using dynamic fractions (a fraction request with a memory limit) require migration to a new annotation. [Native workload types](../../workloads-in-nvidia-run-ai/workload-types/native-workloads.md) keep the same UI, API, and CLI fields - NVIDIA Run:ai converts them to the new annotation format automatically.
 * You can choose whether to upgrade the CUDA driver and GPU Operator before or after upgrading NVIDIA Run:ai - the choice affects only how long fractions stay unavailable.
@@ -75,7 +75,7 @@ Before upgrading, identify any workloads or node pools relying on GPU memory swa
 
 ### Dynamic Resource Allocation (DRA) Driver
 
-A fresh GPU Operator installation installs the [NVIDIA DRA driver](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html) automatically, but upgrading an existing GPU Operator deployment does not. If your cluster requires the DRA driver (for example, Multi-Node NVLink deployments such as GB200), install it manually after upgrading the GPU Operator. See [Install](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/dra-intro-install.html#) in the NVIDIA GPU Operator documentation.
+Upgrading the GPU Operator does not install or change the [NVIDIA DRA driver](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/26.7/dra-intro-install.html), and does not change the GPU Operator mode. If your cluster uses a separately installed DRA driver (for example, Multi-Node NVLink deployments such as GB200), keep it when upgrading. Refer to the [Support Matrix](../support-matrix.md) for the supported DRA driver versions. `GPUCluster` mode, in which GPU Operator 26.7 deploys the DRA driver itself, is supported for new installations only.
 
 ## Upgrade Workflow
 

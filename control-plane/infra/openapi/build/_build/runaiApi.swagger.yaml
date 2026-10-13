@@ -6504,7 +6504,7 @@ paths:
   /api/v1/authorization/access-rules:
     post:
       summary: Create an access rule.
-      description: Use to bind a predefined role to a subject (user, group or application) in a scope.
+      description: Use to bind a predefined role to a subject (user, group or service account) in a scope.
       operationId: create_access_rule
       tags:
         - Access rules
@@ -17935,6 +17935,15 @@ components:
         $ref: '#/components/schemas/ExtendedResource'
       maxItems: 1000
       nullable: true
+    GpuComputeMode:
+      description: GPU compute sharing mode. Policy and template defaults apply before the built-in time-slicing fallback. Explicit modes require an available GPU fractioning runtime on the selected cluster.
+      type: string
+      minLength: 1
+      enum:
+        - time-slicing
+        - sm-sharing
+      nullable: true
+      x-gorm-ignore: true
     GpuDevicesRequest:
       description: Requested number of GPU devices. Currently if more than one device is requested, it is not possible to provide values for gpuMemory or gpuPortion.
       type: integer
@@ -17949,6 +17958,23 @@ components:
       maxLength: 63
       example: 10M
       nullable: true
+    GpuMemoryPortionLimit:
+      description: Maximum GPU memory fraction consumed per GPU device. Must be no less than gpuMemoryPortionRequest.
+      type: number
+      format: double
+      example: 0.5
+      nullable: true
+      minimum: 0
+      x-gorm-ignore: true
+    GpuMemoryPortionRequest:
+      description: GPU memory fraction to allocate per GPU device, between 0 and 1. Required when gpuRequestType is portion.
+      type: number
+      format: double
+      example: 0.5
+      nullable: true
+      minimum: 0
+      maximum: 1
+      x-gorm-ignore: true
     GpuMemoryRequest:
       description: Required if and only if gpuRequestType is memory. States the GPU memory to allocate for the created workload, per GPU device. Note that the workload will not be scheduled unless the system can guarantee this amount of GPU memory to the workload.
       type: string
@@ -17957,19 +17983,21 @@ components:
       example: 10M
       nullable: true
     GpuPortionLimit:
-      description: Limitations on the portion consumed by the workload, per GPU device. The system guarantees The gpuPotionLimit must be no less than the gpuPortionRequest.
+      description: Deprecated. Use gpuMemoryPortionLimit instead. Limitations on the portion consumed by the workload, per GPU device. The system guarantees The gpuPotionLimit must be no less than the gpuPortionRequest.
       type: number
       format: double
       example: 0.5
       nullable: true
       minimum: 0
+      deprecated: true
     GpuPortionRequest:
-      description: Required if and only if gpuRequestType is portion. States the portion of the GPU to allocate for the created workload, per GPU device, between 0 and 1. The default is no allocated GPUs.
+      description: Deprecated. Use gpuMemoryPortionRequest instead. Required if and only if gpuRequestType is portion. States the portion of the GPU to allocate for the created workload, per GPU device, between 0 and 1. The default is no allocated GPUs.
       type: number
       format: double
       example: 0.5
       nullable: true
       minimum: 0
+      deprecated: true
     GpuRequestType:
       description: Sets the unit type for GPU resources requests. Stated in terms of portion or memory. Sets the unit type for other GPU request fields. If `gpuDevicesRequest > 1`, only `portion` is supported. If `gpuDeviceRequest = 1`, the request type can be stated as `portion` or `memory`.
       type: string
@@ -17995,10 +18023,16 @@ components:
           $ref: '#/components/schemas/CpuMemoryRequest'
         extendedResources:
           $ref: '#/components/schemas/ExtendedResources'
+        gpuComputeMode:
+          $ref: '#/components/schemas/GpuComputeMode'
         gpuDevicesRequest:
           $ref: '#/components/schemas/GpuDevicesRequest'
         gpuMemoryLimit:
           $ref: '#/components/schemas/GpuMemoryLimit'
+        gpuMemoryPortionLimit:
+          $ref: '#/components/schemas/GpuMemoryPortionLimit'
+        gpuMemoryPortionRequest:
+          $ref: '#/components/schemas/GpuMemoryPortionRequest'
         gpuMemoryRequest:
           $ref: '#/components/schemas/GpuMemoryRequest'
         gpuPortionLimit:
@@ -22760,10 +22794,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -22946,10 +22986,16 @@ components:
               $ref: '#/components/schemas/CpuMemoryRequest'
             extendedResources:
               $ref: '#/components/schemas/ExtendedResources'
+            gpuComputeMode:
+              $ref: '#/components/schemas/GpuComputeMode'
             gpuDevicesRequest:
               $ref: '#/components/schemas/GpuDevicesRequest'
             gpuMemoryLimit:
               $ref: '#/components/schemas/GpuMemoryLimit'
+            gpuMemoryPortionLimit:
+              $ref: '#/components/schemas/GpuMemoryPortionLimit'
+            gpuMemoryPortionRequest:
+              $ref: '#/components/schemas/GpuMemoryPortionRequest'
             gpuMemoryRequest:
               $ref: '#/components/schemas/GpuMemoryRequest'
             gpuPortionLimit:
@@ -23267,10 +23313,16 @@ components:
           $ref: '#/components/schemas/GpuMemoryLimit'
         gpuMemoryRequest:
           $ref: '#/components/schemas/GpuMemoryRequest'
+        gpuMemoryPortionLimit:
+          $ref: '#/components/schemas/GpuMemoryPortionLimit'
         gpuPortionLimit:
           $ref: '#/components/schemas/GpuPortionLimit'
+        gpuMemoryPortionRequest:
+          $ref: '#/components/schemas/GpuMemoryPortionRequest'
         gpuPortionRequest:
           $ref: '#/components/schemas/GpuPortionRequest'
+        gpuComputeMode:
+          $ref: '#/components/schemas/GpuComputeMode'
         gpuRequestType:
           $ref: '#/components/schemas/GpuRequestType'
         largeShmRequest:
@@ -23701,6 +23753,31 @@ components:
           $ref: '#/components/schemas/ItemRules'
       nullable: true
       type: object
+    GpuComputeModeOptions:
+      properties:
+        options:
+          description: Limit the permitted values for gpuComputeMode to a given set of values.
+          type: array
+          items:
+            required:
+              - value
+            properties:
+              value:
+                $ref: '#/components/schemas/GpuComputeMode'
+              displayed:
+                description: Textual description of the value
+                type: string
+                nullable: true
+                pattern: .*
+          nullable: true
+      nullable: true
+      type: object
+    GpuComputeModeRules:
+      allOf:
+        - $ref: '#/components/schemas/StringRulesCommon'
+        - $ref: '#/components/schemas/GpuComputeModeOptions'
+      nullable: true
+      type: object
     GpuRequestOptions:
       properties:
         options:
@@ -23746,10 +23823,20 @@ components:
           $ref: '#/components/schemas/QuantityRules'
         gpuMemoryRequest:
           $ref: '#/components/schemas/QuantityRules'
+        gpuMemoryPortionLimit:
+          $ref: '#/components/schemas/NumberRules'
         gpuPortionLimit:
+          allOf:
+            - $ref: '#/components/schemas/NumberRules'
+          deprecated: true
+        gpuMemoryPortionRequest:
           $ref: '#/components/schemas/NumberRules'
         gpuPortionRequest:
-          $ref: '#/components/schemas/NumberRules'
+          allOf:
+            - $ref: '#/components/schemas/NumberRules'
+          deprecated: true
+        gpuComputeMode:
+          $ref: '#/components/schemas/GpuComputeModeRules'
         gpuRequestType:
           $ref: '#/components/schemas/GpuRequestRules'
         largeShmRequest:
@@ -25836,10 +25923,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryLimit'
                 cpuMemoryRequest:
                   $ref: '#/components/schemas/CpuMemoryRequest'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -26038,16 +26131,26 @@ components:
                   $ref: '#/components/schemas/QuantityRules'
                 cpuMemoryRequest:
                   $ref: '#/components/schemas/QuantityRules'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeModeRules'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/IntegerRules'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/QuantityRules'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/NumberRules'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/NumberRules'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/QuantityRules'
                 gpuPortionLimit:
-                  $ref: '#/components/schemas/NumberRules'
+                  allOf:
+                    - $ref: '#/components/schemas/NumberRules'
+                  deprecated: true
                 gpuPortionRequest:
-                  $ref: '#/components/schemas/NumberRules'
+                  allOf:
+                    - $ref: '#/components/schemas/NumberRules'
+                  deprecated: true
                 gpuRequestType:
                   $ref: '#/components/schemas/GpuRequestRules'
               type: object
@@ -27727,7 +27830,7 @@ components:
         subjectId:
           type: string
           example: user@run.ai
-          description: The unique identifier of the subject (e.g., user, group, or app).
+          description: The unique identifier of the subject (e.g., user, group, or service account).
         roleId:
           type: integer
           format: int32
@@ -27749,7 +27852,7 @@ components:
         Subject type enum for access rule responses. Extends SubjectType with the built-in
         all-authenticated-users subject, which applies to every authenticated user and service account.
 
-        Note: The 'app' subject type is DEPRECATED. Please use 'service-account' instead for service accounts.
+        Note: The 'app' subject type is DEPRECATED and is no longer returned. Please use 'service-account' instead for service accounts.
       enum:
         - user
         - app
@@ -27852,7 +27955,8 @@ components:
       description: |
         Subject type enum for access rules.
 
-        Note: The 'app' subject type is DEPRECATED. Please use 'service-account' instead for service accounts.
+        Note: The 'app' subject type is DEPRECATED and no longer supported. Please use 'service-account' instead for service accounts.
+        Requests that create an access rule with 'app' are rejected with 415 Unsupported Media Type.
       enum:
         - user
         - app
@@ -28021,12 +28125,12 @@ components:
         properties:
           subjectId:
             type: string
-            description: The unique identifier of the subject e.g., user, group, or app).
+            description: The unique identifier of the subject e.g., user, group, or service account).
             example: user@run.ai
           subjectType:
             allOf:
               - $ref: '#/components/schemas/SubjectType'
-              - description: 'The subject assigned to the access rule. Valid values: user, group, app.'
+              - description: 'The subject assigned to the access rule. Valid values: user, group, service-account.'
     AccessRuleScopes:
       type: array
       description: scopes for the access rules. must have at least one value
@@ -30564,10 +30668,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -30709,10 +30819,16 @@ components:
               $ref: '#/components/schemas/CpuMemoryRequest'
             extendedResources:
               $ref: '#/components/schemas/ExtendedResources'
+            gpuComputeMode:
+              $ref: '#/components/schemas/GpuComputeMode'
             gpuDevicesRequest:
               $ref: '#/components/schemas/GpuDevicesRequest'
             gpuMemoryLimit:
               $ref: '#/components/schemas/GpuMemoryLimit'
+            gpuMemoryPortionLimit:
+              $ref: '#/components/schemas/GpuMemoryPortionLimit'
+            gpuMemoryPortionRequest:
+              $ref: '#/components/schemas/GpuMemoryPortionRequest'
             gpuMemoryRequest:
               $ref: '#/components/schemas/GpuMemoryRequest'
             gpuPortionLimit:
@@ -30809,10 +30925,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -30966,10 +31088,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -31178,10 +31306,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -31325,10 +31459,16 @@ components:
                       $ref: '#/components/schemas/CpuMemoryRequest'
                     extendedResources:
                       $ref: '#/components/schemas/ExtendedResources'
+                    gpuComputeMode:
+                      $ref: '#/components/schemas/GpuComputeMode'
                     gpuDevicesRequest:
                       $ref: '#/components/schemas/GpuDevicesRequest'
                     gpuMemoryLimit:
                       $ref: '#/components/schemas/GpuMemoryLimit'
+                    gpuMemoryPortionLimit:
+                      $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                    gpuMemoryPortionRequest:
+                      $ref: '#/components/schemas/GpuMemoryPortionRequest'
                     gpuMemoryRequest:
                       $ref: '#/components/schemas/GpuMemoryRequest'
                     gpuPortionLimit:
@@ -31605,10 +31745,16 @@ components:
               $ref: '#/components/schemas/CpuMemoryRequest'
             extendedResources:
               $ref: '#/components/schemas/ExtendedResources'
+            gpuComputeMode:
+              $ref: '#/components/schemas/GpuComputeMode'
             gpuDevicesRequest:
               $ref: '#/components/schemas/GpuDevicesRequest'
             gpuMemoryLimit:
               $ref: '#/components/schemas/GpuMemoryLimit'
+            gpuMemoryPortionLimit:
+              $ref: '#/components/schemas/GpuMemoryPortionLimit'
+            gpuMemoryPortionRequest:
+              $ref: '#/components/schemas/GpuMemoryPortionRequest'
             gpuMemoryRequest:
               $ref: '#/components/schemas/GpuMemoryRequest'
             gpuPortionLimit:
@@ -31802,10 +31948,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -32057,10 +32209,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -32245,10 +32403,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -32468,10 +32632,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryRequest'
                 extendedResources:
                   $ref: '#/components/schemas/ExtendedResources'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
@@ -32638,10 +32808,16 @@ components:
               $ref: '#/components/schemas/CpuMemoryRequest'
             extendedResources:
               $ref: '#/components/schemas/ExtendedResources'
+            gpuComputeMode:
+              $ref: '#/components/schemas/GpuComputeMode'
             gpuDevicesRequest:
               $ref: '#/components/schemas/GpuDevicesRequest'
             gpuMemoryLimit:
               $ref: '#/components/schemas/GpuMemoryLimit'
+            gpuMemoryPortionLimit:
+              $ref: '#/components/schemas/GpuMemoryPortionLimit'
+            gpuMemoryPortionRequest:
+              $ref: '#/components/schemas/GpuMemoryPortionRequest'
             gpuMemoryRequest:
               $ref: '#/components/schemas/GpuMemoryRequest'
             gpuPortionLimit:
@@ -34150,10 +34326,16 @@ components:
                   $ref: '#/components/schemas/CpuMemoryLimit'
                 cpuMemoryRequest:
                   $ref: '#/components/schemas/CpuMemoryRequest'
+                gpuComputeMode:
+                  $ref: '#/components/schemas/GpuComputeMode'
                 gpuDevicesRequest:
                   $ref: '#/components/schemas/GpuDevicesRequest'
                 gpuMemoryLimit:
                   $ref: '#/components/schemas/GpuMemoryLimit'
+                gpuMemoryPortionLimit:
+                  $ref: '#/components/schemas/GpuMemoryPortionLimit'
+                gpuMemoryPortionRequest:
+                  $ref: '#/components/schemas/GpuMemoryPortionRequest'
                 gpuMemoryRequest:
                   $ref: '#/components/schemas/GpuMemoryRequest'
                 gpuPortionLimit:
