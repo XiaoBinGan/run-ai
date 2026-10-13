@@ -26,31 +26,28 @@ type LogReader struct {
 
 func (lr *LogReader) GetLogList() ([]string, error) {
 	var lines []string
-	var lc = lr.tail
+	remaining := lr.tail
 	for _, log := range lr.logListInfo {
-		readFile, err := os.Open(filepath.Join(lr.path, log.Name))
+		if remaining <= 0 {
+			break
+		}
 
+		readFile, err := os.Open(filepath.Join(lr.path, log.Name))
 		if err != nil {
 			return lines, err
 		}
+
 		fileScanner := bufio.NewScanner(readFile)
 		fileScanner.Split(bufio.ScanLines)
-		var fileLines []string
-
 		for fileScanner.Scan() {
-			fileLines = append(fileLines, fileScanner.Text())
+			if remaining <= 0 {
+				break
+			}
+			lines = append(lines, fileScanner.Text())
+			remaining--
 		}
 
 		readFile.Close()
-
-		for _, line := range fileLines {
-			lines = append(lines, line)
-			lc--
-
-			if lc < 0 {
-				break
-			}
-		}
 	}
 	return lines, nil
 }
