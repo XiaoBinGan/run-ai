@@ -388,7 +388,7 @@ func (p *PoliciesHandler) backendToClusterWorkspacePolicies(policies []policy_op
 					continue
 				}
 			} else {
-				log.Warn().Msgf("Had an error while getting backend policy project id, name: %s, project id: %d", backendPolicy.Meta.Name, *projectIdPtr)
+				log.Warn().Msgf("Had an error while getting backend policy project id, name: %s: project id is missing", backendPolicy.Meta.Name)
 				continue
 			}
 		}
@@ -569,14 +569,14 @@ func (p *PoliciesHandler) addPolicyLabels(objectMeta *metav1.ObjectMeta, backend
 		if departmentIdPtr != nil {
 			objectMeta.GetLabels()[constants.DepartmentScopeLabel] = *departmentIdPtr
 		} else {
-			log.Warn().Msgf("Had an error while getting backend policy scope id, name: %s, department id: %s", objectMeta.GetName(), *departmentIdPtr)
+			log.Warn().Msgf("Had an error while getting backend policy scope id, name: %s: department id is missing", objectMeta.GetName())
 		}
 	case policy_openapi.SCOPETYPE_PROJECT:
 		projectIdPtr := backendPolicyMeta.ProjectId.Get()
 		if projectIdPtr != nil {
 			objectMeta.GetLabels()[constants.ProjectScopeLabel] = strconv.Itoa(int(*projectIdPtr))
 		} else {
-			log.Warn().Msgf("Had an error while getting backend policy scope id, name: %s, project id: %d", objectMeta.GetName(), *projectIdPtr)
+			log.Warn().Msgf("Had an error while getting backend policy scope id, name: %s: project id is missing", objectMeta.GetName())
 		}
 	}
 }
