@@ -374,16 +374,6 @@ func (p *PoliciesHandler) backendToClusterWorkspacePolicies(policies []policy_op
 	clusterPoliciesExtraction := clusterWorkloadsAndPoliciesUpdates{}
 
 	for idx, backendPolicy := range policies {
-		// The control plane stamps the counter today, but the field is optional in
-		// the policy API - the spec's `required` entry for it is misspelled - and
-		// the agent has no recover, so a policy without one is skipped instead of
-		// taking the whole sync down.
-		if backendPolicy.UpdateCounter == nil {
-			log.Warn().Msgf("Had an error while getting backend policy update counter, name: %s: update counter is missing", backendPolicy.Meta.Name)
-			continue
-		}
-
-		backendPolicyCounter := *backendPolicy.UpdateCounter
 		backendPolicyNamespace := constants.NamespaceRunAi // default namespace for tenant/department scope
 
 		if backendPolicy.Meta.Scope == policy_openapi.SCOPETYPE_PROJECT {
@@ -415,6 +405,18 @@ func (p *PoliciesHandler) backendToClusterWorkspacePolicies(policies []policy_op
 			clusterPoliciesExtraction.DeleteRef = append(clusterPoliciesExtraction.DeleteRef, idx)
 			continue
 		}
+
+		// The control plane stamps the counter today, but the field is optional in
+		// the policy API - the spec's `required` entry for it is misspelled - and
+		// the agent has no recover. Only composition needs it, so a policy without
+		// one is skipped here rather than dereferenced; a deletion above is still
+		// carried out, since it does not read the counter.
+		if backendPolicy.UpdateCounter == nil {
+			log.Warn().Msgf("Had an error while getting backend policy update counter, name: %s: update counter is missing", backendPolicy.Meta.Name)
+			continue
+		}
+
+		backendPolicyCounter := *backendPolicy.UpdateCounter
 
 		// the context is used for loading cluster information in the control plane, in agent we do not need it
 		clusterPolicy, err := p.composePolicy(context.Background(), &backendPolicy, backendPolicyNamespace, backendPolicyCounter)

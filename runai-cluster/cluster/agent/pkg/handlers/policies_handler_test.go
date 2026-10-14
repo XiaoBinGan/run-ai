@@ -90,6 +90,22 @@ var _ = Describe("PoliciesHandler", func() {
 			Expect(updates.ToUpdate).To(BeEmpty())
 		})
 
+		// Only composition reads the counter, so a deletion that arrives without
+		// one must still be carried out instead of leaving the policy behind.
+		It("deletes a policy without an update counter", func() {
+			policies := []policy_openapi.PolicySyncResponsePoliciesInner{{
+				Meta:      policy_openapi.PolicyCreationFields{Name: "policy", Scope: policy_openapi.SCOPETYPE_CLUSTER},
+				IsDeleted: *policy_openapi.NewNullableBool(ptr.To(true)),
+			}}
+
+			updates, err := handler.backendToClusterWorkspacePolicies(policies, nil)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(updates.ToDelete).To(HaveLen(1))
+			Expect(updates.ToDelete[0].Name).To(Equal("policy"))
+			Expect(updates.DeleteRef).To(Equal([]int{0}))
+			Expect(updates.ToUpdate).To(BeEmpty())
+		})
+
 		// The guard must not skip a policy that does carry a counter.
 		It("deletes a policy that carries an update counter", func() {
 			policies := []policy_openapi.PolicySyncResponsePoliciesInner{{
