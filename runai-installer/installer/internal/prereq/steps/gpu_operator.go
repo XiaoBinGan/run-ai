@@ -198,6 +198,7 @@ func isControlPlaneNode(labels map[string]string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
