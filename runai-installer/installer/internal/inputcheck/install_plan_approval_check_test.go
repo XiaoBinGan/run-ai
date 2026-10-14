@@ -13,15 +13,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Not one of the two accepted values; every operator that reaches OperatorHub
+// has to reject it for the same reason, so the table shares it.
+const invalidInstallPlanApproval = "sometimes"
+
 func installPlanApprovalFindings(t *testing.T, s *spec.Spec) []string {
 	t.Helper()
 
 	var fields []string
+
 	for _, finding := range inputcheck.Validate(s).Findings {
 		if finding.Check == "install-plan-approval" {
 			fields = append(fields, finding.Field)
 		}
 	}
+
 	return fields
 }
 
@@ -36,22 +42,22 @@ func TestInstallPlanApprovalCheckCoversEveryOLMOperator(t *testing.T) {
 	}{
 		{
 			name:  "gpu operator",
-			spec:  &spec.Spec{Prerequisites: &spec.Prerequisites{GPUOperator: &spec.Dependency{OpenShiftInstallPlanApproval: "sometimes"}}},
+			spec:  &spec.Spec{Prerequisites: &spec.Prerequisites{GPUOperator: &spec.Dependency{OpenShiftInstallPlanApproval: invalidInstallPlanApproval}}},
 			field: "prerequisites.gpuOperator.openshift.installPlanApproval",
 		},
 		{
 			name:  "network operator",
-			spec:  &spec.Spec{Prerequisites: &spec.Prerequisites{NetworkOperator: &spec.Dependency{OpenShiftInstallPlanApproval: "sometimes"}}},
+			spec:  &spec.Spec{Prerequisites: &spec.Prerequisites{NetworkOperator: &spec.Dependency{OpenShiftInstallPlanApproval: invalidInstallPlanApproval}}},
 			field: "prerequisites.networkOperator.openshift.installPlanApproval",
 		},
 		{
 			name:  "knative",
-			spec:  &spec.Spec{Features: &spec.Features{Knative: &spec.Dependency{OpenShiftInstallPlanApproval: "sometimes"}}},
+			spec:  &spec.Spec{Features: &spec.Features{Knative: &spec.Dependency{OpenShiftInstallPlanApproval: invalidInstallPlanApproval}}},
 			field: "features.knative.openshift.installPlanApproval",
 		},
 		{
 			name:  "lws",
-			spec:  &spec.Spec{Features: &spec.Features{LWS: &spec.Dependency{OpenShiftInstallPlanApproval: "sometimes"}}},
+			spec:  &spec.Spec{Features: &spec.Features{LWS: &spec.Dependency{OpenShiftInstallPlanApproval: invalidInstallPlanApproval}}},
 			field: "features.lws.openshift.installPlanApproval",
 		},
 	}
