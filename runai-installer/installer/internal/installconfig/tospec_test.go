@@ -13,6 +13,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// The fixtures below reuse these Helm value keys; naming them keeps one
+// fixture from silently testing a different key than the others.
+const (
+	keyGlobal = "global"
+	keyDNS    = "dns"
+	keyArgs   = "args"
+)
+
 func TestToSpec_InstallMode(t *testing.T) {
 	cases := map[string]spec.InstallMode{
 		"":                         spec.InstallModeFull,
@@ -251,7 +259,7 @@ func TestToSpec_CustomHelmValuesNestedMaps(t *testing.T) {
 				"telemetryService": map[string]any{
 					"enabled": true,
 				},
-				"global": map[string]any{
+				keyGlobal: map[string]any{
 					"fipsMode": "only",
 					"ingress":  map[string]any{"enabled": false},
 				},
@@ -292,13 +300,13 @@ func TestToSpec_CustomHelmValuesShapes(t *testing.T) {
 		},
 		{
 			name: "lists use helm brace syntax",
-			in:   map[string]any{"dns": []any{"1.1.1.1", "8.8.8.8"}},
-			want: map[string]string{"dns": "{1.1.1.1,8.8.8.8}"},
+			in:   map[string]any{keyDNS: []any{"1.1.1.1", "8.8.8.8"}},
+			want: map[string]string{keyDNS: "{1.1.1.1,8.8.8.8}"},
 		},
 		{
 			name: "commas inside list elements are escaped",
-			in:   map[string]any{"args": []any{"a,b", `c\d`}},
-			want: map[string]string{"args": `{a\,b,c\\d}`},
+			in:   map[string]any{keyArgs: []any{"a,b", `c\d`}},
+			want: map[string]string{keyArgs: `{a\,b,c\\d}`},
 		},
 		{
 			name: "a map nested under a dotted key is still flattened",
@@ -307,13 +315,13 @@ func TestToSpec_CustomHelmValuesShapes(t *testing.T) {
 		},
 		{
 			name: "empty nested maps do not clear chart defaults",
-			in:   map[string]any{"global": map[string]any{}},
+			in:   map[string]any{keyGlobal: map[string]any{}},
 			want: nil,
 		},
 		{
 			name: "braces inside list elements are escaped",
-			in:   map[string]any{"args": []any{"a}b", "{c}"}},
-			want: map[string]string{"args": `{a\}b,\{c\}}`},
+			in:   map[string]any{keyArgs: []any{"a}b", "{c}"}},
+			want: map[string]string{keyArgs: `{a\}b,\{c\}}`},
 		},
 		{
 			name: "braces inside scalar values are escaped",
@@ -324,14 +332,14 @@ func TestToSpec_CustomHelmValuesShapes(t *testing.T) {
 			// Helm's --set has no empty-list form: `key={}` sets a list holding
 			// one empty string, so an empty list has to emit nothing.
 			name: "empty lists do not become a one element list",
-			in:   map[string]any{"dns": []any{}, "args": []string{}},
+			in:   map[string]any{keyDNS: []any{}, keyArgs: []string{}},
 			want: nil,
 		},
 		{
 			// Both spellings name global.foo. Sorted iteration makes the result
 			// independent of map order, and the key spelled out in full wins.
 			name: "a dotted key wins over the same path from a nested map",
-			in:   map[string]any{"global": map[string]any{"foo": "from-nested"}, "global.foo": "from-dotted"},
+			in:   map[string]any{keyGlobal: map[string]any{"foo": "from-nested"}, "global.foo": "from-dotted"},
 			want: map[string]string{"global.foo": "from-dotted"},
 		},
 	}

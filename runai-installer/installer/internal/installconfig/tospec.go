@@ -303,6 +303,7 @@ func toStringMap(m map[string]any) map[string]string {
 	}
 	out := make(map[string]string, len(m))
 	flattenHelmValues(out, "", m)
+
 	if len(out) == 0 {
 		return nil
 	}
@@ -321,6 +322,7 @@ func flattenHelmValues(out map[string]string, prefix string, m map[string]any) {
 	for k := range m {
 		keys = append(keys, k)
 	}
+
 	sort.Strings(keys)
 
 	for _, k := range keys {
@@ -328,6 +330,7 @@ func flattenHelmValues(out map[string]string, prefix string, m map[string]any) {
 		if prefix != "" {
 			key = prefix + "." + k
 		}
+
 		flattenHelmValue(out, key, m[k])
 	}
 }
@@ -346,6 +349,7 @@ func flattenHelmValue(out map[string]string, key string, v any) {
 			for k, s := range t {
 				nested[k] = s
 			}
+
 			flattenHelmValues(out, key, nested)
 		}
 	case []any:
@@ -361,6 +365,7 @@ func flattenHelmValue(out map[string]string, key string, v any) {
 			for _, s := range t {
 				items = append(items, s)
 			}
+
 			out[key] = helmListValue(items)
 		}
 	default:
@@ -373,13 +378,16 @@ func flattenHelmValue(out map[string]string, key string, v any) {
 // the end of the list.
 func helmListValue(items []any) string {
 	parts := make([]string, 0, len(items))
+
 	for _, item := range items {
 		if item == nil {
 			parts = append(parts, "")
 			continue
 		}
+
 		parts = append(parts, escapeHelmValue(fmt.Sprintf("%v", item)))
 	}
+
 	return "{" + strings.Join(parts, ",") + "}"
 }
 
