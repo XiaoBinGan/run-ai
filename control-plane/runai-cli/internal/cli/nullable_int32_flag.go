@@ -6,7 +6,10 @@
 package cli
 
 import (
+	"fmt"
 	"strconv"
+
+	"github.com/dsx-ai-factory/run-ai/control-plane/runai-cli/internal/consts"
 
 	openapi "github.com/dsx-ai-factory/run-ai/control-plane/workloads/pkg/client/generated"
 
@@ -46,6 +49,12 @@ func (ni *NullableInt32Flag) Set(value string) error {
 	i, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
 		return err
+	}
+	// Parsing as uint used to reject negatives as a side effect of the base
+	// conversion. Keep rejecting them explicitly now that the value is parsed
+	// as a signed int32 that cannot overflow.
+	if i < 0 {
+		return fmt.Errorf(consts.InvalidNegativeValue)
 	}
 
 	ni.value.Set(ptr.To(int32(i)))

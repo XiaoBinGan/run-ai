@@ -44,18 +44,22 @@ var _ = Describe("NullableInt32", func() {
 			}
 		})
 
-		It("should set the int32 boundary values", func() {
-			for _, tc := range []struct {
-				value string
-				want  int32
-			}{
-				{value: "2147483647", want: 2147483647},
-				{value: "-2147483648", want: -2147483648},
-			} {
+		It("should reject a negative value", func() {
+			// The flag used to parse as uint, so a negative value failed there;
+			// parsing as int32 must not start accepting it.
+			for _, value := range []string{"-1", "-2147483648"} {
 				ni = cli.NewNullableInt32Flag(&openapi.NullableInt32{})
-				Expect(ni.Set(tc.value)).To(Succeed())
-				Expect(*ni.Value()).To(Equal(tc.want))
+				err := ni.Set(value)
+				Expect(err).To(HaveOccurred(), "value %q must be rejected", value)
+				Expect(err.Error()).To(Equal("value cannot be negative"))
+				Expect(ni.IsSet()).To(BeFalse(), "value %q must leave the flag unset", value)
 			}
+		})
+
+		It("should set the int32 upper boundary", func() {
+			ni = cli.NewNullableInt32Flag(&openapi.NullableInt32{})
+			Expect(ni.Set("2147483647")).To(Succeed())
+			Expect(*ni.Value()).To(Equal(int32(2147483647)))
 		})
 	})
 
