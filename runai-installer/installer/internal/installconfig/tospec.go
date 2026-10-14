@@ -328,7 +328,11 @@ func flattenHelmValues(out map[string]string, prefix string, m map[string]any) {
 	for _, k := range keys {
 		key := k
 		if prefix != "" {
-			key = prefix + "." + k
+			// A key nested in the config is a literal key, so the separators it
+			// contains are escaped: `podAnnotations: {"prometheus.io/scrape": x}`
+			// must reach the chart as that annotation, not as nested keys. A key
+			// written in dotted form at the top level stays a path on purpose.
+			key = prefix + "." + escapeHelmKey(k)
 		}
 
 		flattenHelmValue(out, key, m[k])
@@ -366,6 +370,10 @@ func flattenHelmValue(out map[string]string, key string, v any) {
 		// literal "<nil>" instead.
 		out[key] = "null"
 	default:
+		// Helm parses what it is given, so a value that reads as a number, a
+		// boolean or null reaches the chart as that type. There is no way to
+		// force a string inside a --set argument; that needs --set-string
+		// (strvals' ParseIntoString) from the caller.
 		out[key] = escapeHelmValue(fmt.Sprintf("%v", v))
 	}
 }
@@ -434,5 +442,18 @@ func escapeHelmValue(s string) string {
 		`,`, `\,`,
 		`{`, `\{`,
 		`}`, `\}`,
+	).Replace(s)
+}
+
+// escapeHelmKey backslash-escapes the characters Helm's --set parser treats as
+// key separators, so a nested key that contains one stays a single key instead
+// of splitting into path segments: `.`, `,`, `=` and `[` all end a key there.
+func escapeHelmKey(s string) string {
+	return strings.NewReplacer(
+		`\`, `\\`,
+		`.`, `\.`,
+		`,`, `\,`,
+		`=`, `\=`,
+		`[`, `\[`,
 	).Replace(s)
 }

@@ -346,6 +346,23 @@ func TestToSpec_CustomHelmValuesShapes(t *testing.T) {
 			want: map[string]string{"global.foo": "from-dotted"},
 		},
 		{
+			// Helm splits keys on dots, so a nested key containing one has to be
+			// escaped or the chart receives nested maps instead of that key.
+			name: "dots in nested keys stay part of the key",
+			in:   map[string]any{"podAnnotations": map[string]any{"prometheus.io/scrape": valueTrue}},
+			want: map[string]string{`podAnnotations.prometheus\.io/scrape`: valueTrue},
+		},
+		{
+			name: "nested keys escape every helm key separator",
+			in:   map[string]any{"a": map[string]any{"b,c": 1, "d=e": 2, `f\g`: 3, "h[i": 4}},
+			want: map[string]string{`a.b\,c`: "1", `a.d\=e`: "2", `a.f\\g`: "3", `a.h\[i`: "4"},
+		},
+		{
+			name: "an indexed entry escapes the dots in its keys",
+			in:   map[string]any{"ports": []any{map[string]any{"prometheus.io/scrape": true}}},
+			want: map[string]string{`ports[0].prometheus\.io/scrape`: valueTrue},
+		},
+		{
 			// Helm's brace syntax carries scalars only, so an entry that is a map
 			// has to be addressed by index or the chart receives the Go map
 			// string that this change exists to remove.
