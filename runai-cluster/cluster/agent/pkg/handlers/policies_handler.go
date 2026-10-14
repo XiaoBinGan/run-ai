@@ -374,6 +374,15 @@ func (p *PoliciesHandler) backendToClusterWorkspacePolicies(policies []policy_op
 	clusterPoliciesExtraction := clusterWorkloadsAndPoliciesUpdates{}
 
 	for idx, backendPolicy := range policies {
+		// The control plane stamps the counter today, but the field is optional in
+		// the policy API - the spec's `required` entry for it is misspelled - and
+		// the agent has no recover, so a policy without one is skipped instead of
+		// taking the whole sync down.
+		if backendPolicy.UpdateCounter == nil {
+			log.Warn().Msgf("Had an error while getting backend policy update counter, name: %s: update counter is missing", backendPolicy.Meta.Name)
+			continue
+		}
+
 		backendPolicyCounter := *backendPolicy.UpdateCounter
 		backendPolicyNamespace := constants.NamespaceRunAi // default namespace for tenant/department scope
 

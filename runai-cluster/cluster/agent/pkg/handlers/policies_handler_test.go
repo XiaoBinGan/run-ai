@@ -60,4 +60,49 @@ var _ = Describe("PoliciesHandler", func() {
 			Expect(labels).To(HaveKeyWithValue(constants.DepartmentScopeLabel, "dept-1"))
 		})
 	})
+
+	Describe("backendToClusterWorkspacePolicies", func() {
+		var handler *PoliciesHandler
+
+		BeforeEach(func() {
+			// isUnstructured keeps getObject on the fake client instead of the
+			// typed createEmptyObject path, which needs a registered GVK.
+			handler = &PoliciesHandler{CommonHandler: &CommonHandler{cachedClient: fakeClientWithObjects(), isUnstructured: true}}
+		})
+
+		// The counter is optional in the policy API, so a policy that arrives
+		// without one must be skipped: dereferencing it used to take the agent
+		// down, and the agent has no recover.
+		It("skips a policy without an update counter", func() {
+			policies := []policy_openapi.PolicySyncResponsePoliciesInner{{
+				Meta: policy_openapi.PolicyCreationFields{Name: "policy", Scope: policy_openapi.SCOPETYPE_CLUSTER},
+			}}
+
+			var (
+				updates clusterWorkloadsAndPoliciesUpdates
+				err     error
+			)
+			Expect(func() {
+				updates, err = handler.backendToClusterWorkspacePolicies(policies, nil)
+			}).NotTo(Panic(), "a missing counter must not be dereferenced")
+			Expect(err).NotTo(HaveOccurred())
+			Expect(updates.ToDelete).To(BeEmpty())
+			Expect(updates.ToUpdate).To(BeEmpty())
+		})
+
+		// The guard must not skip a policy that does carry a counter.
+		It("deletes a policy that carries an update counter", func() {
+			policies := []policy_openapi.PolicySyncResponsePoliciesInner{{
+				Meta:          policy_openapi.PolicyCreationFields{Name: "policy", Scope: policy_openapi.SCOPETYPE_CLUSTER},
+				IsDeleted:     *policy_openapi.NewNullableBool(ptr.To(true)),
+				UpdateCounter: ptr.To(int64(3)),
+			}}
+
+			updates, err := handler.backendToClusterWorkspacePolicies(policies, nil)
+			Expect(err).NotTo(HaveOccurred())
+			Expect(updates.ToDelete).To(HaveLen(1))
+			Expect(updates.ToDelete[0].Name).To(Equal("policy"))
+			Expect(updates.DeleteRef).To(Equal([]int{0}))
+		})
+	})
 })
