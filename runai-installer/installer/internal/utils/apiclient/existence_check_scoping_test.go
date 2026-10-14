@@ -27,19 +27,23 @@ func newTestClient(t *testing.T, handler http.HandlerFunc) *runaiclient.RunAICli
 		if r.URL.Path == "/_version" {
 			w.Header().Set("Content-Type", "application/json")
 			_, _ = w.Write([]byte(`{"version":"test"}`))
+
 			return
 		}
+
 		handler(w, r)
 	}))
 	t.Cleanup(srv.Close)
 
 	client, err := runaiclient.NewClient(srv.URL, runaiclient.Credentials{Token: "test-token"})
 	require.NoError(t, err)
+
 	return client
 }
 
 func jsonResponse(t *testing.T, body string) http.HandlerFunc {
 	t.Helper()
+
 	return func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(body))
@@ -51,6 +55,7 @@ func jsonResponse(t *testing.T, body string) http.HandlerFunc {
 // it, so an unrelated project must not be returned.
 func TestGetProjectByNameRejectsAnUnrelatedProject(t *testing.T) {
 	var rawQuery string
+
 	client := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		rawQuery = r.URL.RawQuery
 		jsonResponse(t, `{"projects":[{"id":"alpha-id","name":"alpha","clusterId":"cluster-a"}]}`)(w, r)
@@ -82,6 +87,7 @@ func TestGetProjectByNameReturnsTheMatchingProject(t *testing.T) {
 // create, so it must not be reported as already existing.
 func TestAccessRuleExistsRejectsARuleForAnotherScope(t *testing.T) {
 	var rawQuery string
+
 	client := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		rawQuery = r.URL.RawQuery
 		jsonResponse(t, `{"accessRules":[{"subjectId":"user@example.com","roleId":7,"scopeId":"other-project","scopeType":"project","clusterId":"cluster-a"}]}`)(w, r)
@@ -123,6 +129,7 @@ func TestAccessRuleExistsFindsTheMatchingRule(t *testing.T) {
 // for user@example.com. The rule has to be matched on the subject itself.
 func TestAccessRuleExistsRejectsARuleForAnotherSubject(t *testing.T) {
 	var rawQuery string
+
 	client := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
 		rawQuery = r.URL.RawQuery
 		jsonResponse(t, `{"accessRules":[{"subjectId":"otheruser@example.com","roleId":7,"scopeId":"target-project","scopeType":"project","clusterId":"cluster-a"}]}`)(w, r)

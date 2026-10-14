@@ -141,7 +141,6 @@ func (c *AuthServiceClient) AccessRuleExists(ctx context.Context, userEmail stri
 		FilterBy(filterString).
 		ClusterId(clusterUUID).
 		Execute()
-
 	if err != nil {
 		statusCode := 0
 		if resp != nil {
@@ -152,6 +151,7 @@ func (c *AuthServiceClient) AccessRuleExists(ctx context.Context, userEmail stri
 	}
 
 	exists := false
+
 	for _, rule := range accessRulesResp.GetAccessRules() {
 		// The filter operators are a request, not a guarantee: "=@" means
 		// contains, so the subject has to be matched again here, and a rule for
@@ -159,16 +159,21 @@ func (c *AuthServiceClient) AccessRuleExists(ctx context.Context, userEmail stri
 		if rule.GetSubjectId() != userEmail {
 			continue
 		}
+
 		if rule.GetRoleId() != roleID || rule.GetScopeId() != projectID {
 			continue
 		}
+
 		if rule.GetScopeType() != authorization.SCOPETYPE_PROJECT {
 			continue
 		}
+
 		if rule.GetClusterId() != clusterUUID {
 			continue
 		}
+
 		exists = true
+
 		break
 	}
 

@@ -44,13 +44,16 @@ func (c *OrgUnitServiceClient) GetProjectByName(ctx context.Context, clusterUUID
 		logging.Errorf("[ProjectsService] Failed to get projects: %v", err)
 		return nil, statusCode, fmt.Errorf("failed to get projects: %w", err)
 	}
+
 	for i := range projects.Projects {
 		// Both are rechecked here: a filter is a request, and a project from
 		// another cluster with the same name is not this project.
 		if projects.Projects[i].GetName() != projectName || projects.Projects[i].GetClusterId() != clusterUUID {
 			continue
 		}
+
 		logging.Infof("[ProjectsService] Found project '%s' (ID: %s)", projectName, projects.Projects[i].GetId())
+
 		return &projects.Projects[i], resp.StatusCode, nil
 	}
 
