@@ -353,24 +353,57 @@ func flattenHelmValue(out map[string]string, key string, v any) {
 			flattenHelmValues(out, key, nested)
 		}
 	case []any:
-		// Helm's --set has no empty-list form: `key={}` sets a list holding one
-		// empty string, which is not what an empty list means. Emitting nothing
-		// leaves the chart default in place, as for an empty map.
-		if len(t) > 0 {
-			out[key] = helmListValue(t)
-		}
+		flattenHelmList(out, key, t)
 	case []string:
-		if len(t) > 0 {
-			items := make([]any, 0, len(t))
-			for _, s := range t {
-				items = append(items, s)
-			}
-
-			out[key] = helmListValue(items)
+		items := make([]any, 0, len(t))
+		for _, s := range t {
+			items = append(items, s)
 		}
+
+		flattenHelmList(out, key, items)
+	case nil:
+		// Helm parses a bare `null` as an empty value; `%v` would send it the
+		// literal "<nil>" instead.
+		out[key] = "null"
 	default:
 		out[key] = escapeHelmValue(fmt.Sprintf("%v", v))
 	}
+}
+
+// flattenHelmList renders a list the way Helm's --set can address it. A list of
+// scalars uses the brace form; as soon as an element is itself a map or a list,
+// the brace form would hand the chart a Go map string, so the entries are
+// addressed by index instead (`key[0].sub=...`, `key[0][1]=...`).
+//
+// An empty list emits nothing: Helm has no empty-list form (`key={}` is a list
+// holding one empty string) and leaving the key out keeps the chart default,
+// exactly as an empty map does.
+func flattenHelmList(out map[string]string, key string, items []any) {
+	if len(items) == 0 {
+		return
+	}
+
+	if !helmListNeedsIndexes(items) {
+		out[key] = helmListValue(items)
+		return
+	}
+
+	for i, item := range items {
+		flattenHelmValue(out, fmt.Sprintf("%s[%d]", key, i), item)
+	}
+}
+
+// helmListNeedsIndexes reports whether an element is a map or a list, which
+// Helm's brace syntax cannot express.
+func helmListNeedsIndexes(items []any) bool {
+	for _, item := range items {
+		switch item.(type) {
+		case map[string]any, map[string]string, []any, []string:
+			return true
+		}
+	}
+
+	return false
 }
 
 // helmListValue renders a list in the brace form Helm's --set parser expects.
@@ -381,7 +414,7 @@ func helmListValue(items []any) string {
 
 	for _, item := range items {
 		if item == nil {
-			parts = append(parts, "")
+			parts = append(parts, "null")
 			continue
 		}
 

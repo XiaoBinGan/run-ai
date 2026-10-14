@@ -342,6 +342,44 @@ func TestToSpec_CustomHelmValuesShapes(t *testing.T) {
 			in:   map[string]any{keyGlobal: map[string]any{"foo": "from-nested"}, "global.foo": "from-dotted"},
 			want: map[string]string{"global.foo": "from-dotted"},
 		},
+		{
+			// Helm's brace syntax carries scalars only, so an entry that is a map
+			// has to be addressed by index or the chart receives the Go map
+			// string that this change exists to remove.
+			name: "a list of maps uses indexed keys",
+			in:   map[string]any{"tolerations": []any{map[string]any{"key": "nvidia.com/gpu", "operator": "Exists"}}},
+			want: map[string]string{
+				"tolerations[0].key":      "nvidia.com/gpu",
+				"tolerations[0].operator": "Exists",
+			},
+		},
+		{
+			// The outer list needs indexes because one entry is a list, while the
+			// inner list of scalars keeps the compact brace form Helm accepts on
+			// the right hand side of an indexed key.
+			name: "a list with a nested list addresses the outer entries by index",
+			in:   map[string]any{keyArgs: []any{"plain", []any{"a", "b"}}},
+			want: map[string]string{
+				"args[0]": "plain",
+				"args[1]": "{a,b}",
+			},
+		},
+		{
+			name: "an indexed list keeps helm escaping and types",
+			in:   map[string]any{"ports": []any{map[string]any{"name": "a,b", "number": 8080, "enabled": true}}},
+			want: map[string]string{
+				"ports[0].name":    `a\,b`,
+				"ports[0].number":  "8080",
+				"ports[0].enabled": "true",
+			},
+		},
+		{
+			// Helm parses a bare `null` as an empty value; `%v` would have sent
+			// the literal "<nil>".
+			name: "null keeps its meaning",
+			in:   map[string]any{"affinity": nil, keyArgs: []any{nil, "x"}},
+			want: map[string]string{"affinity": "null", keyArgs: "{null,x}"},
+		},
 	}
 
 	for _, tc := range cases {
