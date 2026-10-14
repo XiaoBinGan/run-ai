@@ -7,6 +7,7 @@ package logreader
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sort"
@@ -47,7 +48,15 @@ func (lr *LogReader) GetLogList() ([]string, error) {
 			remaining--
 		}
 
-		readFile.Close()
+		// A failed read leaves "lines" short without saying so, which is exactly
+		// what this function is supposed to report accurately.
+		if err := fileScanner.Err(); err != nil {
+			_ = readFile.Close()
+			return lines, fmt.Errorf("read log file %q: %w", log.Name, err)
+		}
+		if err := readFile.Close(); err != nil {
+			return lines, fmt.Errorf("close log file %q: %w", log.Name, err)
+		}
 	}
 	return lines, nil
 }
