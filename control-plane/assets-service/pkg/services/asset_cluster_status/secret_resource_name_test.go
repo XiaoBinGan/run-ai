@@ -6,6 +6,7 @@
 package asset_cluster_status
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/dsx-ai-factory/run-ai/control-plane/assets-service/generated/pkg/api"
@@ -64,5 +65,40 @@ func TestPatchedSecretNamesAreLowercased(t *testing.T) {
 	want := convutils.Deref(dbmodel.GetSecretName(api.ASSETKIND_ACCESS_KEY, "MyKey", nil), "")
 	if got := convutils.Deref(getAccessKeyResourceName(patchingInfo), ""); got != want {
 		t.Fatalf("getAccessKeyResourceName = %q, want %q", got, want)
+	}
+}
+
+// An NGC API key is reported as two secrets. The cluster lowercases the shared
+// ones, while a private name keeps the asset name as spelled, so the two cases
+// must not be normalised the same way.
+func TestNGCApiKeyResourceNamesMatchTheController(t *testing.T) {
+	const assetName = "MyKey"
+
+	for _, tc := range []struct {
+		name    string
+		private bool
+		want    []string
+	}{
+		{
+			name: "shared",
+			want: []string{"genericsecret-ngcgs-mykey", "dockerregistry-ngcdr-mykey"},
+		},
+		{
+			name:    "private",
+			private: true,
+			want:    []string{"ngcgs-MyKey-0123456789", "ngcdr-MyKey-0123456789"},
+		},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			patchingInfo := response_patching.ResponsePatchingPtrs{
+				Meta: &api.AssetMeta{Name: assetName, Private: convutils.Ref(tc.private), Id: "0123456789abcdef"},
+				Spec: &api.NgcApiKeySpec{},
+			}
+
+			got := getNGCApiKeyResourcesName(patchingInfo)
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Fatalf("getNGCApiKeyResourcesName(private=%t) = %v, want %v", tc.private, got, tc.want)
+			}
+		})
 	}
 }

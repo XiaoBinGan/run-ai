@@ -965,14 +965,19 @@ func getNGCApiKeyResourcesName(patchingInfo response_patching.ResponsePatchingPt
 		return nil
 	}
 	if convutils.BoolIsTrue(patchingInfo.Meta.Private) {
+		// The private name is composed from the asset name as spelled, see the
+		// agent's getSecretResourceName.
 		return []string{
 			fmt.Sprintf("%s-%s-%s", composer.NgcApiKeyGenericSecretPrefix, baseName, patchingInfo.Meta.Id[:10]),
 			fmt.Sprintf("%s-%s-%s", composer.NgcApiKeyDockerRegistryPrefix, baseName, patchingInfo.Meta.Id[:10]),
 		}
 	}
+	// The cluster lowercases the composed name for these kinds, so an asset
+	// named "MyKey" is created as "<kind>-ngcgs-mykey" and a name spelled
+	// without the lowercasing is never found.
 	return []string{
-		fmt.Sprintf("%s-%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_GENERIC_SECRET], composer.NgcApiKeyGenericSecretPrefix, baseName),
-		fmt.Sprintf("%s-%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_DOCKER_REGISTRY], composer.NgcApiKeyDockerRegistryPrefix, baseName),
+		strings.ToLower(fmt.Sprintf("%s-%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_GENERIC_SECRET], composer.NgcApiKeyGenericSecretPrefix, baseName)),
+		strings.ToLower(fmt.Sprintf("%s-%s-%s", dbmodel.SecretTypeMap[api.ASSETKIND_DOCKER_REGISTRY], composer.NgcApiKeyDockerRegistryPrefix, baseName)),
 	}
 }
 
