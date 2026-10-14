@@ -29,7 +29,14 @@ func roundNumber(num *float64) float64 {
 		return 0
 	}
 
-	return math.Round(*num*1000) / 1000
+	rounded := math.Round(*num*1000) / 1000
+	// Rounding a tiny negative value lands on a negative zero, which marshals
+	// and renders as "-0" in the quota the UI shows.
+	if rounded == 0 {
+		return 0
+	}
+
+	return rounded
 }
 
 func getQuotaStatusesMap(projectResources []models.Resources) map[string]models.Resources {
