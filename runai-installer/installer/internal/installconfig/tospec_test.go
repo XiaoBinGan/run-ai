@@ -16,9 +16,12 @@ import (
 // The fixtures below reuse these Helm value keys; naming them keeps one
 // fixture from silently testing a different key than the others.
 const (
-	keyGlobal = "global"
-	keyDNS    = "dns"
-	keyArgs   = "args"
+	keyGlobal  = "global"
+	keyDNS     = "dns"
+	keyArgs    = "args"
+	keyName    = "name"
+	keyEnabled = "enabled"
+	valueTrue  = "true"
 )
 
 func TestToSpec_InstallMode(t *testing.T) {
@@ -366,11 +369,11 @@ func TestToSpec_CustomHelmValuesShapes(t *testing.T) {
 		},
 		{
 			name: "an indexed list keeps helm escaping and types",
-			in:   map[string]any{"ports": []any{map[string]any{"name": "a,b", "number": 8080, "enabled": true}}},
+			in:   map[string]any{"ports": []any{map[string]any{keyName: "a,b", "number": 8080, keyEnabled: true}}},
 			want: map[string]string{
 				"ports[0].name":    `a\,b`,
 				"ports[0].number":  "8080",
-				"ports[0].enabled": "true",
+				"ports[0].enabled": valueTrue,
 			},
 		},
 		{
