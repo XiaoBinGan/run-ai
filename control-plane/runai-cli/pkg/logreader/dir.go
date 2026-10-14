@@ -7,6 +7,7 @@ package logreader
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -81,10 +82,11 @@ func readLastLines(filePath string, n int) ([]string, error) {
 	}
 
 	// A failed read leaves the result short without saying so, which is exactly
-	// what this function is supposed to report accurately.
+	// what this function is supposed to report accurately. A close failure is
+	// reported alongside the scan failure rather than dropped because the scan
+	// failed first.
 	if err := fileScanner.Err(); err != nil {
-		_ = readFile.Close()
-		return nil, fmt.Errorf("scan: %w", err)
+		return nil, fmt.Errorf("scan: %w", errors.Join(err, readFile.Close()))
 	}
 	if err := readFile.Close(); err != nil {
 		return nil, fmt.Errorf("close: %w", err)
